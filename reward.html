@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation Rewards Program</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div x-data="rewardsApp" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <header class="bg-red-600 text-white rounded-lg shadow-md p-8 mb-8 text-center">
+            <h1 class="text-4xl font-bold mb-2">Blood Donation Rewards Program</h1>
+            <p class="text-xl font-light">Every drop counts. Get rewarded for saving lives.</p>
+        </header>
+        
+        <!-- Introduction -->
+        <div class="text-center mb-10 px-4">
+            <p class="text-lg max-w-3xl mx-auto">
+                Thank you for being a blood donor! Our rewards program is designed to show our appreciation for your life-saving contributions. Earn points with every donation and redeem them for exclusive rewards.
+            </p>
+        </div>
+        
+        <!-- Points Display -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8 text-center">
+            <div class="flex justify-center mb-6">
+                <div class="bg-red-600 text-white rounded-full w-36 h-36 flex flex-col items-center justify-center">
+                    <span class="text-4xl font-bold" x-text="currentPoints"></span>
+                    <span class="text-sm uppercase">POINTS</span>
+                </div>
+            </div>
+            <p class="text-lg mb-6">Your next donation eligible date: <span class="font-semibold" x-text="nextDonationDate"></span></p>
+            <div class="mb-4">
+                <div class="flex justify-between mb-1 text-sm">
+                    <span>Progress to Premium Donor Status</span>
+                    <span x-text="`${currentPoints}/${targetPoints} points`"></span>
+                </div>
+                <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-red-600 rounded-full" x-bind:style="`width: ${progressPercentage()}%`"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="bg-red-100 rounded-lg p-8 text-center mb-12">
+            <h3 class="text-2xl font-semibold text-red-600 mb-4">Schedule Your Next Donation</h3>
+            <p class="text-lg mb-6">We need donors like you! Schedule your next appointment and keep saving lives.</p>
+            <button class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
+                Book Appointment
+            </button>
+        </div>
+        
+        <!-- Rewards Section -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold text-red-600 text-center mb-8">Available Rewards</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="reward in rewards" :key="reward.id">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1">
+                        <div class="bg-gray-100 h-48 flex items-center justify-center text-red-600">
+                            <i :class="`fas ${reward.icon} text-6xl`"></i>
+                        </div>
+                        <div class="p-6"></div>
+                            <h3 class="text-xl font-semibold mb-2" x-text="reward.title"></h3>
+                            <p class="text-lg font-bold text-red-600 mb-2" x-text="`${reward.points} points`"></p>
+                            <p class="text-gray-600 mb-4" x-text="reward.description"></p>
+                            <button 
+                                @click="redeemReward(reward.id)"
+                                :class="canRedeem(reward.points) ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-300 cursor-not-allowed'"
+                                class="w-full py-2 px-4 text-white font-semibold rounded transition duration-300"
+                                x-text="canRedeem(reward.points) ? 'Redeem Reward' : 'Insufficient Points'"
+                                :disabled="!canRedeem(reward.points)"
+                            ></button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <!-- Donation History -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-12"></div>
+            <h2 class="text-3xl font-bold text-red-600 text-center mb-6">Your Donation History</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="py-3 px-4 text-left font-semibold">Date</th>
+                            <th class="py-3 px-4 text-left font-semibold">Donation Type</th>
+                            <th class="py-3 px-4 text-left font-semibold">Points Earned</th>
+                            <th class="py-3 px-4 text-left font-semibold">Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="(donation, index) in donationHistory" :key="index">
+                            <tr class="border-t border-gray-200">
+                                <td class="py-3 px-4" x-text="donation.date"></td>
+                                <td class="py-3 px-4" x-text="donation.type"></td>
+                                <td class="py-3 px-4" x-text="`${donation.points} points`"></td>
+                                <td class="py-3 px-4" x-text="donation.location"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-12 py-6"></footer>
+            <p class="mb-2">© 2025 Blood Donation Rewards Program. All rights reserved.</p>
+            <p>For questions about your rewards or donations, please contact support at 
+                <a href="mailto:support@blooddonationrewards.org" class="text-red-600 hover:underline">support@blooddonationrewards.org</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('rewardsApp', () => ({
+                currentPoints: 350,
+                targetPoints: 1000,
+                nextDonationDate: 'May 15, 2025',
+                rewards: [
+                    { id: 1, title: '$10 Coffee Shop Gift Card', points: 250, description: 'Enjoy a cup of coffee on us! Redeemable at any participating coffee shop locations.', icon: 'fa-mug-hot' },
+                    { id: 2, title: 'Exclusive Donor T-Shirt', points: 400, description: 'Show your pride as a blood donor with our limited edition t-shirt.', icon: 'fa-shirt' },
+                    { id: 3, title: 'Movie Tickets for Two', points: 600, description: 'Enjoy a movie with a friend or loved one at any participating theater.', icon: 'fa-ticket' },
+                    { id: 4, title: 'Fitness Tracker', points: 1000, description: 'Track your health metrics with this premium fitness wearable.', icon: 'fa-heart-pulse' },
+                    { id: 5, title: '$25 Restaurant Gift Card', points: 500, description: 'Treat yourself to a delicious meal at a variety of local restaurants.', icon: 'fa-utensils' },
+                    { id: 6, title: '15% Online Shopping Discount', points: 300, description: 'Get a discount code for your next purchase at our partner online stores.', icon: 'fa-tag' }
+                ],
+                donationHistory: [
+                    { date: 'March 12, 2025', type: 'Whole Blood', points: 100, location: 'Downtown Center' },
+                    { date: 'January 15, 2025', type: 'Platelet', points: 150, location: 'Mobile Drive - City Hall' },
+                    { date: 'November 20, 2024', type: 'Whole Blood', points: 100, location: 'North Community Center' },
+                    { date: 'August 5, 2024', type: 'Double Red Cells', points: 200, location: 'Downtown Center' }
+                ],
+                canRedeem(points) {
+                    return this.currentPoints >= points;
+                },
+                progressPercentage() {
+                    return Math.min(100, Math.round((this.currentPoints / this.targetPoints) * 100));
+                },
+                redeemReward(rewardId) {
+                    const reward = this.rewards.find(r => r.id === rewardId);
+                    if (this.canRedeem(reward.points)) {
+                        alert(`You have redeemed: ${reward.title} for ${reward.points} points!`);
+                        this.currentPoints -= reward.points;
+                    }
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
