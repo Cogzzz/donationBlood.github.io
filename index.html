@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMI Blood Heroes - Blood Donation Educational Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Slick Slider -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <style>
+      .hero-slider .slick-slide {
+        height: 500px;
+      }
+      .hero-slider .slick-dots {
+        bottom: 25px;
+      }
+      .hero-slider .slick-dots li button:before {
+        color: white;
+        font-size: 12px;
+        opacity: 0.7;
+      }
+      .hero-slider .slick-dots li.slick-active button:before {
+        color: white;
+        opacity: 1;
+      }
+      .hero-slider .slick-arrow {
+        z-index: 10;
+      }
+      .hero-slider .slick-prev {
+        left: 20px;
+      }
+      .hero-slider .slick-next {
+        right: 20px;
+      }
+      .hero-slider .slick-prev:before,
+      .hero-slider .slick-next:before {
+        font-size: 24px;
+      }
+      .slide-badge {
+        display: inline-block;
+        background-color: rgba(220, 38, 38, 0.9);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
+    <header class="bg-white text-black shadow-md sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+          <div class="flex items-center space-x-2">
+              <img src="img/blood.png" alt="Blood Heroes Logo" class="h-8 w-8 rounded-full object-cover" />
+              <span class="font-bold text-xl">PMI Blood Heroes</span>
+          </div>
+          <nav class="hidden md:block">
+              <ul class="flex space-x-6">
+                  <li><a href="index.html" class="hover:text-red-600 transition duration-300">Home</a></li>
+                  <li><a href="index.html" class="hover:text-red-600 transition duration-300">Games</a></li>
+                  <li><a href="index.html" class="hover:text-red-600 transition duration-300">Education</a></li>
+                  <li><a href="index.html" class="hover:text-red-600 transition duration-300">Leaderboard</a></li>
+                  <li><a href="index.html" class="hover:text-red-600 transition duration-300">Blood Stock</a></li>
+              </ul>
+          </nav>
+          <div class="flex items-center space-x-3 relative">
+              <!-- Profile container with dropdown -->
+              <div class="profile-container relative">
+                  <button id="profileButton" class="block focus:outline-none">
+                      <div class="relative w-10 h-10 rounded-full overflow-hidden">
+                          <img src="/img/Sample_User_Icon.png" alt="User Profile" class="w-full h-full object-cover" />
+                      </div>
+                  </button>
+                  
+                  <!-- Dropdown Menu -->
+                  <div id="dropdownMenu" class="dropdown-menu hidden absolute right-0 top-12 bg-white rounded-lg shadow-lg w-64 z-50">
+                      <div class="user-info flex items-center p-4 border-b border-gray-200">
+                          <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
+                              <img src="/img/Sample_User_Icon.png" alt="User Profile" class="w-full h-full object-cover" />
+                          </div>
+                          <div class="user-details">
+                              <span class="font-semibold text-sm">Sabri Hakuli</span>
+                          </div>
+                      </div>
+                      
+                      <a href="profile.html" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
+                          <span class="mr-3 w-5 text-center">👤</span> Profile
+                      </a>
+                      
+                      <a href="#" class="dropdown-item flex items-center px-4 py-3 text-blue-500 hover:bg-gray-100 text-sm">
+                          <span class="mr-3 w-5 text-center">🪙</span> Reedem Points
+                      </a>
+
+                      <div class="border-t border-gray-200 my-1"></div>
+                  
+                      <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
+                          <span class="mr-3 w-5 text-center">❌</span> Log out
+                      </a>
+                      
+                        <div class="flex justify-start p-4">
+                          <div class="w-10 h-10 rounded-full overflow-hidden">
+                            <i class="fas fa-coins text-yellow-500 text-3xl"></i>
+                          </div>
+                          <span class="font-medium text-sm ml-3">304 Points</span>
+                        </div>
+                  </div>
+              </div>
+          </div>
+          <!-- Mobile menu toggle button -->
+          <button class="md:hidden text-gray-700 focus:outline-none" id="mobile-menu-button">
+              <i class="fas fa-bars text-xl"></i>
+          </button>
+      </div>
+      <!-- Mobile menu (hidden by default) -->
+      <div class="md:hidden hidden bg-white px-4 py-2" id="mobile-menu">
+          <ul class="space-y-2">
+              <li><a href="#home" class="block py-2 hover:text-red-400">Home</a></li>
+              <li><a href="#games" class="block py-2 hover:text-red-400">Games</a></li>
+              <li><a href="#education" class="block py-2 hover:text-red-400">Education</a></li>
+              <li><a href="#leaderboard" class="block py-2 hover:text-red-400">Leaderboard</a></li>
+              <li><a href="#blood-stock" class="block py-2 hover:text-red-400">Blood Stock</a></li>
+          </ul>
+      </div>
+  </header>
+
+  <section class="hero-slider" id="home">
+    <!-- Slide 1 -->
+    <div class="relative h-full">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/hospital.png')"></div>
+      <div class="absolute inset-0 bg-black opacity-50"></div>
+      <div class="container mx-auto px-4 h-full flex items-center justify-center">
+        <div class="relative z-10 max-w-3xl text-center text-white">
+          <span class="slide-badge">Join Today</span>
+          <h1 class="text-4xl md:text-5xl font-bold mb-6">Become a Blood Donation Hero</h1>
+          <p class="text-xl mb-8">
+            Play and learn about the importance of blood donation. Earn points, challenge friends, and discover how one
+            blood bag can save up to three lives!
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <a
+              href="#games"
+              class="bg-white text-red-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300"
+              >Start Playing</a
+            >
+            <a
+              href="#education"
+              class="bg-transparent border-2 border-white py-3 px-8 rounded-full hover:bg-white hover:text-red-600 transition duration-300"
+              >Learn About Blood Donation</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="relative h-full">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/donors.jpg')"></div>
+      <div class="absolute inset-0 bg-black opacity-50"></div>
+      <div class="container mx-auto px-4 h-full flex items-center justify-center">
+        <div class="relative z-10 max-w-3xl text-center text-white">
+          <span class="slide-badge">Did You Know?</span>
+          <h1 class="text-4xl md:text-5xl font-bold mb-6">One Donation Saves 3 Lives</h1>
+          <p class="text-xl mb-8">
+            Your single donation can be separated into red cells, platelets, and plasma
+            to help multiple patients with different medical needs.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <a
+              href="#schedule"
+              class="bg-white text-red-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300"
+              >Schedule Donation</a
+            >
+            <a
+              href="#facts"
+              class="bg-transparent border-2 border-white py-3 px-8 rounded-full hover:bg-white hover:text-red-600 transition duration-300"
+              >More Blood Facts</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="relative h-full">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/points.png')"></div>
+      <div class="absolute inset-0 bg-black opacity-50"></div>
+      <div class="container mx-auto px-4 h-full flex items-center justify-center">
+        <div class="relative z-10 max-w-3xl text-center text-white">
+          <span class="slide-badge">Donor Rewards</span>
+          <h1 class="text-4xl md:text-5xl font-bold mb-6">Earn Points While Saving Lives</h1>
+          <p class="text-xl mb-8">
+            Join our Donor Rewards Program and earn points for each donation.
+            Redeem them for exclusive merchandise, gift cards, and more!
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <a
+              href=""
+              class="bg-white text-red-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300"
+              >View Rewards</a
+            >
+            <a
+              href="#register"
+              class="bg-transparent border-2 border-white py-3 px-8 rounded-full hover:bg-white hover:text-red-600 transition duration-300"
+              >Join Program</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="py-16 px-4 bg-white">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Main Features</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+            <div class="bg-red-100 p-6 text-center">
+              <i class="fas fa-gamepad text-4xl text-red-600"></i>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-800 mb-3">Blood Donation Simulation</h3>
+              <p class="text-gray-600 mb-4">
+                Experience what it's like to be a medical professional managing the blood donation process, from
+                screening to distribution.
+              </p>
+              <a
+                href="#simulation"
+                class="block text-center bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300"
+                >Play Now</a
+              >
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+            <div class="bg-red-100 p-6 text-center">
+              <i class="fas fa-question-circle text-4xl text-red-600"></i>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-800 mb-3">Interactive Quiz</h3>
+              <p class="text-gray-600 mb-4">
+                Test your knowledge about blood donation through quizzes with various difficulty levels and earn virtual
+                rewards.
+              </p>
+              <a
+                href="#quiz"
+                class="block text-center bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300"
+                >Play Now</a
+              >
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+            <div class="bg-red-100 p-6 text-center">
+              <i class="fas fa-book-medical text-4xl text-red-600"></i>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-800 mb-3">Educational Materials</h3>
+              <p class="text-gray-600 mb-4">
+                Learn about different blood products, blood needs, storage, processing, and blood donation activities.
+              </p>
+              <a
+                href="#education"
+                class="block text-center bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300"
+                >Learn More</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 px-4 bg-white" id="games">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Educational Games</h2>
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="flex border-b">
+            <button
+              class="py-4 px-6 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none"
+              id="sim-tab"
+            >
+              Blood Donation Simulation
+            </button>
+            <button
+              class="py-4 px-6 font-medium text-gray-800 bg-gray-200 hover:bg-gray-300 transition duration-300 focus:outline-none"
+              id="quiz-tab"
+            >
+              Interactive Quiz
+            </button>
+          </div>
+
+          <div class="p-6 hidden" id="simulation">
+            <div class="mb-6">
+              <img src="/api/placeholder/600/400" alt="Simulation Scene" class="w-full h-auto rounded-lg shadow-md" />
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
+                Check Donor
+              </button>
+              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
+                Draw Blood
+              </button>
+              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
+                Process Blood
+              </button>
+              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
+                Distribution
+              </button>
+            </div>
+          </div>
+
+          <div class="p-6" id="quiz">
+            <!-- Quiz intro screen -->
+            <div id="quiz-intro" class="text-center py-8">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Blood Donation Quiz</h3>
+              <p class="text-gray-600 mb-6">Test your knowledge about blood donation with this interactive quiz!</p>
+              <p class="text-gray-600 mb-8">Answer all questions correctly to earn points!</p>
+              <button
+                id="start-quiz"
+                class="bg-red-600 text-white py-3 px-8 rounded-lg hover:bg-red-700 transition duration-300"
+              >
+                Start Quiz
+              </button>
+            </div>
+
+            <!-- Quiz container -->
+            <div id="quiz-container" class="hidden">
+              <!-- Progress bar -->
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-600"
+                  >Question <span id="current-question">1</span> of <span id="total-questions">3</span></span
+                >
+                <span class="text-sm text-gray-600">Score: <span id="quiz-score">0</span></span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div id="quiz-progress" class="bg-red-600 h-2.5 rounded-full" style="width: 33%"></div>
+              </div>
+
+              <!-- Question container -->
+              <div id="question-container">
+                <h3 id="question-text" class="text-xl font-bold text-gray-800 mb-6">
+                  How long does it take for the body to replace plasma after donating blood?
+                </h3>
+                <div id="options-container" class="space-y-3 mb-6">
+                  <!-- Options will be inserted here by JavaScript -->
+                </div>
+                <div class="flex justify-between">
+                  <button
+                    id="next-question"
+                    class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition duration-300 hidden"
+                  >
+                    Next Question
+                  </button>
+                  <button
+                    id="submit-answer"
+                    class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition duration-300"
+                  >
+                    Submit Answer
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results screen -->
+            <div id="quiz-results" class="hidden text-center py-8">
+              <div id="success-icon" class="mx-auto mb-6 text-green-500">
+                <i class="fas fa-trophy text-6xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Quiz Complete!</h3>
+              <p class="text-xl mb-2">Your score: <span id="final-score">0</span> / 3</p>
+              <p id="result-message" class="text-gray-600 mb-6">Well done!</p>
+              <p class="text-green-600 mb-8 text-lg font-bold hidden" id="points-earned">
+                +<span id="points-value">30</span> points earned!
+              </p>
+              <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button
+                  id="retry-quiz"
+                  class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition duration-300"
+                >
+                  Try Again
+                </button>
+                <button
+                  id="back-to-home"
+                  class="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition duration-300"
+                >
+                  Back to Home
+                </button>
+              </div>
+            </div>
+
+            <!-- Feedback alert -->
+            <div id="feedback-alert" class="hidden mt-4 p-4 rounded-lg">
+              <p id="feedback-text" class="font-medium"></p>
+              <p id="feedback-explanation" class="text-sm mt-2"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 px-4 bg-white" id="leaderboard">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Leaderboard</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <h3 class="bg-red-600 text-white text-xl font-bold py-4 px-6">Blood Donation Simulation</h3>
+            <ul class="divide-y divide-gray-200">
+              <li class="flex items-center p-4">
+                <div class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">
+                  1
+                </div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">R</div>
+                  <span class="font-medium">Rizky_88</span>
+                </div>
+                <div class="font-bold">950</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div
+                  class="bg-gray-400 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4"
+                >
+                  2
+                </div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">A</div>
+                  <span class="font-medium">Andi123</span>
+                </div>
+                <div class="font-bold">820</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div
+                  class="bg-yellow-700 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4"
+                >
+                  3
+                </div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">F</div>
+                  <span class="font-medium">Fitri_PMI</span>
+                </div>
+                <div class="font-bold">790</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">4</div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">S</div>
+                  <span class="font-medium">SandiW</span>
+                </div>
+                <div class="font-bold">715</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">5</div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">D</div>
+                  <span class="font-medium">DewiAnggraini</span>
+                </div>
+                <div class="font-bold">690</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <h3 class="bg-red-600 text-white text-xl font-bold py-4 px-6">Blood Donation Quiz</h3>
+            <ul class="divide-y divide-gray-200">
+              <li class="flex items-center p-4">
+                <div class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">
+                  1
+                </div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">B</div>
+                  <span class="font-medium">Budi_Smart</span>
+                </div>
+                <div class="font-bold">850</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div
+                  class="bg-gray-400 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4"
+                >
+                  2
+                </div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">S</div>
+                  <span class="font-medium">Sinta22</span>
+                </div>
+                <div class="font-bold">810</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div
+                  class="bg-yellow-700 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4"
+                >
+                  3
+                </div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">M</div>
+                  <span class="font-medium">Maya_SMA</span>
+                </div>
+                <div class="font-bold">780</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">4</div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">R</div>
+                  <span class="font-medium">Rudi_PMI</span>
+                </div>
+                <div class="font-bold">760</div>
+              </li>
+              <li class="flex items-center p-4">
+                <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">5</div>
+                <div class="flex items-center flex-grow">
+                  <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">D</div>
+                  <span class="font-medium">Dinda09</span>
+                </div>
+                <div class="font-bold">705</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 px-4 bg-white" id="education">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Blood Donation Education</h2>
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="flex flex-wrap border-b">
+            <button
+              class="education-tab py-3 px-4 font-medium text-gray-800 bg-gray-200 hover:bg-gray-300 transition duration-300 focus:outline-none text-sm md:text-base"
+              data-tab="human-body"
+            >
+              Human Body
+            </button>
+            <button
+              class="education-tab py-3 px-4 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none text-sm md:text-base"
+              data-tab="blood-products"
+            >
+              Blood Products
+            </button>
+            <button
+              class="education-tab py-3 px-4 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none text-sm md:text-base"
+              data-tab="blood-needs"
+            >
+              Blood Needs
+            </button>
+            <button
+              class="education-tab py-3 px-4 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none text-sm md:text-base"
+              data-tab="storage"
+            >
+              Storage
+            </button>
+            <button
+              class="education-tab py-3 px-4 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none text-sm md:text-base"
+              data-tab="processing"
+            >
+              Processing
+            </button>
+            <button
+              class="education-tab py-3 px-4 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none text-sm md:text-base"
+              data-tab="donation-process"
+            >
+              Donation Process
+            </button>
+          </div>
+
+          <!-- Human Body Tab -->
+          <div class="education-content p-6" id="human-body-content">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Understanding the Human Body</h3>
+
+            <h4 class="text-xl font-bold text-gray-700 mb-2">The Circulatory System</h4>
+            <div class="flex flex-col md:flex-row gap-6 mb-8">
+              <div class="md:w-2/3">
+                <p class="text-gray-600 mb-4">
+                  The circulatory system is the body's transportation network, responsible for delivering oxygen,
+                  nutrients, hormones, and immune cells to tissues while removing waste products.
+                </p>
+                <p class="text-gray-600 mb-4">
+                  At the center of this system is the heart, a powerful muscle that pumps blood throughout the body. The
+                  average adult has about 5-6 liters of blood circulating in their body.
+                </p>
+              </div>
+              <div class="md:w-1/3">
+                <img
+                  src="img/human-circulatory.png"
+                  alt="Circulatory System"
+                  class="w-full h-auto rounded-lg shadow-md"
+                />
+              </div>
+            </div>
+
+            <h4 class="text-xl font-bold text-gray-700 mb-2">Blood: The River of Life</h4>
+            <p class="text-gray-600 mb-4">
+              Blood is a specialized body fluid that consists of cells suspended in a liquid called plasma. It makes up
+              approximately 7-8% of human body weight.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 mb-8">
+              <div class="md:w-1/2 bg-gray-50 p-4 rounded-lg shadow-sm">
+                <h5 class="font-bold text-gray-700 mb-2">Primary Functions of Blood:</h5>
+                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                  <li>Transportation of oxygen from the lungs to all body tissues</li>
+                  <li>Delivery of nutrients from the digestive system to cells</li>
+                  <li>Removal of waste products to excretory organs</li>
+                  <li>Defense against infections through white blood cells</li>
+                  <li>Regulation of body temperature</li>
+                  <li>Maintenance of proper pH balance</li>
+                  <li>Prevention of blood loss through clotting</li>
+                </ul>
+              </div>
+              <div class="md:w-1/2 bg-gray-50 p-4 rounded-lg shadow-sm">
+                <h5 class="font-bold text-gray-700 mb-2">Blood Composition:</h5>
+                <div class="relative h-40">
+                  <div class="absolute inset-0 rounded-lg overflow-hidden">
+                    <div class="h-2/5 bg-yellow-100 w-full p-2 flex items-center">
+                      <span class="text-sm font-medium">Plasma (55%)</span>
+                    </div>
+                    <div class="h-2/5 bg-red-400 w-full p-2 flex items-center">
+                      <span class="text-sm font-medium text-white">Red Blood Cells (45%)</span>
+                    </div>
+                    <div class="h-1/5 flex w-full">
+                      <div class="h-full bg-blue-300 w-4/5 p-1 flex items-center justify-center">
+                        <span class="text-xs font-medium">White Blood Cells</span>
+                      </div>
+                      <div class="h-full bg-purple-300 w-1/5 p-1 flex items-center justify-center">
+                        <span class="text-xs font-medium">Platelets</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 text-center">Visual representation of blood composition</p>
+              </div>
+            </div>
+
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+              <h5 class="font-bold text-red-700 mb-1">Did You Know?</h5>
+              <p class="text-gray-700">
+                The average adult has around 5-6 liters of blood in their body, which is replenished constantly. When
+                you donate blood (450ml), your body replaces the fluid portion within 24 hours and the cellular
+                components within a few weeks.
+              </p>
+            </div>
+          </div>
+
+          <!-- Blood Products Tab -->
+          <div class="education-content p-6 hidden" id="blood-products-content">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Types of Blood Products</h3>
+
+            <h4 class="text-xl font-bold text-gray-700 mb-2">Blood Types and Compatibility</h4>
+            <p class="text-gray-600 mb-4">
+              Blood types are determined by the presence or absence of certain antigens on the surface of red blood
+              cells. The two main classification systems are ABO and Rh factor.
+            </p>
+
+            <div class="overflow-x-auto mb-8">
+              <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                <thead class="bg-red-600 text-white">
+                  <tr>
+                    <th class="py-3 px-4 text-left">Blood Type</th>
+                    <th class="py-3 px-4 text-left">Can Donate To</th>
+                    <th class="py-3 px-4 text-left">Can Receive From</th>
+                    <th class="py-3 px-4 text-left">Population %</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">A+</td>
+                    <td class="py-3 px-4">A+, AB+</td>
+                    <td class="py-3 px-4">A+, A-, O+, O-</td>
+                    <td class="py-3 px-4">~30%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">A-</td>
+                    <td class="py-3 px-4">A+, A-, AB+, AB-</td>
+                    <td class="py-3 px-4">A-, O-</td>
+                    <td class="py-3 px-4">~6%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">B+</td>
+                    <td class="py-3 px-4">B+, AB+</td>
+                    <td class="py-3 px-4">B+, B-, O+, O-</td>
+                    <td class="py-3 px-4">~8%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">B-</td>
+                    <td class="py-3 px-4">B+, B-, AB+, AB-</td>
+                    <td class="py-3 px-4">B-, O-</td>
+                    <td class="py-3 px-4">~2%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">AB+</td>
+                    <td class="py-3 px-4">AB+ (Universal recipient)</td>
+                    <td class="py-3 px-4">All types</td>
+                    <td class="py-3 px-4">~3%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">AB-</td>
+                    <td class="py-3 px-4">AB+, AB-</td>
+                    <td class="py-3 px-4">A-, B-, AB-, O-</td>
+                    <td class="py-3 px-4">~1%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">O+</td>
+                    <td class="py-3 px-4">A+, B+, AB+, O+</td>
+                    <td class="py-3 px-4">O+, O-</td>
+                    <td class="py-3 px-4">~38%</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">O-</td>
+                    <td class="py-3 px-4">All types (Universal donor)</td>
+                    <td class="py-3 px-4">O- only</td>
+                    <td class="py-3 px-4">~7%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4 class="text-xl font-bold text-gray-700 mb-2">Blood Components and Their Uses</h4>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-red-600 text-white p-3">
+                  <h5 class="font-bold">Red Blood Cells (Erythrocytes)</h5>
+                </div>
+                <div class="p-4">
+                  <p class="text-gray-600 mb-3">
+                    Disc-shaped cells containing hemoglobin that transport oxygen throughout the body.
+                  </p>
+                  <h6 class="font-bold text-gray-700 mb-1">Used for:</h6>
+                  <ul class="list-disc list-inside text-gray-600 mb-3">
+                    <li>Severe anemia</li>
+                    <li>Blood loss from surgery or injury</li>
+                    <li>Chronic conditions like thalassemia</li>
+                  </ul>
+                  <h6 class="font-bold text-gray-700 mb-1">Storage Time:</h6>
+                  <p class="text-gray-600">Up to 42 days at 2-6°C</p>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-yellow-400 text-white p-3">
+                  <h5 class="font-bold">Blood Plasma</h5>
+                </div>
+                <div class="p-4">
+                  <p class="text-gray-600 mb-3">
+                    Yellowish liquid component of blood that contains proteins, clotting factors, and other substances.
+                  </p>
+                  <h6 class="font-bold text-gray-700 mb-1">Used for:</h6>
+                  <ul class="list-disc list-inside text-gray-600 mb-3">
+                    <li>Bleeding disorders</li>
+                    <li>Burns and shock</li>
+                    <li>Liver diseases</li>
+                    <li>Immunodeficiencies</li>
+                  </ul>
+                  <h6 class="font-bold text-gray-700 mb-1">Storage Time:</h6>
+                  <p class="text-gray-600">Up to 1 year frozen at -18°C or below</p>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-purple-500 text-white p-3">
+                  <h5 class="font-bold">Platelets (Thrombocytes)</h5>
+                </div>
+                <div class="p-4">
+                  <p class="text-gray-600 mb-3">
+                    Tiny cell fragments that help blood to clot and prevent excessive bleeding.
+                  </p>
+                  <h6 class="font-bold text-gray-700 mb-1">Used for:</h6>
+                  <ul class="list-disc list-inside text-gray-600 mb-3">
+                    <li>Cancer patients undergoing chemotherapy</li>
+                    <li>Bone marrow transplant recipients</li>
+                    <li>Bleeding disorders</li>
+                    <li>Major surgeries or trauma</li>
+                  </ul>
+                  <h6 class="font-bold text-gray-700 mb-1">Storage Time:</h6>
+                  <p class="text-gray-600">Up to 5 days at room temperature with agitation</p>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-blue-500 text-white p-3">
+                  <h5 class="font-bold">Cryoprecipitate</h5>
+                </div>
+                <div class="p-4">
+                  <p class="text-gray-600 mb-3">
+                    Concentrated portion of plasma containing clotting factors like fibrinogen, Factor VIII, and von
+                    Willebrand factor.
+                  </p>
+                  <h6 class="font-bold text-gray-700 mb-1">Used for:</h6>
+                  <ul class="list-disc list-inside text-gray-600 mb-3">
+                    <li>Hemophilia</li>
+                    <li>Von Willebrand disease</li>
+                    <li>Disseminated intravascular coagulation (DIC)</li>
+                    <li>Massive bleeding with low fibrinogen</li>
+                  </ul>
+                  <h6 class="font-bold text-gray-700 mb-1">Storage Time:</h6>
+                  <p class="text-gray-600">Up to 1 year frozen at -18°C or below</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blood Needs Tab -->
+          <div class="education-content p-6 hidden" id="blood-needs-content">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Blood Needs and Demand</h3>
+
+            <div class="flex flex-col md:flex-row gap-8 mb-8">
+              <div class="md:w-1/2">
+                <h4 class="text-xl font-bold text-gray-700 mb-4">Why Is Blood Always Needed?</h4>
+                <p class="text-gray-600 mb-4">
+                  Blood cannot be manufactured or synthesized — it can only come from generous donors. Even with medical
+                  advances, there is no substitute for human blood.
+                </p>
+                <p class="text-gray-600 mb-4">
+                  Every day, hospitals need fresh supplies of blood for routine surgeries, emergency situations, and
+                  ongoing treatments for chronic conditions.
+                </p>
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                  <p class="text-gray-700 font-medium">
+                    Every 2 seconds, someone needs blood — that's approximately 43,000 units needed daily.
+                  </p>
+                </div>
+              </div>
+              <div class="md:w-1/2">
+                <img
+                  src="img/blood-donation.png"
+                  alt="Blood Donation Need"
+                  class="w-full h-auto rounded-lg shadow-md"
+                />
+              </div>
+            </div>
+
+            <h4 class="text-xl font-bold text-gray-700 mb-4">Who Needs Blood?</h4>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+              <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-red-600">
+                <div class="text-red-600 mb-3">
+                  <i class="fas fa-hospital-user text-3xl"></i>
+                </div>
+                <h5 class="font-bold text-gray-800 mb-2">Surgery and Trauma Patients</h5>
+                <p class="text-gray-600">
+                  Patients undergoing major surgeries or experiencing traumatic injuries often require blood
+                  transfusions to replace lost blood and stabilize their condition.
+                </p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-red-600">
+                <div class="text-red-600 mb-3">
+                  <i class="fas fa-baby text-3xl"></i>
+                </div>
+                <h5 class="font-bold text-gray-800 mb-2">Mothers and Newborns</h5>
+                <p class="text-gray-600">
+                  Women experiencing complications during childbirth may need blood transfusions. Premature and ill
+                  newborns often need blood components.
+                </p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-red-600">
+                <div class="text-red-600 mb-3">
+                  <i class="fas fa-heartbeat text-3xl"></i>
+                </div>
+                <h5 class="font-bold text-gray-800 mb-2">Cancer Patients</h5>
+                <p class="text-gray-600">
+                  Many cancer treatments affect the body's ability to produce blood cells. Transfusions help patients
+                  maintain strength during chemotherapy and radiation.
+                </p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-red-600">
+                <div class="text-red-600 mb-3">
+                  <i class="fas fa-procedures text-3xl"></i>
+                </div>
+                <h5 class="font-bold text-gray-800 mb-2">Chronic Disease Patients</h5>
+                <p class="text-gray-600">
+                  People with sickle cell disease, thalassemia, and hemophilia require regular blood transfusions
+                  throughout their lives.
+                </p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-red-600">
+                <div class="text-red-600 mb-3">
+                  <i class="fas fa-car-crash text-3xl"></i>
+                </div>
+                <h5 class="font-bold text-gray-800 mb-2">Accident Victims</h5>
+                <p class="text-gray-600">
+                  A single car accident victim can require up to 100 units of blood. Emergency responders need immediate
+                  access to blood to save lives.
+                </p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-red-600">
+                <div class="text-red-600 mb-3">
+                  <i class="fas fa-fire text-3xl"></i>
+                </div>
+                <h5 class="font-bold text-gray-800 mb-2">Burn Victims</h5>
+                <p class="text-gray-600">
+                  People with severe burns often need plasma transfusions to replace lost fluids and help maintain blood
+                  pressure.
+                </p>
+              </div>
+            </div>
+
+            <h4 class="text-xl font-bold text-gray-700 mb-4">Blood Usage Statistics</h4>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+              <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div class="bg-gray-50 p-4 rounded-lg text-center">
+                    <span class="block text-3xl font-bold text-red-600 mb-2">36,000</span>
+                    <span class="text-sm text-gray-600">Units of red blood cells needed daily</span>
+                  </div>
+                  <div class="bg-gray-50 p-4 rounded-lg text-center">
+                    <span class="block text-3xl font-bold text-red-600 mb-2">7,000</span>
+                    <span class="text-sm text-gray-600">Units of platelets needed daily</span>
+                  </div>
+                  <div class="bg-gray-50 p-4 rounded-lg text-center">
+                    <span class="block text-3xl font-bold text-red-600 mb-2">10,000</span>
+                    <span class="text-sm text-gray-600">Units of plasma needed daily</span>
+                  </div>
+                  <div class="bg-gray-50 p-4 rounded-lg text-center">
+                    <span class="block text-3xl font-bold text-red-600 mb-2">3</span>
+                    <span class="text-sm text-gray-600">Lives saved by one donation</span>
+                  </div>
+                </div>
+
+                <h5 class="font-bold text-gray-700 mb-2">Blood Usage by Condition:</h5>
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">Cancer Treatment</span>
+                      <span class="text-sm font-medium text-gray-700">25%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-red-600 h-2 rounded-full" style="width: 25%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">Surgery & Trauma</span>
+                      <span class="text-sm font-medium text-gray-700">35%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-red-600 h-2 rounded-full" style="width: 35%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">Blood Disorders</span>
+                      <span class="text-sm font-medium text-gray-700">15%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-red-600 h-2 rounded-full" style="width: 15%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">Heart & Burn Procedures</span>
+                      <span class="text-sm font-medium text-gray-700">12%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-red-600 h-2 rounded-full" style="width: 12%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">Other Medical Conditions</span>
+                      <span class="text-sm font-medium text-gray-700">13%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-red-600 h-2 rounded-full" style="width: 13%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insert this section after the education section and before the footer -->
+<!-- Blood Availability Section -->
+<section class="py-10 px-4 bg-red-50" id="blood-stock">
+  <div class="container mx-auto">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Blood Stock Availability</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Blood Type A+ -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">A+</span>
+        </div>
+        <span class="text-lg font-semibold">85 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-red-600 h-2.5 rounded-full" style="width: 85%"></div>
+        </div>
+        <span class="text-sm text-gray-500 mt-2">Status: Available</span>
+      </div>
+      <!-- Blood Type B+ -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">B+</span>
+        </div>
+        <span class="text-lg font-semibold">43 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 43%"></div>
+        </div>
+        <span class="text-sm text-yellow-500 mt-2">Status: Low</span>
+      </div>
+      <!-- Blood Type AB+ -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">AB+</span>
+        </div>
+        <span class="text-lg font-semibold">25 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-red-500 h-2.5 rounded-full" style="width: 25%"></div>
+        </div>
+        <span class="text-sm text-red-500 mt-2">Status: Critical</span>
+      </div>
+      <!-- Blood Type O+ -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">O+</span>
+        </div>
+        <span class="text-lg font-semibold">60 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 60%"></div>
+        </div>
+        <span class="text-sm text-yellow-500 mt-2">Status: Low</span>
+      </div>
+      <!-- Blood Type A- -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">A-</span>
+        </div>
+        <span class="text-lg font-semibold">18 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-red-500 h-2.5 rounded-full" style="width: 18%"></div>
+        </div>
+        <span class="text-sm text-red-500 mt-2">Status: Critical</span>
+      </div>
+      <!-- Blood Type B- -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">B-</span>
+        </div>
+        <span class="text-lg font-semibold">12 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-red-500 h-2.5 rounded-full" style="width: 12%"></div>
+        </div>
+        <span class="text-sm text-red-500 mt-2">Status: Critical</span>
+      </div>
+      <!-- Blood Type AB- -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">AB-</span>
+        </div>
+        <span class="text-lg font-semibold">7 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-red-600 h-2.5 rounded-full" style="width: 7%"></div>
+        </div>
+        <span class="text-sm text-red-500 mt-2">Status: Critical</span>
+      </div>
+      <!-- Blood Type O- -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
+          <span class="text-red-600 text-2xl font-bold">O-</span>
+        </div>
+        <span class="text-lg font-semibold">32 Units</span>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 32%"></div>
+        </div>
+        <span class="text-sm text-yellow-500 mt-2">Status: Low</span>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-13 mb-12">
+    <a href="donasi.html" class="bg-red-600 text-white py-4 px-8 rounded-lg shadow-lg hover:bg-red-700 transition duration-300 font-bold text-lg">
+      Donate Now
+    </a>
+  </div>
+</section>
+<footer class="bg-gray-800 text-white py-12 px-4">
+  <div class="container mx-auto">
+  <div class="grid md:grid-cols-3 gap-8">
+      <div>
+      <h3 class="text-xl font-bold mb-4">About PMI Blood Heroes</h3>
+      <p class="text-gray-300">
+          An interactive educational platform that aims to raise awareness about the importance of blood donation
+          among teenagers, especially middle and high school students.
+      </p>
+      </div>
+      <div>
+      <h3 class="text-xl font-bold mb-4">Important Links</h3>
+      <ul class="space-y-2 text-gray-300">
+          <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation Locations</a></li>
+          <li><a href="#" class="hover:text-red-400 transition duration-300">Mobile Unit Schedule</a></li>
+          <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation FAQ</a></li>
+          <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation Requirements</a></li>
+          <li><a href="#" class="hover:text-red-400 transition duration-300">Contact PMI</a></li>
+      </ul>
+      </div>
+      <div>
+      <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+      <ul class="space-y-2 text-gray-300">
+          <li>
+          <a href="#" class="hover:text-red-400 transition duration-300">
+              <i class="far fa-envelope mr-2"></i> Email: info@pmibloodheroes.id
+          </a>
+          </li>
+          <li>
+          <a href="#" class="hover:text-red-400 transition duration-300">
+              <i class="fas fa-phone mr-2"></i> Phone: 021-7992325
+          </a>
+          </li>
+          <li>
+          <a href="#" class="hover:text-red-400 transition duration-300">
+              <i class="fab fa-instagram mr-2"></i> Instagram: @pmibloodheroes
+          </a>
+          </li>
+          <li>
+          <a href="#" class="hover:text-red-400 transition duration-300">
+              <i class="fab fa-facebook mr-2"></i> Facebook: PMI Blood Heroes
+          </a>
+          </li>
+          <li>
+          <a href="#" class="hover:text-red-400 transition duration-300">
+              <i class="fab fa-twitter mr-2"></i> Twitter: @PMIBloodHeroes
+          </a>
+          </li>
+      </ul>
+      </div>
+  </div>
+  <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 PMI Blood Heroes. All rights reserved.</p>
+  </div>
+  </div>
+</footer>
+    <script>
+      // Mobile menu toggle
+      document.querySelector("button.md\\:hidden").addEventListener("click", function () {
+        const mobileMenu = document.getElementById("mobile-menu")
+        mobileMenu.classList.toggle("hidden")
+      })
+
+      // Game tabs functionality
+      document.getElementById("sim-tab").addEventListener("click", function () {
+        document.getElementById("simulation").classList.remove("hidden")
+        document.getElementById("quiz").classList.add("hidden")
+        this.classList.add("bg-gray-200")
+        document.getElementById("quiz-tab").classList.remove("bg-gray-200")
+      })
+
+      document.getElementById("quiz-tab").addEventListener("click", function () {
+        document.getElementById("quiz").classList.remove("hidden")
+        document.getElementById("simulation").classList.add("hidden")
+        this.classList.add("bg-gray-200")
+        document.getElementById("sim-tab").classList.remove("bg-gray-200")
+      })
+
+      // Quiz functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        // Quiz questions
+        const questions = [
+          {
+            question: "How long does it take for the body to replace plasma after donating blood?",
+            options: ["12 hours", "24 hours", "36 hours", "48 hours"],
+            correctAnswer: 1, // 24 hours
+            explanation: "It typically takes about 24 hours for the body to replace plasma after a donation."
+          },
+          {
+            question: "What blood type is known as the universal donor?",
+            options: ["A+", "B-", "AB+", "O-"],
+            correctAnswer: 3, // O-
+            explanation:
+              "O- is the universal donor because it can be given to any blood type recipient without causing a negative reaction."
+          },
+          {
+            question: "How many lives can one blood donation potentially save?",
+            options: ["1 life", "Up to 3 lives", "Up to 5 lives", "Up to 10 lives"],
+            correctAnswer: 1, // Up to 3 lives
+            explanation:
+              "One unit of blood can be separated into red cells, plasma, and platelets, potentially saving up to 3 lives."
+          }
+        ]
+
+        // Quiz variables
+        let currentQuestion = 0
+        let score = 0
+        let selectedOption = null
+        let userPoints = 304 // Initial points from the original HTML
+
+        // Quiz elements
+        const quizIntro = document.getElementById("quiz-intro")
+        const quizContainer = document.getElementById("quiz-container")
+        const quizResults = document.getElementById("quiz-results")
+        const startQuizBtn = document.getElementById("start-quiz")
+        const submitAnswerBtn = document.getElementById("submit-answer")
+        const nextQuestionBtn = document.getElementById("next-question")
+        const retryQuizBtn = document.getElementById("retry-quiz")
+        const backToHomeBtn = document.getElementById("back-to-home")
+        const questionText = document.getElementById("question-text")
+        const optionsContainer = document.getElementById("options-container")
+        const currentQuestionEl = document.getElementById("current-question")
+        const totalQuestionsEl = document.getElementById("total-questions")
+        const quizProgress = document.getElementById("quiz-progress")
+        const quizScore = document.getElementById("quiz-score")
+        const finalScore = document.getElementById("final-score")
+        const resultMessage = document.getElementById("result-message")
+        const pointsEarned = document.getElementById("points-earned")
+        const pointsValue = document.getElementById("points-value")
+        const feedbackAlert = document.getElementById("feedback-alert")
+        const feedbackText = document.getElementById("feedback-text")
+        const feedbackExplanation = document.getElementById("feedback-explanation")
+        const pointsDisplay = document.querySelector(".quiz-points")
+
+        // Set total questions
+        totalQuestionsEl.textContent = questions.length
+
+        // Start quiz
+        startQuizBtn.addEventListener("click", function () {
+          quizIntro.classList.add("hidden")
+          quizContainer.classList.remove("hidden")
+          loadQuestion()
+        })
+
+        // Load question
+        function loadQuestion() {
+          // Update question counter
+          currentQuestionEl.textContent = currentQuestion + 1
+
+          // Update progress bar
+          const progressPercentage = ((currentQuestion + 1) / questions.length) * 100
+          quizProgress.style.width = `${progressPercentage}%`
+
+          // Reset selected option
+          selectedOption = null
+
+          // Load question text
+          questionText.textContent = questions[currentQuestion].question
+
+          // Load options
+          optionsContainer.innerHTML = ""
+          questions[currentQuestion].options.forEach((option, index) => {
+            const optionDiv = document.createElement("div")
+            optionDiv.className = "p-4 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer transition duration-300"
+            optionDiv.dataset.index = index
+            optionDiv.innerHTML = `<span class="font-medium">${String.fromCharCode(65 + index)}.</span> ${option}`
+
+            // Add click event to select option
+            optionDiv.addEventListener("click", function () {
+              // Remove selected class from all options
+              document.querySelectorAll("#options-container div").forEach((div) => {
+                div.classList.remove("bg-red-100", "border-2", "border-red-600")
+              })
+
+              // Add selected class to clicked option
+              this.classList.add("bg-red-100", "border-2", "border-red-600")
+
+              // Update selected option
+              selectedOption = parseInt(this.dataset.index)
+            })
+
+            optionsContainer.appendChild(optionDiv)
+          })
+
+          // Hide next button, show submit button
+          submitAnswerBtn.classList.remove("hidden")
+          nextQuestionBtn.classList.add("hidden")
+
+          // Hide feedback
+          feedbackAlert.classList.add("hidden")
+        }
+
+        // Submit answer
+        submitAnswerBtn.addEventListener("click", function () {
+          if (selectedOption === null) {
+            alert("Please select an answer")
+            return
+          }
+
+          const correctAnswer = questions[currentQuestion].correctAnswer
+
+          // Check if answer is correct
+          if (selectedOption === correctAnswer) {
+            score++
+            quizScore.textContent = score
+
+            // Show correct feedback
+            feedbackAlert.className = "mt-4 p-4 rounded-lg bg-green-100 text-green-800"
+            feedbackText.textContent = "Correct! Well done!"
+            feedbackExplanation.textContent = questions[currentQuestion].explanation
+          } else {
+            // Show incorrect feedback
+            feedbackAlert.className = "mt-4 p-4 rounded-lg bg-red-100 text-red-800"
+            feedbackText.textContent = "Incorrect!"
+            feedbackExplanation.textContent = `The correct answer is: ${questions[currentQuestion].options[correctAnswer]}. ${questions[currentQuestion].explanation}`
+
+            // Highlight correct answer
+            document.querySelectorAll("#options-container div").forEach((div, index) => {
+              if (index === correctAnswer) {
+                div.classList.remove("bg-red-100", "border-red-600")
+                div.classList.add("bg-green-100", "border-2", "border-green-600")
+              }
+            })
+          }
+
+          feedbackAlert.classList.remove("hidden")
+
+          // Hide submit button, show next button or finish quiz
+          submitAnswerBtn.classList.add("hidden")
+
+          if (currentQuestion < questions.length - 1) {
+            nextQuestionBtn.classList.remove("hidden")
+          } else {
+            // Show results after a short delay
+            setTimeout(showResults, 1500)
+          }
+        })
+
+        // Next question
+        nextQuestionBtn.addEventListener("click", function () {
+          currentQuestion++
+          loadQuestion()
+        })
+
+        // Show results
+        function showResults() {
+          quizContainer.classList.add("hidden")
+          quizResults.classList.remove("hidden")
+
+          finalScore.textContent = score
+
+          // Set result message based on score
+          if (score === questions.length) {
+            resultMessage.textContent = "Perfect! You're a blood donation expert!"
+            // Award points for perfect score
+            const pointsAwarded = 50
+            userPoints += pointsAwarded
+            pointsValue.textContent = pointsAwarded
+            pointsEarned.classList.remove("hidden")
+            pointsDisplay.textContent = `${userPoints} Points`
+          } else if (score >= questions.length / 2) {
+            resultMessage.textContent = "Good job! You know quite a bit about blood donation."
+            // Award points for passing score
+            const pointsAwarded = 20
+            userPoints += pointsAwarded
+            pointsValue.textContent = pointsAwarded
+            pointsEarned.classList.remove("hidden")
+            pointsDisplay.textContent = `${userPoints} Points`
+          } else {
+            resultMessage.textContent = "Keep learning! Check out our education section for more information."
+            pointsEarned.classList.add("hidden")
+          }
+        }
+
+        // Retry quiz
+        retryQuizBtn.addEventListener("click", function () {
+          // Reset quiz variables
+          currentQuestion = 0
+          score = 0
+          quizScore.textContent = 0
+
+          // Show quiz container, hide results
+          quizResults.classList.add("hidden")
+          quizContainer.classList.remove("hidden")
+
+          // Load first question
+          loadQuestion()
+        })
+
+        // Back to home
+        backToHomeBtn.addEventListener("click", function () {
+          // Reset quiz variables
+          currentQuestion = 0
+          score = 0
+          quizScore.textContent = 0
+
+          // Show intro, hide results
+          quizResults.classList.add("hidden")
+          quizIntro.classList.remove("hidden")
+        })
+      })
+
+      // Wait for the DOM to be fully loaded before executing
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get all tab buttons
+        const tabButtons = document.querySelectorAll(".education-tab")
+
+        // Get all content sections
+        const contentSections = document.querySelectorAll(".education-content")
+
+        // Function to handle tab switching
+        function switchTab(tabId) {
+          // Hide all content sections
+          contentSections.forEach((section) => {
+            section.classList.add("hidden")
+          })
+
+          // Remove active state from all tab buttons
+          tabButtons.forEach((button) => {
+            button.classList.remove("bg-gray-200")
+            button.classList.add("hover:bg-gray-200")
+          })
+
+          // Show the selected content section
+          const selectedContent = document.getElementById(`${tabId}-content`)
+          if (selectedContent) {
+            selectedContent.classList.remove("hidden")
+          }
+
+          // Set active state for the clicked tab button
+          const activeButton = document.querySelector(`[data-tab="${tabId}"]`)
+          if (activeButton) {
+            activeButton.classList.add("bg-gray-200")
+            activeButton.classList.remove("hover:bg-gray-200")
+          }
+        }
+
+        // Add click event listeners to all tab buttons
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const tabId = this.getAttribute("data-tab")
+            switchTab(tabId)
+          })
+        })
+
+      // Set the default active tab (first tab)
+        const defaultTabId = tabButtons[0].getAttribute("data-tab")
+        switchTab(defaultTabId)
+      })
+      // Profile dropdown functionality
+      const profileButton = document.getElementById('profileButton');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      
+      profileButton.addEventListener('click', function() {
+          dropdownMenu.classList.toggle('hidden');
+      });
+      
+      // Close the dropdown if clicked outside
+      window.addEventListener('click', function(event) {
+          if (!event.target.closest('.profile-container')) {
+              dropdownMenu.classList.add('hidden');
+          }
+      });
+      
+      // Initialize the hero slider
+    $(document).ready(function(){
+      $('.hero-slider').slick({
+        dots: true,
+        infinite: true,
+        speed: 800,
+        fade: true,
+        cssEase: 'linear',
+        autoplay: true,
+        autoplaySpeed: 5000,
+        arrows: true,
+        adaptiveHeight: false
+      });
+    });
+    </script>
+  </body>
+</html>
