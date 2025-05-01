@@ -1,156 +1,705 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blood Donation Rewards Program</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <title>Redeem Reward Donor Darah</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --secondary: #f1faee;
+            --dark: #1d3557;
+            --accent: #a8dadc;
+            --text: #457b9d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .blood-drops {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .drop {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(45deg);
+            animation: falling 15s infinite linear;
+        }
+        
+        @keyframes falling {
+            0% {
+                transform: rotate(45deg) translateY(-100px) translateX(var(--startX));
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(45deg) translateY(calc(100vh + 100px)) translateX(calc(var(--startX) + var(--drift)));
+                opacity: 0;
+            }
+        }
+        
+        .profile {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+        
+        .profile:hover {
+            transform: translateY(-5px);
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--dark);
+            margin-right: 20px;
+        }
+        
+        .profile-info {
+            flex-grow: 1;
+        }
+        
+        .points {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(230, 57, 70, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(230, 57, 70, 0);
+            }
+        }
+        
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        h2:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .reward-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .reward-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .reward-image {
+            height: 180px;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .reward-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(255,255,255,0.4), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .reward-card:hover .reward-image::before {
+            opacity: 1;
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .reward-info {
+            padding: 20px;
+        }
+        
+        .reward-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .reward-points {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+        
+        .reward-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .redeem-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .redeem-btn:hover {
+            background-color: #c1121f;
+            transform: scale(1.05);
+        }
+        
+        .redeem-btn.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .ribbon {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background-color: gold;
+            color: var(--dark);
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .history {
+            margin-top: 40px;
+        }
+        
+        .history-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+            color: var(--dark);
+        }
+        
+        .history-details {
+            flex-grow: 1;
+        }
+        
+        .history-date {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: modalSlideIn 0.3s forwards;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            transition: color 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: var(--primary);
+        }
+        
+        .success-icon {
+            font-size: 60px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .primary-btn:hover {
+            background-color: #c1121f;
+        }
+        
+        .secondary-btn {
+            background-color: white;
+            color: var(--dark);
+            border: 1px solid #ddd;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .rewards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            
+            .profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-    <div x-data="rewardsApp" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <header class="bg-red-600 text-white rounded-lg shadow-md p-8 mb-8 text-center">
-            <h1 class="text-4xl font-bold mb-2">Blood Donation Rewards Program</h1>
-            <p class="text-xl font-light">Every drop counts. Get rewarded for saving lives.</p>
-        </header>
-        
-        <!-- Introduction -->
-        <div class="text-center mb-10 px-4">
-            <p class="text-lg max-w-3xl mx-auto">
-                Thank you for being a blood donor! Our rewards program is designed to show our appreciation for your life-saving contributions. Earn points with every donation and redeem them for exclusive rewards.
-            </p>
+<body>
+    <header>
+        <div class="blood-drops" id="bloodDrops"></div>
+        <h1>Redeem Reward Donor Darah</h1>
+        <p>Tukarkan poin donor darahmu dengan berbagai hadiah menarik</p>
+    </header>
+    
+    <div class="profile">
+        <div class="avatar">JS</div>
+        <div class="profile-info">
+            <h3>Selamat Datang, John Smith</h3>
+            <p>Donor Darah Terakhir: 12 April 2025</p>
+            <div class="points">2.500 Poin</div>
         </div>
-        
-        <!-- Points Display -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8 text-center">
-            <div class="flex justify-center mb-6">
-                <div class="bg-red-600 text-white rounded-full w-36 h-36 flex flex-col items-center justify-center">
-                    <span class="text-4xl font-bold" x-text="currentPoints"></span>
-                    <span class="text-sm uppercase">POINTS</span>
-                </div>
-            </div>
-            <p class="text-lg mb-6">Your next donation eligible date: <span class="font-semibold" x-text="nextDonationDate"></span></p>
-            <div class="mb-4">
-                <div class="flex justify-between mb-1 text-sm">
-                    <span>Progress to Premium Donor Status</span>
-                    <span x-text="`${currentPoints}/${targetPoints} points`"></span>
-                </div>
-                <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-red-600 rounded-full" x-bind:style="`width: ${progressPercentage()}%`"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Call to Action -->
-        <div class="bg-red-100 rounded-lg p-8 text-center mb-12">
-            <h3 class="text-2xl font-semibold text-red-600 mb-4">Schedule Your Next Donation</h3>
-            <p class="text-lg mb-6">We need donors like you! Schedule your next appointment and keep saving lives.</p>
-            <button class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
-                Book Appointment
-            </button>
-        </div>
-        
-        <!-- Rewards Section -->
-        <div class="mb-12">
-            <h2 class="text-3xl font-bold text-red-600 text-center mb-8">Available Rewards</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <template x-for="reward in rewards" :key="reward.id">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1">
-                        <div class="bg-gray-100 h-48 flex items-center justify-center text-red-600">
-                            <i :class="`fas ${reward.icon} text-6xl`"></i>
-                        </div>
-                        <div class="p-6"></div>
-                            <h3 class="text-xl font-semibold mb-2" x-text="reward.title"></h3>
-                            <p class="text-lg font-bold text-red-600 mb-2" x-text="`${reward.points} points`"></p>
-                            <p class="text-gray-600 mb-4" x-text="reward.description"></p>
-                            <button 
-                                @click="redeemReward(reward.id)"
-                                :class="canRedeem(reward.points) ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-300 cursor-not-allowed'"
-                                class="w-full py-2 px-4 text-white font-semibold rounded transition duration-300"
-                                x-text="canRedeem(reward.points) ? 'Redeem Reward' : 'Insufficient Points'"
-                                :disabled="!canRedeem(reward.points)"
-                            ></button>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </div>
-        
-        <!-- Donation History -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-12"></div>
-            <h2 class="text-3xl font-bold text-red-600 text-center mb-6">Your Donation History</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="py-3 px-4 text-left font-semibold">Date</th>
-                            <th class="py-3 px-4 text-left font-semibold">Donation Type</th>
-                            <th class="py-3 px-4 text-left font-semibold">Points Earned</th>
-                            <th class="py-3 px-4 text-left font-semibold">Location</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template x-for="(donation, index) in donationHistory" :key="index">
-                            <tr class="border-t border-gray-200">
-                                <td class="py-3 px-4" x-text="donation.date"></td>
-                                <td class="py-3 px-4" x-text="donation.type"></td>
-                                <td class="py-3 px-4" x-text="`${donation.points} points`"></td>
-                                <td class="py-3 px-4" x-text="donation.location"></td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Footer -->
-        <footer class="text-center text-gray-500 mt-12 py-6"></footer>
-            <p class="mb-2">© 2025 Blood Donation Rewards Program. All rights reserved.</p>
-            <p>For questions about your rewards or donations, please contact support at 
-                <a href="mailto:support@blooddonationrewards.org" class="text-red-600 hover:underline">support@blooddonationrewards.org</a>
-            </p>
-        </footer>
     </div>
-
+    
+    <main>
+        <h2>Rewards Tersedia</h2>
+        <div class="rewards-grid">
+            <div class="reward-card">
+                <div class="ribbon">POPULER</div>
+                <div class="reward-image">Voucher Diskon 50%</div>
+                <div class="reward-info">
+                    <div class="reward-name">Voucher Diskon Supermarket 50%</div>
+                    <div class="reward-points">
+                        <span>1.000 poin</span>
+                    </div>
+                    <div class="reward-description">
+                        Voucher diskon 50% untuk belanja di Supermarket XYZ dengan minimum pembelian Rp 200.000.
+                    </div>
+                    <button class="redeem-btn">Tukar Sekarang</button>
+                </div>
+            </div>
+            
+            <div class="reward-card">
+                <div class="reward-image">Paket Check-up</div>
+                <div class="reward-info">
+                    <div class="reward-name">Paket Medical Check-up Gratis</div>
+                    <div class="reward-points">
+                        <span>2.000 poin</span>
+                    </div>
+                    <div class="reward-description">
+                        Paket medical check-up gratis di Rumah Sakit ABC (termasuk cek gula darah, kolesterol, dan asam urat).
+                    </div>
+                    <button class="redeem-btn">Tukar Sekarang</button>
+                </div>
+            </div>
+            
+            <div class="reward-card">
+                <div class="reward-image">Merchandise</div>
+                <div class="reward-info">
+                    <div class="reward-name">Merchandise Eksklusif</div>
+                    <div class="reward-points">
+                        <span>800 poin</span>
+                    </div>
+                    <div class="reward-description">
+                        Dapatkan merchandise eksklusif berupa tumbler, t-shirt, dan tote bag.
+                    </div>
+                    <button class="redeem-btn">Tukar Sekarang</button>
+                </div>
+            </div>
+            
+            <div class="reward-card">
+                <div class="reward-image">Tiket Bioskop</div>
+                <div class="reward-info">
+                    <div class="reward-name">Tiket Nonton Bioskop</div>
+                    <div class="reward-points">
+                        <span>1.200 poin</span>
+                    </div>
+                    <div class="reward-description">
+                        Tiket nonton bioskop untuk 2 orang. Berlaku untuk semua film dan hari.
+                    </div>
+                    <button class="redeem-btn">Tukar Sekarang</button>
+                </div>
+            </div>
+            
+            <div class="reward-card">
+                <div class="reward-image">Voucher Makanan</div>
+                <div class="reward-info">
+                    <div class="reward-name">Voucher Makan Restaurant</div>
+                    <div class="reward-points">
+                        <span>1.500 poin</span>
+                    </div>
+                    <div class="reward-description">
+                        Voucher makan senilai Rp 150.000 di Restaurant DEF. Berlaku untuk 3 bulan.
+                    </div>
+                    <button class="redeem-btn">Tukar Sekarang</button>
+                </div>
+            </div>
+            
+            <div class="reward-card">
+                <div class="reward-image">E-Money</div>
+                <div class="reward-info">
+                    <div class="reward-name">Top-up E-Money</div>
+                    <div class="reward-points">
+                        <span>3.000 poin</span>
+                    </div>
+                    <div class="reward-description">
+                        Top-up e-money senilai Rp 300.000. Berlaku untuk semua e-wallet.
+                    </div>
+                    <button class="redeem-btn disabled">Poin Tidak Cukup</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="history">
+            <h2>Riwayat Penukaran</h2>
+            
+            <div class="history-item">
+                <div class="history-icon">🎁</div>
+                <div class="history-details">
+                    <div class="history-title">Voucher Diskon Supermarket 50%</div>
+                    <div class="history-points">-1.000 poin</div>
+                    <div class="history-date">15 April 2025</div>
+                </div>
+            </div>
+            
+            <div class="history-item">
+                <div class="history-icon">🎁</div>
+                <div class="history-details">
+                    <div class="history-title">Merchandise Eksklusif</div>
+                    <div class="history-points">-800 poin</div>
+                    <div class="history-date">2 Maret 2025</div>
+                </div>
+            </div>
+            
+            <div class="history-item">
+                <div class="history-icon">💉</div>
+                <div class="history-details">
+                    <div class="history-title">Donor Darah</div>
+                    <div class="history-points">+500 poin</div>
+                    <div class="history-date">12 April 2025</div>
+                </div>
+            </div>
+            
+            <div class="history-item">
+                <div class="history-icon">💉</div>
+                <div class="history-details">
+                    <div class="history-title">Donor Darah</div>
+                    <div class="history-points">+500 poin</div>
+                    <div class="history-date">10 Januari 2025</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <div class="modal" id="redeemModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="success-icon">✓</div>
+            <h3>Penukaran Berhasil!</h3>
+            <p>Selamat, anda telah berhasil menukarkan poin anda dengan <span id="modalRewardName">Voucher Diskon</span>.</p>
+            <p>Hadiah anda akan segera dikirimkan sesuai dengan informasi yang terdaftar.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn primary-btn" id="closeModalBtn">OK</button>
+                <button class="modal-btn secondary-btn" id="viewHistoryBtn">Lihat Riwayat</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2025 Program Donor Darah. Semua hak dilindungi.
+    </footer>
+    
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('rewardsApp', () => ({
-                currentPoints: 350,
-                targetPoints: 1000,
-                nextDonationDate: 'May 15, 2025',
-                rewards: [
-                    { id: 1, title: '$10 Coffee Shop Gift Card', points: 250, description: 'Enjoy a cup of coffee on us! Redeemable at any participating coffee shop locations.', icon: 'fa-mug-hot' },
-                    { id: 2, title: 'Exclusive Donor T-Shirt', points: 400, description: 'Show your pride as a blood donor with our limited edition t-shirt.', icon: 'fa-shirt' },
-                    { id: 3, title: 'Movie Tickets for Two', points: 600, description: 'Enjoy a movie with a friend or loved one at any participating theater.', icon: 'fa-ticket' },
-                    { id: 4, title: 'Fitness Tracker', points: 1000, description: 'Track your health metrics with this premium fitness wearable.', icon: 'fa-heart-pulse' },
-                    { id: 5, title: '$25 Restaurant Gift Card', points: 500, description: 'Treat yourself to a delicious meal at a variety of local restaurants.', icon: 'fa-utensils' },
-                    { id: 6, title: '15% Online Shopping Discount', points: 300, description: 'Get a discount code for your next purchase at our partner online stores.', icon: 'fa-tag' }
-                ],
-                donationHistory: [
-                    { date: 'March 12, 2025', type: 'Whole Blood', points: 100, location: 'Downtown Center' },
-                    { date: 'January 15, 2025', type: 'Platelet', points: 150, location: 'Mobile Drive - City Hall' },
-                    { date: 'November 20, 2024', type: 'Whole Blood', points: 100, location: 'North Community Center' },
-                    { date: 'August 5, 2024', type: 'Double Red Cells', points: 200, location: 'Downtown Center' }
-                ],
-                canRedeem(points) {
-                    return this.currentPoints >= points;
-                },
-                progressPercentage() {
-                    return Math.min(100, Math.round((this.currentPoints / this.targetPoints) * 100));
-                },
-                redeemReward(rewardId) {
-                    const reward = this.rewards.find(r => r.id === rewardId);
-                    if (this.canRedeem(reward.points)) {
-                        alert(`You have redeemed: ${reward.title} for ${reward.points} points!`);
-                        this.currentPoints -= reward.points;
-                    }
+        // Create blood drops animation
+        const bloodDrops = document.getElementById('bloodDrops');
+        for (let i = 0; i < 10; i++) {
+            const drop = document.createElement('div');
+            drop.classList.add('drop');
+            
+            // Random position and timing
+            const startX = Math.random() * 100;
+            const drift = (Math.random() - 0.5) * 200;
+            const delay = Math.random() * 15;
+            
+            drop.style.setProperty('--startX', `${startX}px`);
+            drop.style.setProperty('--drift', `${drift}px`);
+            drop.style.animationDelay = `${delay}s`;
+            
+            // Random size
+            const size = 10 + (Math.random() * 15);
+            drop.style.width = `${size}px`;
+            drop.style.height = `${size}px`;
+            
+            bloodDrops.appendChild(drop);
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('redeemModal');
+        const redeemButtons = document.querySelectorAll('.redeem-btn:not(.disabled)');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeModalX = document.querySelector('.close-modal');
+        const modalRewardName = document.getElementById('modalRewardName');
+        
+        redeemButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const rewardName = this.parentElement.querySelector('.reward-name').textContent;
+                const pointsText = this.parentElement.querySelector('.reward-points span').textContent;
+                const points = parseInt(pointsText);
+                
+                // Update points display
+                const currentPoints = parseInt(document.querySelector('.points').textContent);
+                const newPoints = currentPoints - points;
+                document.querySelector('.points').textContent = `${newPoints} Poin`;
+                
+                // Add to history
+                const historyContainer = document.querySelector('.history');
+                const today = new Date();
+                const formattedDate = `${today.getDate()} ${['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][today.getMonth()]} ${today.getFullYear()}`;
+                
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item');
+                historyItem.innerHTML = `
+                    <div class="history-icon">🎁</div>
+                    <div class="history-details">
+                        <div class="history-title">${rewardName}</div>
+                        <div class="history-points">-${points} poin</div>
+                        <div class="history-date">${formattedDate}</div>
+                    </div>
+                `;
+                
+                // Insert at the beginning
+                historyContainer.insertBefore(historyItem, historyContainer.querySelector('.history-item'));
+                
+                // Show modal
+                modalRewardName.textContent = rewardName;
+                modal.style.display = 'flex';
+                
+                // Disable button if not enough points
+                if (newPoints < points) {
+                    this.classList.add('disabled');
+                    this.textContent = 'Poin Tidak Cukup';
                 }
-            }));
+                
+                // Update other redeem buttons based on points
+                redeemButtons.forEach(btn => {
+                    const btnPoints = parseInt(btn.parentElement.querySelector('.reward-points span').textContent);
+                    if (newPoints < btnPoints) {
+                        btn.classList.add('disabled');
+                        btn.textContent = 'Poin Tidak Cukup';
+                    }
+                });
+            });
+        });
+        
+        closeModalBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        closeModalX.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Close modal if clicked outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // View history button
+        document.getElementById('viewHistoryBtn').addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.querySelector('.history').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>

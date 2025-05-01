@@ -991,55 +991,7 @@
             </div>
             
             <div class="controls" id="controls">
-                <div class="item" data-item="cotton" title="Kapas Alkohol">
-                    <svg viewBox="0 0 60 60">
-                        <rect x="10" y="25" width="40" height="10" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
-                        <circle cx="10" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
-                        <circle cx="50" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
-                        <text x="30" y="55" text-anchor="middle" font-size="8">Kapas Alkohol</text>
-                    </svg>
-                </div>
-    
-                <div class="item" data-item="syringe" title="Jarum Suntik">
-                    <svg viewBox="0 0 60 60">
-                        <rect x="10" y="25" width="30" height="10" rx="2" fill="#bbdefb" stroke="#1976d2" />
-                        <rect x="40" y="27" width="15" height="6" fill="#e0e0e0" stroke="#bdbdbd" />
-                        <path d="M55 30 L60 30" stroke="#bdbdbd" stroke-width="1" />
-                        <rect x="5" y="27" width="5" height="6" fill="#42a5f5" />
-                        <text x="30" y="55" text-anchor="middle" font-size="8">Jarum Suntik</text>
-                    </svg>
-                </div>
-    
-                <div class="item" data-item="bandage" title="Plester">
-                    <svg viewBox="0 0 60 60">
-                        <rect x="10" y="25" width="40" height="10" rx="2" fill="#ffe0b2" stroke="#ff9800" />
-                        <rect x="20" y="25" width="20" height="10" fill="#f5f5f5" />
-                        <line x1="15" y1="20" x2="15" y2="40" stroke="#ff9800" stroke-width="1" />
-                        <line x1="25" y1="20" x2="25" y2="40" stroke="#ff9800" stroke-width="1" />
-                        <line x1="35" y1="20" x2="35" y2="40" stroke="#ff9800" stroke-width="1" />
-                        <line x1="45" y1="20" x2="45" y2="40" stroke="#ff9800" stroke-width="1" />
-                        <text x="30" y="55" text-anchor="middle" font-size="8">Plester</text>
-                    </svg>
-                </div>
-    
-                <div class="item" data-item="test" title="Tes Golongan Darah">
-                    <svg viewBox="0 0 60 60">
-                        <rect x="10" y="20" width="40" height="20" rx="2" fill="#fff" stroke="#bdbdbd" />
-                        <circle cx="20" cy="30" r="6" fill="#fff9c4" stroke="#bdbdbd" />
-                        <circle cx="30" cy="30" r="6" fill="#bbdefb" stroke="#bdbdbd" />
-                        <circle cx="40" cy="30" r="6" fill="#c8e6c9" stroke="#bdbdbd" />
-                        <text x="30" y="55" text-anchor="middle" font-size="8">Tes Darah</text>
-                    </svg>
-                </div>
-    
-                <div class="item" data-item="bag" title="Kantung Darah">
-                    <svg viewBox="0 0 60 60">
-                        <path d="M15 15 L45 15 L45 40 Q30 50 15 40 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="1" />
-                        <circle cx="30" cy="25" r="6" fill="white" stroke="#7b1fa2" stroke-width="1" />
-                        <text x="30" y="28" text-anchor="middle" font-size="6">A+</text>
-                        <text x="30" y="55" text-anchor="middle" font-size="8">Kantung Darah</text>
-                    </svg>
-                </div>
+                <!-- Isi Item keperluan alat donor darah, item akan di panggil dari script -->
             </div>
             
             <!-- New placement: Blood type selection interface OUTSIDE scene but BEFORE message -->
@@ -2253,20 +2205,20 @@
       });
     });
     let selectedItem = null;
-let currentStage = 'donor';
-let gameState = {
-    armCleaned: false,
-    bloodCollected: false,
-testDone: false,
-    bandageApplied: false,
-    bloodGroupTested: false,
-    bloodGroupIdentified: false,
-    transfusionComplete: false,
-    donorBloodType: 'A+', // Default blood type for donor
-    recipientBloodType: 'A+', // Default blood type for recipient
-    selectedGroupABO: '', // Untuk menyimpan pilihan golongan ABO
-    selectedGroupRh: '', // Untuk menyimpan pilihan rhesus
-};
+    let currentStage = 'donor';
+    let gameState = {
+      armCleaned: false,
+      bloodCollected: false,
+      testDone: false,
+      bandageApplied: false,
+      bloodGroupTested: false,
+      bloodGroupIdentified: false,
+      transfusionComplete: false,
+      donorBloodType: 'A+', // Default blood type for donor
+      recipientBloodType: 'A+', // Default blood type for recipient
+      selectedGroupABO: '', // Untuk menyimpan pilihan golongan ABO
+      selectedGroupRh: '', // Untuk menyimpan pilihan rhesus
+  };
 
   // Elements
 const controls = document.getElementById('controls');
@@ -2279,7 +2231,7 @@ const transitionOverlay = document.getElementById('transition-overlay');
 const stageTitle = document.getElementById('stage-title');
 const stageDesc = document.getElementById('stage-desc');
 
-  // Scene elements
+// Scene elements
 const patientEl = document.querySelector('.patient');
 const patientTargetEl = document.getElementById('patient-target');
 const armEl = document.querySelector('.arm');
@@ -2311,7 +2263,7 @@ const confirmSelection = document.getElementById('confirm-selection');
 const testResultDisplay = document.getElementById('test-result-display');
 const resultText = document.getElementById('result-text');
 
-  // Blood group selection elements
+// Blood group selection elements
 const btnA = document.getElementById('btn-a');
 const btnB = document.getElementById('btn-b');
 const btnAB = document.getElementById('btn-ab');
