@@ -25,8 +25,8 @@
                     <li><a href="index.html" class="hover:text-red-600 transition duration-300">Blood Stock</a></li>
                 </ul>
             </nav>
-            <div class="flex items-center space-x-3 relative">
-                <!-- Profile container with dropdown -->
+            <div class="flex items-center space-x-3">
+                <!-- Profile container with fixed positioning for dropdown -->
                 <div class="profile-container relative">
                     <button id="profileButton" class="block focus:outline-none">
                         <div class="relative w-10 h-10 rounded-full overflow-hidden">
@@ -34,8 +34,8 @@
                         </div>
                     </button>
                     
-                    <!-- Dropdown Menu -->
-                    <div id="dropdownMenu" class="dropdown-menu hidden absolute right-0 top-12 bg-white rounded-lg shadow-lg w-64 z-50">
+                    <!-- Dropdown Menu - Fixed right alignment -->
+                      <div id="dropdownMenu" class="dropdown-menu hidden absolute right-0 top-12 bg-white rounded-lg shadow-lg w-64 z-50 border border-black">
                         <div class="user-info flex items-center p-4 border-b border-gray-200">
                             <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
                                 <img src="img/user.png" alt="User Profile" class="w-full h-full object-cover" />
@@ -45,56 +45,33 @@
                             </div>
                         </div>
                         
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">⚙️</span> Settings
+                        <a href="profile.html" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
+                            <span class="mr-3 w-5 text-center">👤</span> Profile
                         </a>
                         
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-blue-500 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">📊</span> Upgrade plan
+                        <a href="reward.html" class="dropdown-item flex items-center px-4 py-3 text-blue-500 hover:bg-gray-100 text-sm">
+                            <span class="mr-3 w-5 text-center">🪙</span> Reedem Points
                         </a>
-                        
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">%</span> Get a Discount
-                        </a>
-                        
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">👥</span> Refer & Earn
-                        </a>
-                        
+    
                         <div class="border-t border-gray-200 my-1"></div>
-                        
+                    
                         <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">🔗</span> Link in Bio
+                            <span class="mr-3 w-5 text-center">❌</span> Log out
                         </a>
                         
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">🧩</span> Browser Extension
-                        </a>
-                        
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">📱</span> Mobile App
-                        </a>
-                        
-                        <div class="border-t border-gray-200 my-1"></div>
-                        
-                        <a href="#" class="dropdown-item flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 text-sm">
-                            <span class="mr-3 w-5 text-center">↪️</span> Log out
-                        </a>
-                        
-                        <div class="flex items-center p-4">
+                          <div class="flex justify-start p-4">
                             <div class="w-10 h-10 rounded-full overflow-hidden">
-                                <img src="/img/user.png" alt="User Profile" class="w-full h-full object-cover" />
+                              <i class="fas fa-coins text-yellow-500 text-3xl"></i>
                             </div>
                             <span class="font-medium text-sm ml-3">304 Points</span>
-                        </div>
+                          </div>
                     </div>
                 </div>
-                <span class="font-medium">304 Points</span>
+                <!-- Mobile menu toggle button - Moved inside the right-side flex container -->
+                <button class="md:hidden text-gray-700 focus:outline-none" id="mobile-menu-button">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
             </div>
-            <!-- Mobile menu toggle button -->
-            <button class="md:hidden text-gray-700 focus:outline-none" id="mobile-menu-button">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
         </div>
         <!-- Mobile menu (hidden by default) -->
         <div class="md:hidden hidden bg-white px-4 py-2" id="mobile-menu">

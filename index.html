@@ -79,6 +79,474 @@
           transform: translateY(0);
         }
       }
+
+      #simulation {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .scene {
+      width: 100%;
+      height: 450px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+  }
+  .scene-content {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+  }
+  .controls {
+      background-color: #f8f8f8;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+  }
+  .item {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      display: inline-block;
+      margin: 5px;
+      border: 2px solid transparent;
+      border-radius: 5px;
+      padding: 5px;
+      transition: all 0.3s;
+  }
+  .item:hover {
+      border-color: #d32f2f;
+      background-color: #ffebee;
+  }
+  .selected {
+      border-color: #d32f2f;
+      box-shadow: 0 0 5px #d32f2f;
+      background-color: #ffebee;
+  }
+  .patient {
+      position: relative;
+      height: 350px;
+      width: 200px;
+  }
+  .arm {
+      position: absolute;
+      top: 100px;
+      right: -30px;
+      cursor: pointer;
+  }
+  .vein {
+      stroke: #5c6bc0;
+      stroke-width: 3;
+      stroke-opacity: 0.7;
+  }
+  .blood-sample {
+      position: absolute;
+      display: none;
+  }
+  .test-result {
+      width: 120px;
+      height: 60px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      position: absolute;
+      top: 50px;
+      right: 50px;
+      font-size: 14px;
+      padding: 5px;
+      text-align: center;
+      display: none;
+      border-radius: 5px;
+  }
+  .patient-target {
+      position: relative;
+      height: 350px;
+      width: 200px;
+      display: none;
+  }
+  .blood-bag {
+      position: absolute;
+      display: none;
+      cursor: grab;
+  }
+  .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin-top: 20px;
+  }
+  .progress-bar {
+      width: 0;
+      height: 20px;
+      background-color: #d32f2f;
+      border-radius: 5px;
+      text-align: center;
+      line-height: 20px;
+      color: white;
+  }
+  .message {
+      background-color: #fff;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-weight: bold;
+      text-align: center;
+  }
+  .btn {
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+  }
+  .btn:hover {
+      background-color: #b71c1c;
+  }
+  .btn:disabled {
+      background-color: #e0e0e0;
+      cursor: not-allowed;
+  }
+  .fade-in {
+      animation: fadeIn 0.5s;
+  }
+  @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+  }
+  .fade-out {
+      animation: fadeOut 0.5s;
+  }
+  @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+  }
+  .transition-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+  }
+  .transition-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+  }
+  .stage-title {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #ff5252;
+  }
+  .stage-desc {
+      font-size: 18px;
+      max-width: 80%;
+      line-height: 1.5;
+  }
+  .laboratory {
+      background-color: #f5f5f5;
+      width: 100%;
+      height: 100%;
+      display: none;
+      position: relative;
+      background-image: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
+  }
+  .lab-table {
+      width: 80%;
+      height: 200px;
+      background-color: #e0e0e0;
+      position: absolute;
+      bottom: 50px;
+      left: 10%;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #bdbdbd;
+  }
+  .transfusion-room {
+      background-color: #e8f5e9;
+      width: 100%;
+      height: 100%;
+      display: none;
+      position: relative;
+      background-image: linear-gradient(to bottom, #e8f5e9, #c8e6c9);
+  }
+  .transfusion-stand {
+      transition: filter 0.3s ease;
+  }
+  .alert {
+      padding: 15px;
+      color: white;
+      background-color: #4CAF50;
+      border-radius: 5px;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  svg {
+      display: block;
+  }
+  .blood-flow {
+      stroke-dasharray: 10, 5;
+      animation: flow 5s linear infinite;
+  }
+  @keyframes flow {
+      from {
+          stroke-dashoffset: 1000;
+      }
+      to {
+          stroke-dashoffset: 0;
+      }
+  }
+  
+  @keyframes pulse {
+      from { r: 5; fill: #e53935; }
+      to { r: 7; fill: #c62828; }
+  }
+  .blood-drop-animation {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #e53935;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      animation: dropBlood 1s forwards;
+  }
+  
+  @keyframes dropBlood {
+      0% {
+          transform: translate(-50%, -100%) rotate(-45deg);
+          opacity: 1;
+      }
+      100% {
+          transform: translate(-50%, 0) rotate(-45deg);
+          opacity: 0;
+      }
+  }
+  /* Tambahkan style untuk visualisasi yang lebih jelas pada penggumpalan */
+  .coagulation-positive {
+      animation: pulseCoagulation 1.5s infinite;
+  }
+  
+  @keyframes pulseCoagulation {
+      0% { fill-opacity: 0.5; }
+      50% { fill-opacity: 0.9; }
+      100% { fill-opacity: 0.5; }
+  }
+  
+  /* Style untuk drop-zone yang lebih jelas */
+  .drop-zone-highlight {
+      stroke-dasharray: 5;
+      animation: dash 2s linear infinite;
+  }
+  
+  .drop-zone-active {
+      fill: rgba(255, 235, 238, 0.7);
+      stroke: #b71c1c;
+      stroke-width: 4;
+  }
+  
+  @keyframes dash {
+      to {
+          stroke-dashoffset: 20;
+      }
+  }
+  
+  @keyframes pulseBorder {
+      0% { border-color: #ff1744; }
+      50% { border-color: #ff616f; }
+      100% { border-color: #ff1744; }
+  }
+  
+  /* Highlight untuk transfusion stand */
+  .stand-highlight {
+      filter: drop-shadow(0 0 5px rgba(255, 23, 68, 0.7));
+  }
+
+  /* Additional styles for the simulation tabs */
+  .sim-tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .sim-tab {
+      background-color: #f5f5f5;
+      color: #333;
+      padding: 10px 20px;
+      border-radius: 5px 5px 0 0;
+      border: 1px solid #e0e0e0;
+      border-bottom: none;
+      margin-right: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+  }
+  
+  .sim-tab.active {
+      background-color: #d32f2f;
+      color: white;
+      border-color: #b71c1c;
+  }
+  
+  .sim-tab:hover:not(.active) {
+      background-color: #eeeeee;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+      .scene {
+          height: 350px;
+      }
+      
+      .controls {
+          flex-wrap: wrap;
+      }
+      
+      .item {
+          width: 50px;
+          height: 50px;
+      }
+  }
+
+  .blood-type-btn.selected, .rh-btn.selected {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+    border-width: 2px;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+    transform: scale(1.05);
+}
+
+/* Animasi untuk penggumpalan darah */
+@keyframes coagulationPulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.coagulation-positive {
+    animation: coagulationPulse 2s infinite;
+}
+
+/* Efek flash saat jawaban salah */
+@keyframes flashError {
+    0% { background-color: #fff; }
+    50% { background-color: #fee2e2; }
+    100% { background-color: #fff; }
+}
+
+.flash-error {
+    animation: flashError 0.6s ease-in-out;
+}
+
+/* Efek muncul untuk interface pemilihan golongan darah */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Efek sukses untuk hasil tes yang benar */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.success-pulse {
+    animation: successPulse 1s ease-in-out;
+}
+
+/* Efek hover untuk tombol */
+.blood-type-btn:hover, .rh-btn:hover {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling tambahan untuk tampilan hasil tes */
+#test-result-display {
+    transform-origin: center;
+    transition: all 0.3s ease;
+}
+
+#test-result-display.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Efek tetesan darah tambahan */
+.blood-drop {
+    position: absolute;
+    width: 10px;
+    height: 15px;
+    background-color: #ef4444;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: dropAnimation 1.5s forwards;
+}
+
+@keyframes dropAnimation {
+    0% { transform: translateY(-20px); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(100px); opacity: 0; }
+}
+
+/* Kotak bantuan dengan efek bayangan */
+.helper-box {
+    border-left: 4px solid #3b82f6;
+    background-color: #eff6ff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Efek hover pada tombol konfirmasi */
+#btn-confirm {
+    transition: all 0.3s ease;
+}
+
+#btn-confirm:hover {
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.25);
+}
     </style>
   </head>
   <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
@@ -303,40 +771,328 @@
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
           <div class="flex border-b">
             <button
-              class="py-4 px-6 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none"
+              class="py-4 px-6 font-medium text-gray-800 bg-gray-200 hover:bg-gray-300 transition duration-300 focus:outline-none"
               id="sim-tab"
             >
               Blood Donation Simulation
             </button>
             <button
-              class="py-4 px-6 font-medium text-gray-800 bg-gray-200 hover:bg-gray-300 transition duration-300 focus:outline-none"
+              class="py-4 px-6 font-medium text-gray-800 hover:bg-gray-200 transition duration-300 focus:outline-none"
               id="quiz-tab"
             >
               Interactive Quiz
             </button>
           </div>
 
-          <div class="p-6 hidden" id="simulation">
-            <div class="mb-6">
-              <img src="/api/placeholder/600/400" alt="Simulation Scene" class="w-full h-auto rounded-lg shadow-md" />
+          <div id="simulation">
+            <div class="scene">
+                <div class="scene-content" id="scene-content">
+                    <div class="patient">
+                        <svg width="200" height="350" viewBox="0 0 200 350">
+                            <!-- Patient body -->
+                            <rect x="50" y="50" width="100" height="200" rx="20" fill="#ffccbc" />
+                            <!-- Patient head -->
+                            <circle cx="100" cy="30" r="30" fill="#ffccbc" />
+                            <!-- Patient details -->
+                            <circle cx="90" cy="25" r="3" fill="#424242" /> <!-- Left eye -->
+                            <circle cx="110" cy="25" r="3" fill="#424242" /> <!-- Right eye -->
+                            <path d="M95 40 Q100 45 105 40" stroke="#424242" stroke-width="2" fill="none" /> <!-- Smile -->
+                        </svg>
+                        <div class="arm">
+                            <svg width="100" height="150" viewBox="0 0 100 150">
+                                <!-- Arm -->
+                                <rect x="10" y="10" width="40" height="130" rx="20" fill="#ffccbc" />
+                                <!-- Vein -->
+                                <path d="M25 40 L25 120" class="vein" />
+                                <!-- Cleaned area indicator (initially hidden) -->
+                                <circle id="cleaned-area" cx="25" cy="80" r="15" fill="rgba(200, 230, 255, 0.5)" style="display: none;" />
+                                <!-- Bandage (initially hidden) -->
+                                <rect id="bandage" x="10" y="70" width="40" height="20" rx="5" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="1" style="display: none;" />
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="blood-sample" id="blood-sample">
+                        <svg width="40" height="80" viewBox="0 0 40 80">
+                            <!-- Test tube -->
+                            <rect x="5" y="5" width="30" height="70" rx="5" fill="white" stroke="#bdbdbd" stroke-width="2" />
+                            <!-- Blood -->
+                            <rect x="5" y="30" width="30" height="45" rx="5" fill="#e53935" />
+                            <!-- Tube cap -->
+                            <rect x="5" y="2" width="30" height="8" rx="2" fill="#7b1fa2" />
+                        </svg>
+                    </div>
+                    
+                    <div class="test-result" id="test-result"></div>
+                    
+                    <div class="patient-target" id="patient-target">
+                        <svg width="200" height="350" viewBox="0 0 200 350">
+                            <!-- Patient body -->
+                            <rect x="50" y="50" width="100" height="200" rx="20" fill="#f5cba7" />
+                            <!-- Patient head -->
+                            <circle cx="100" cy="30" r="30" fill="#f5cba7" />
+                            <!-- Patient details -->
+                            <circle cx="90" cy="25" r="3" fill="#424242" /> <!-- Left eye -->
+                            <circle cx="110" cy="25" r="3" fill="#424242" /> <!-- Right eye -->
+                            <path d="M95 45 Q100 40 105 45" stroke="#424242" stroke-width="2" fill="none" /> <!-- Frown (sick) -->
+                        </svg>
+                        <div class="arm">
+                            <svg width="100" height="150" viewBox="0 0 100 150">
+                                <!-- Arm -->
+                                <rect x="10" y="10" width="40" height="130" rx="20" fill="#f5cba7" />
+                                <!-- Vein -->
+                                <path d="M25 40 L25 120" class="vein" />
+                                <!-- IV insertion point (initially hidden) -->
+                                <circle id="iv-point" cx="25" cy="80" r="5" fill="#e53935" style="display: none;" />
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="blood-bag" id="blood-bag" >
+                        <svg width="80" height="100" viewBox="0 0 80 100">
+                            <!-- Blood bag -->
+                            <path d="M5 5 L45 5 L45 35 Q25 45 5 35 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="2" />
+                            <!-- Blood type label -->
+                            <circle cx="25" cy="20" r="8" fill="white" stroke="#7b1fa2" stroke-width="1" />
+                            <text id="blood-type-text" x="25" y="23" text-anchor="middle" font-weight="bold" font-size="8">A+</text>
+                            <!-- Tube -->
+                            <path d="M25 45 L25 50" stroke="white" stroke-width="2" />
+                            <!-- Drip -->
+                            <circle id="drip" cx="25" cy="52" r="1" fill="#e53935" style="display: none;" />
+                        </svg>
+                    </div>
+                    
+                    <!-- Laboratory scene -->
+                    <div class="laboratory" id="laboratory">
+                        <svg width="800" height="450" viewBox="0 0 800 450">
+                            <!-- Lab equipment background -->
+                            <rect x="50" y="50" width="700" height="300" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="2" />
+                            
+                            <!-- Blood sample in lab -->
+                            <g transform="translate(150, 150)" id="lab-blood-sample">
+                                <!-- Test tube -->
+                                <rect x="-15" y="-40" width="30" height="70" rx="5" fill="white" stroke="#bdbdbd" stroke-width="2" />
+                                <!-- Blood -->
+                                <rect x="-15" y="-10" width="30" height="40" rx="5" fill="#e53935" />
+                                <!-- Tube cap -->
+                                <rect x="-15" y="-45" width="30" height="8" rx="2" fill="#7b1fa2" />
+                            </g>
+                            
+                            <!-- Blood testing kit -->
+                            <g transform="translate(350, 200)" id="test-plates">
+                                <!-- A plate -->
+                                <g class="test-plate" id="test-plate-a" data-type="A">
+                                    <circle cx="-120" cy="0" r="30" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="2" />
+                                    <text x="-120" y="5" text-anchor="middle" font-size="16" font-weight="bold">A</text>
+                                    <!-- Reagent (light yellow) -->
+                                    <circle cx="-120" cy="0" r="25" fill="#fff9c4" fill-opacity="0.6" />
+                                    <!-- Coagulation result (initially hidden) -->
+                                    <g id="result-a" style="display: none;">
+                                        <circle cx="-120" cy="0" r="15" fill="#e53935" fill-opacity="0.7" class="coagulation-positive" />
+                                        <path d="M-130 -10 L-110 10 M-130 10 L-110 -10" stroke="#8d0000" stroke-width="2" />
+                                    </g>
+                                </g>
+                                
+                                <!-- B plate -->
+                                <g class="test-plate" id="test-plate-b" data-type="B">
+                                    <circle cx="0" cy="0" r="30" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="2" />
+                                    <text x="0" y="5" text-anchor="middle" font-size="16" font-weight="bold">B</text>
+                                    <!-- Reagent (light blue) -->
+                                    <circle cx="0" cy="0" r="25" fill="#bbdefb" fill-opacity="0.6" />
+                                    <!-- Coagulation result (initially hidden) -->
+                                    <g id="result-b" style="display: none;">
+                                        <circle cx="0" cy="0" r="15" fill="#e53935" fill-opacity="0.7" class="coagulation-positive" />
+                                        <path d="M-10 -10 L10 10 M-10 10 L10 -10" stroke="#8d0000" stroke-width="2" />
+                                    </g>
+                                </g>
+                                
+                                <!-- Rh plate -->
+                                <g class="test-plate" id="test-plate-rh" data-type="Rh">
+                                    <circle cx="120" cy="0" r="30" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="2" />
+                                    <text x="120" y="5" text-anchor="middle" font-size="16" font-weight="bold">Rh</text>
+                                    <!-- Reagent (light green) -->
+                                    <circle cx="120" cy="0" r="25" fill="#c8e6c9" fill-opacity="0.6" />
+                                    <!-- Coagulation result (initially hidden) -->
+                                    <g id="result-rh" style="display: none;">
+                                        <circle cx="120" cy="0" r="15" fill="#e53935" fill-opacity="0.7" class="coagulation-positive" />
+                                        <path d="M110 -10 L130 10 M110 10 L130 -10" stroke="#8d0000" stroke-width="2" />
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    
+                    <!-- Transfusion room scene -->
+                    <div class="transfusion-room" id="transfusion-room">
+                        <svg width="800" height="450" viewBox="0 0 800 450">
+                            <!-- Background wall elements -->
+                            <rect x="0" y="0" width="800" height="450" fill="#e8f5e9" />
+                            
+                            <!-- Hospital bed - shifted left -->
+                            <g class="hospital-bed" transform="translate(150, 230)">
+                                <!-- Bed frame -->
+                                <rect x="0" y="100" width="300" height="20" rx="5" fill="#42a5f5" stroke="#1976d2" stroke-width="2" />
+                                <!-- Mattress -->
+                                <rect x="0" y="80" width="290" height="20" rx="5" fill="white" stroke="#bdbdbd" stroke-width="1" />
+                                <!-- Pillow -->
+                                <rect x="0" y="75" width="60" height="15" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
+                                <!-- Legs -->
+                                <rect x="20" y="120" width="10" height="30" fill="#1976d2" />
+                                <rect x="270" y="120" width="10" height="30" fill="#1976d2" />
+                                
+                                <!-- Patient in bed -->
+                                <g class="patient-in-bed">
+                                    <rect x="30" y="50" width="240" height="40" rx="10" fill="#f5cba7" /> <!-- Body -->
+                                    <circle cx="50" cy="40" r="20" fill="#f5cba7" /> <!-- Head -->
+                                    <circle cx="43" cy="35" r="3" fill="#424242" /> <!-- Left eye -->
+                                    <circle cx="57" cy="35" r="3" fill="#424242" /> <!-- Right eye -->
+                                    <path d="M43 45 Q50 42 57 45" stroke="#424242" stroke-width="2" fill="none" /> <!-- Slight smile -->
+                                    <rect x="30" y="90" width="240" height="20" rx="10" fill="#e0e0e0" /> <!-- Blanket -->
+                                </g>
+                                
+                                <!-- Patient arm -->
+                                <rect x="80" y="30" width="20" height="60" rx="10" fill="#f5cba7" />
+                                <path d="M90 50 L90 90" stroke="#5c6bc0" stroke-width="2" stroke-opacity="0.7" /> <!-- Vein -->
+                                <circle id="transfusion-point" cx="90" cy="70" r="5" fill="#e53935" /> <!-- Transfusion point -->
+                            </g>
+    
+                            <!-- IV Stand - repositioned to match the image -->
+                            <g class="transfusion-stand" id="transfusion-stand" transform="translate(520, 100)">
+                                <!-- Stand pole -->
+                                <rect x="0" y="30" width="10" height="200" fill="#757575" stroke="#424242" stroke-width="1" />
+                                <!-- Stand base -->
+                                <path d="M-30 230 L40 230 L25 250 L-15 250 Z" fill="#757575" stroke="#424242" stroke-width="1" />
+                                <!-- Hook - pemindahan posisi hook agar sesuai dengan gambar -->
+                                <path d="M10 30 L30 30 L30 50" fill="none" stroke="#757575" stroke-width="3" />
+                                
+                                <!-- Drop zone - repositioned to match the image -->
+                                <rect id="drop-zone" x="20" y="35" width="35" height="50" stroke="#e53935" 
+                                    stroke-width="3" stroke-dasharray="5" fill="rgba(255,235,238,0.3)" 
+                                    rx="5" class="drop-zone-highlight" />
+                                
+                                <!-- Instruction text -->
+                                <text id="instruction-text" x="45" y="65" text-anchor="middle" font-size="10" fill="#d32f2f" 
+                                    transform="rotate(-90, 45, 65)">Pasang di sini</text>
+                            </g>
+                            
+                            <!-- Medical equipment - adds realism -->
+                            <rect x="650" y="150" width="80" height="40" rx="5" fill="#e0e0e0" stroke="#bdbdbd" />
+                            <circle cx="670" cy="170" r="5" fill="#4caf50" />
+                            <rect x="680" y="165" width="40" height="10" rx="2" fill="#f5f5f5" />
+                        </svg>
+                    </div>
+    
+                    <!-- Transition overlay -->
+                    <div class="transition-overlay" id="transition-overlay">
+                        <div class="stage-title" id="stage-title">Stage Title</div>
+                        <div class="stage-desc" id="stage-desc">Stage description goes here with important information about this stage.</div>
+                    </div>
+                </div>
             </div>
-            <div class="flex flex-wrap gap-3">
-              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
-                Check Donor
-              </button>
-              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
-                Draw Blood
-              </button>
-              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
-                Process Blood
-              </button>
-              <button class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
-                Distribution
-              </button>
+            
+            <div class="controls" id="controls">
+                <div class="item" data-item="cotton" title="Kapas Alkohol">
+                    <svg viewBox="0 0 60 60">
+                        <rect x="10" y="25" width="40" height="10" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
+                        <circle cx="10" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
+                        <circle cx="50" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
+                        <text x="30" y="55" text-anchor="middle" font-size="8">Kapas Alkohol</text>
+                    </svg>
+                </div>
+    
+                <div class="item" data-item="syringe" title="Jarum Suntik">
+                    <svg viewBox="0 0 60 60">
+                        <rect x="10" y="25" width="30" height="10" rx="2" fill="#bbdefb" stroke="#1976d2" />
+                        <rect x="40" y="27" width="15" height="6" fill="#e0e0e0" stroke="#bdbdbd" />
+                        <path d="M55 30 L60 30" stroke="#bdbdbd" stroke-width="1" />
+                        <rect x="5" y="27" width="5" height="6" fill="#42a5f5" />
+                        <text x="30" y="55" text-anchor="middle" font-size="8">Jarum Suntik</text>
+                    </svg>
+                </div>
+    
+                <div class="item" data-item="bandage" title="Plester">
+                    <svg viewBox="0 0 60 60">
+                        <rect x="10" y="25" width="40" height="10" rx="2" fill="#ffe0b2" stroke="#ff9800" />
+                        <rect x="20" y="25" width="20" height="10" fill="#f5f5f5" />
+                        <line x1="15" y1="20" x2="15" y2="40" stroke="#ff9800" stroke-width="1" />
+                        <line x1="25" y1="20" x2="25" y2="40" stroke="#ff9800" stroke-width="1" />
+                        <line x1="35" y1="20" x2="35" y2="40" stroke="#ff9800" stroke-width="1" />
+                        <line x1="45" y1="20" x2="45" y2="40" stroke="#ff9800" stroke-width="1" />
+                        <text x="30" y="55" text-anchor="middle" font-size="8">Plester</text>
+                    </svg>
+                </div>
+    
+                <div class="item" data-item="test" title="Tes Golongan Darah">
+                    <svg viewBox="0 0 60 60">
+                        <rect x="10" y="20" width="40" height="20" rx="2" fill="#fff" stroke="#bdbdbd" />
+                        <circle cx="20" cy="30" r="6" fill="#fff9c4" stroke="#bdbdbd" />
+                        <circle cx="30" cy="30" r="6" fill="#bbdefb" stroke="#bdbdbd" />
+                        <circle cx="40" cy="30" r="6" fill="#c8e6c9" stroke="#bdbdbd" />
+                        <text x="30" y="55" text-anchor="middle" font-size="8">Tes Darah</text>
+                    </svg>
+                </div>
+    
+                <div class="item" data-item="bag" title="Kantung Darah">
+                    <svg viewBox="0 0 60 60">
+                        <path d="M15 15 L45 15 L45 40 Q30 50 15 40 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="1" />
+                        <circle cx="30" cy="25" r="6" fill="white" stroke="#7b1fa2" stroke-width="1" />
+                        <text x="30" y="28" text-anchor="middle" font-size="6">A+</text>
+                        <text x="30" y="55" text-anchor="middle" font-size="8">Kantung Darah</text>
+                    </svg>
+                </div>
             </div>
-          </div>
+            
+            <!-- New placement: Blood type selection interface OUTSIDE scene but BEFORE message -->
+            <div id="blood-type-selection-container" class="bg-white rounded-lg shadow-md p-4 mb-4 hidden transition-all duration-300">
+              <!-- Petunjuk akan ditambahkan secara dinamis via JavaScript -->
+              
+              <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Tentukan golongan darah:</h3>
+              
+              <!-- Tombol Golongan Darah dengan Warna yang Lebih Menarik -->
+              <div class="flex justify-center space-x-3 mb-4">
+                <button id="btn-a" class="blood-type-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">A</button>
+                <button id="btn-b" class="blood-type-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">B</button>
+                <button id="btn-ab" class="blood-type-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">AB</button>
+                <button id="btn-o" class="blood-type-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">O</button>
+              </div>
+              
+              <!-- Tombol Rhesus -->
+              <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Tentukan Rhesus:</h3>
+              <div class="flex justify-center space-x-3 mb-4">
+                <button id="btn-rh-pos" class="rh-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">Rh+</button>
+                <button id="btn-rh-neg" class="rh-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">Rh-</button>
+              </div>
+              
+              <!-- Tombol Konfirmasi dengan Efek Hover -->
+              <div id="confirm-selection" class="flex justify-center hidden">
+                <button id="btn-confirm" class="w-40 h-12 bg-red-600 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none transform hover:scale-105 transition-all duration-200 flex items-center justify-center">
+                  <span>Konfirmasi</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Tampilan Hasil Tes dengan Efek Transisi -->
+            <div id="test-result-display" class="bg-white rounded-lg shadow-md p-5 mb-4 hidden transition-all duration-500 transform">
+              <h3 id="result-text" class="text-xl font-bold text-center text-gray-800 mb-2">Golongan Darah: ?</h3>
+              <div class="flex justify-center">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
+                  <span id="result-blood-type" class="text-3xl font-bold text-red-600">?</span>
+                </div>
+              </div>
+              <p class="text-center text-gray-600 mt-3">Golongan darah berhasil diidentifikasi</p>
+            </div>
+    
+            <div class="message" id="message">Pilih alat untuk memulai donor darah</div>
+    
+            <button class="btn" id="next-btn" disabled>Lanjut</button>
+    
+            <div class="alert" id="alert">Pesan alert</div>
+        </div>
 
-          <div class="p-6" id="quiz">
+        <div id="quiz" class="hidden p-6">
             <!-- Quiz intro screen -->
             <div id="quiz-intro" class="text-center py-8">
               <h3 class="text-2xl font-bold text-gray-800 mb-4">Blood Donation Quiz</h3>
@@ -1168,20 +1924,33 @@
         mobileMenu.classList.toggle("hidden")
       })
 
-      // Game tabs functionality
+      document.getElementById("sim-tab").classList.add("bg-gray-200");
+      document.getElementById("quiz-tab").classList.remove("bg-gray-200");
+      
+      // Make simulation visible and quiz hidden
+      document.getElementById("simulation").classList.remove("hidden");
+      document.getElementById("quiz").classList.add("hidden");
+      
+      // Game tabs functionality - keep your existing event listeners
       document.getElementById("sim-tab").addEventListener("click", function () {
-        document.getElementById("simulation").classList.remove("hidden")
-        document.getElementById("quiz").classList.add("hidden")
-        this.classList.add("bg-gray-200")
-        document.getElementById("quiz-tab").classList.remove("bg-gray-200")
-      })
-
+        // Show simulation, hide quiz
+        document.getElementById("simulation").classList.remove("hidden");
+        document.getElementById("quiz").classList.add("hidden");
+        
+        // Update tab appearance
+        this.classList.add("bg-gray-200");
+        document.getElementById("quiz-tab").classList.remove("bg-gray-200");
+      });
+      
       document.getElementById("quiz-tab").addEventListener("click", function () {
-        document.getElementById("quiz").classList.remove("hidden")
-        document.getElementById("simulation").classList.add("hidden")
-        this.classList.add("bg-gray-200")
-        document.getElementById("sim-tab").classList.remove("bg-gray-200")
-      })
+        // Hide simulation, show quiz
+        document.getElementById("simulation").classList.add("hidden");
+        document.getElementById("quiz").classList.remove("hidden");
+        
+        // Update tab appearance
+        this.classList.add("bg-gray-200");
+        document.getElementById("sim-tab").classList.remove("bg-gray-200");
+      });
 
       // Quiz functionality
       document.addEventListener("DOMContentLoaded", function () {
@@ -1483,6 +2252,1052 @@
         adaptiveHeight: false
       });
     });
-    </script>
+    let selectedItem = null;
+let currentStage = 'donor';
+let gameState = {
+    armCleaned: false,
+    bloodCollected: false,
+testDone: false,
+    bandageApplied: false,
+    bloodGroupTested: false,
+    bloodGroupIdentified: false,
+    transfusionComplete: false,
+    donorBloodType: 'A+', // Default blood type for donor
+    recipientBloodType: 'A+', // Default blood type for recipient
+    selectedGroupABO: '', // Untuk menyimpan pilihan golongan ABO
+    selectedGroupRh: '', // Untuk menyimpan pilihan rhesus
+};
+
+  // Elements
+const controls = document.getElementById('controls');
+const items = document.querySelectorAll('.item');
+const messageEl = document.getElementById('message');
+const nextBtn = document.getElementById('next-btn');
+const alertEl = document.getElementById('alert');
+const sceneContent = document.getElementById('scene-content');
+const transitionOverlay = document.getElementById('transition-overlay');
+const stageTitle = document.getElementById('stage-title');
+const stageDesc = document.getElementById('stage-desc');
+
+  // Scene elements
+const patientEl = document.querySelector('.patient');
+const patientTargetEl = document.getElementById('patient-target');
+const armEl = document.querySelector('.arm');
+const cleanedAreaEl = document.getElementById('cleaned-area');
+const bandageEl = document.getElementById('bandage');
+const bloodSampleEl = document.getElementById('blood-sample');
+const testResultEl = document.getElementById('test-result');
+const bloodBagEl = document.getElementById('blood-bag');
+const bloodTypeText = document.getElementById('blood-type-text');
+const laboratoryEl = document.getElementById('laboratory');
+const transfusionRoomEl = document.getElementById('transfusion-room');
+const transfusionTubeEl = document.getElementById('transfusion-tube');
+const dropZoneEl = document.getElementById('drop-zone');
+const instructionText = document.getElementById('instruction-text');
+const transfusionStandEl = document.getElementById('transfusion-stand');
+
+// Lab test elements
+const labBloodSampleEl = document.getElementById('lab-blood-sample');
+const testPlateA = document.getElementById('test-plate-a');
+const testPlateB = document.getElementById('test-plate-b');
+const testPlateRh = document.getElementById('test-plate-rh');
+const resultA = document.getElementById('result-a');
+const resultB = document.getElementById('result-b');
+const resultRh = document.getElementById('result-rh');
+const bloodTypeSelection = document.getElementById('blood-type-selection');
+const aboButtons = document.getElementById('abo-buttons');
+const rhButtons = document.getElementById('rh-buttons');
+const confirmSelection = document.getElementById('confirm-selection');
+const testResultDisplay = document.getElementById('test-result-display');
+const resultText = document.getElementById('result-text');
+
+  // Blood group selection elements
+const btnA = document.getElementById('btn-a');
+const btnB = document.getElementById('btn-b');
+const btnAB = document.getElementById('btn-ab');
+const btnO = document.getElementById('btn-o');
+const btnRhPos = document.getElementById('btn-rh-pos');
+const btnRhNeg = document.getElementById('btn-rh-neg');
+const btnConfirm = document.getElementById('btn-confirm');
+
+// Setup
+setupEventListeners();
+
+// Setup initial controls for donor stage
+updateControlsForStage('donor');
+
+function setupEventListeners() {
+    // Arm interaction
+    armEl.addEventListener('click', () => {
+        if (selectedItem) {
+            useItemOnArm(selectedItem.dataset.item);
+        }
+    });
+
+    // Next button
+    nextBtn.addEventListener('click', moveToNextStage);
+
+    // Blood group selection buttons
+    btnA.addEventListener('click', () => selectBloodGroup('A'));
+    btnB.addEventListener('click', () => selectBloodGroup('B'));
+    btnAB.addEventListener('click', () => selectBloodGroup('AB'));
+    btnO.addEventListener('click', () => selectBloodGroup('O'));
+    btnRhPos.addEventListener('click', () => selectRhFactor('+'));
+    btnRhNeg.addEventListener('click', () => selectRhFactor('-'));
+    btnConfirm.addEventListener('click', confirmBloodGroup);
+}
+
+function updateControlsForStage(stage) {
+    controls.innerHTML = ''; // Clear existing controls
+    
+    switch (stage) {
+        case 'donor':
+            addControlItem('cotton', 'Kapas Alkohol', `
+                <svg viewBox="0 0 60 60">
+                    <rect x="10" y="25" width="40" height="10" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
+                    <circle cx="10" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
+                    <circle cx="50" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Kapas Alkohol</text>
+                </svg>
+            `);
+            
+            addControlItem('syringe', 'Jarum Suntik', `
+                <svg viewBox="0 0 60 60">
+                    <rect x="10" y="25" width="30" height="10" rx="2" fill="#bbdefb" stroke="#1976d2" />
+                    <rect x="40" y="27" width="15" height="6" fill="#e0e0e0" stroke="#bdbdbd" />
+                    <path d="M55 30 L60 30" stroke="#bdbdbd" stroke-width="1" />
+                    <rect x="5" y="27" width="5" height="6" fill="#42a5f5" />
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Jarum Suntik</text>
+                </svg>
+            `);
+            
+            addControlItem('bandage', 'Plester', `
+                <svg viewBox="0 0 60 60">
+                    <rect x="10" y="25" width="40" height="10" rx="2" fill="#ffe0b2" stroke="#ff9800" />
+                    <rect x="20" y="25" width="20" height="10" fill="#f5f5f5" />
+                    <line x1="15" y1="20" x2="15" y2="40" stroke="#ff9800" stroke-width="1" />
+                    <line x1="25" y1="20" x2="25" y2="40" stroke="#ff9800" stroke-width="1" />
+                    <line x1="35" y1="20" x2="35" y2="40" stroke="#ff9800" stroke-width="1" />
+                    <line x1="45" y1="20" x2="45" y2="40" stroke="#ff9800" stroke-width="1" />
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Plester</text>
+                </svg>
+            `);
+            break;
+            
+        case 'transfusion':
+            addControlItem('bag', 'Kantung Darah', `
+                <svg viewBox="0 0 60 60">
+                    <path d="M15 15 L45 15 L45 40 Q30 50 15 40 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="1" />
+                    <circle cx="30" cy="25" r="6" fill="white" stroke="#7b1fa2" stroke-width="1" />
+                    <text x="30" y="28" text-anchor="middle" font-size="6">A+</text>
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Kantung Darah</text>
+                </svg>
+            `);
+            break;
+    }
+    
+    setupControlItemListeners();
+}
+
+function addControlItem(itemName, title, svgContent) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'item';
+    itemDiv.dataset.item = itemName;
+    itemDiv.title = title;
+    itemDiv.innerHTML = svgContent;
+    controls.appendChild(itemDiv);
+}
+
+function setupControlItemListeners() {
+    const items = document.querySelectorAll('.item');
+    items.forEach(item => {
+        item.addEventListener('click', () => selectItem(item));
+    });
+}
+
+function selectItem(item) {
+    items.forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    selectedItem = item;
+    messageEl.textContent = `Anda memilih ${item.title || item.dataset.item}. Klik pada lengan pasien untuk menggunakan.`;
+}
+
+function useItemOnArm(item) {
+    switch (item) {
+        case 'cotton':
+            if (!gameState.armCleaned) {
+                cleanArm();
+            } else {
+                showAlert('Lengan sudah dibersihkan');
+            }
+            break;
+        case 'syringe':
+            if (gameState.armCleaned && !gameState.bloodCollected) {
+                collectBlood();
+            } else if (!gameState.armCleaned) {
+                showAlert('Bersihkan lengan terlebih dahulu dengan kapas alkohol');
+            } else {
+                showAlert('Darah sudah diambil');
+            }
+            break;
+        case 'bandage':
+            if (gameState.bloodCollected && !gameState.bandageApplied) {
+                applyBandage();
+            } else if (!gameState.bloodCollected) {
+                showAlert('Ambil darah terlebih dahulu');
+            } else {
+                showAlert('Plester sudah dipasang');
+            }
+            break;
+        case 'test':
+            if (gameState.bloodCollected && !gameState.testDone) {
+                testBlood();
+            } else if (!gameState.bloodCollected) {
+                showAlert('Ambil darah terlebih dahulu');
+            } else {
+                showAlert('Tes sudah dilakukan');
+            }
+            break;
+        case 'bag':
+            if (currentStage === 'transfusion') {
+                useBloodBag();
+            } else {
+                showAlert('Kantung darah akan digunakan pada tahap transfusi');
+            }
+            break;
+    }
+}
+
+function cleanArm() {
+    cleanedAreaEl.style.display = 'block';
+    gameState.armCleaned = true;
+    messageEl.textContent = 'Lengan telah dibersihkan. Ambil darah dengan jarum suntik.';
+    showAlert('Lengan telah dibersihkan!');
+}
+
+function collectBlood() {
+    bloodSampleEl.style.display = 'block';
+    gameState.bloodCollected = true;
+    messageEl.textContent = 'Darah telah diambil. Pasang plester pada lengan.';
+    showAlert('Darah berhasil diambil!');
+
+    const bloodSample = document.getElementById('blood-sample');
+    bloodSample.style.top = '100px';
+    bloodSample.style.right = '100px';
+}
+
+function applyBandage() {
+    bandageEl.style.display = 'block';
+    gameState.bandageApplied = true;
+    messageEl.textContent = 'Plester telah dipasang. Klik tombol "Lanjut" untuk melakukan tes darah.';
+    showAlert('Plester dipasang, donor darah selesai!');
+    nextBtn.disabled = false;
+}
+
+function testBlood() {
+    testResultEl.style.display = 'block';
+    testResultEl.innerHTML = `<strong>Golongan Darah:</strong><br>${gameState.donorBloodType}`;
+    gameState.testDone = true;
+    messageEl.textContent = 'Tes darah telah dilakukan. Golongan darah telah diidentifikasi.';
+    showAlert(`Golongan darah diidentifikasi: ${gameState.donorBloodType}`);
+    nextBtn.disabled = false;
+}
+
+function useBloodBag() {
+    messageEl.textContent = 'Pasang kantung darah pada tiang infus dan hubungkan ke pasien.';
+    showAlert('Gunakan kantung darah untuk transfusi');
+}
+
+function moveToNextStage() {
+    nextBtn.disabled = true;
+
+    if (currentStage === 'donor' && gameState.bandageApplied) {
+        showTransition('Laboratorium', 'Saatnya menentukan golongan darah di laboratorium.');
+        setTimeout(() => {
+            currentStage = 'laboratory';
+            startLaboratoryStage();
+            controls.style.display = 'none'; // Hide controls for laboratory stage
+            updateControlsForStage('laboratory');
+        }, 2000);
+    }
+    else if (currentStage === 'laboratory' && gameState.bloodGroupIdentified) {
+        showTransition('Transfusi Darah', 'Gunakan kantung darah untuk transfusi kepada pasien.');
+        setTimeout(() => {
+            currentStage = 'transfusion';
+            startTransfusionStage();
+            updateControlsForStage('transfusion');
+        }, 2000);
+    }
+    else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
+        showTransition('Selesai', 'Transfusi darah telah berhasil dilakukan.');
+        setTimeout(() => {
+            messageEl.textContent = 'Simulator selesai. Refresh halaman untuk memulai kembali.';
+            showAlert('Transfusi darah berhasil!');
+        }, 2000);
+    }
+}
+
+function startLaboratoryStage() {
+  // Sembunyikan elemen pasien
+  patientEl.style.display = 'none';
+  bloodSampleEl.style.display = 'none';
+  testResultEl.style.display = 'none';
+  
+  // Tampilkan adegan laboratorium
+  laboratoryEl.style.display = 'block';
+  
+  // Pastikan kontainer terkait pemilihan golongan darah tersembunyi di awal
+  const bloodTypeSelection = document.getElementById('blood-type-selection-container');
+  if (bloodTypeSelection) {
+      bloodTypeSelection.classList.add('hidden');
+  }
+  
+  const testResultDisplay = document.getElementById('test-result-display');
+  if (testResultDisplay) {
+      testResultDisplay.classList.add('hidden');
+  }
+  
+  // Hasilkan golongan darah acak untuk level ini
+  generateRandomBloodType();
+  
+  // Tampilkan pesan yang menginstruksikan pengguna
+  messageEl.textContent = 'Tes golongan darah dengan meneteskan sampel darah ke plate pengujian, klik pada sampel darah.';
+  
+  // Jadikan sampel darah laboratorium dapat diklik
+  labBloodSampleEl.style.cursor = 'pointer';
+  labBloodSampleEl.addEventListener('click', startBloodGroupTest);
+}
+
+// Fungsi untuk menghasilkan golongan darah acak
+function generateRandomBloodType() {
+  // Definisikan kemungkinan golongan darah
+  const bloodGroups = ['A', 'B', 'AB', 'O'];
+  const rhFactors = ['+', '-'];
+  
+  // Pilih secara acak
+  const randomBloodGroup = bloodGroups[Math.floor(Math.random() * bloodGroups.length)];
+  const randomRhFactor = rhFactors[Math.floor(Math.random() * rhFactors.length)];
+  
+  // Tetapkan golongan darah acak ke gameState
+  gameState.donorBloodType = randomBloodGroup + randomRhFactor;
+  
+  console.log("Golongan darah yang dihasilkan: " + gameState.donorBloodType);
+}
+
+
+function startBloodGroupTest() {
+  let dropCount = 0;
+  const plates = [testPlateA, testPlateB, testPlateRh];
+
+  function createBloodDrop(plate) {
+      const dropEl = document.createElement('div');
+      dropEl.className = 'blood-drop-animation';
+      
+      const plateRect = plate.getBoundingClientRect();
+      const labRect = laboratoryEl.getBoundingClientRect();
+      
+      dropEl.style.left = (plateRect.left - labRect.left + plateRect.width / 2) + 'px';
+      dropEl.style.top = (plateRect.top - labRect.top) + 'px';
+      
+      laboratoryEl.appendChild(dropEl);
+      
+      setTimeout(() => {
+          laboratoryEl.removeChild(dropEl);
+          
+          const plateType = plate.dataset.type;
+          let reactionResult = false;
+          
+          // Tentukan reaksi berdasarkan golongan darah yang ditetapkan
+          if (plateType === 'A') {
+              // Reaksi penggumpalan terjadi jika golongan darah mengandung A (A atau AB)
+              reactionResult = gameState.donorBloodType.includes('A');
+          } else if (plateType === 'B') {
+              // Reaksi penggumpalan terjadi jika golongan darah mengandung B (B atau AB)
+              reactionResult = gameState.donorBloodType.includes('B');
+          } else if (plateType === 'Rh') {
+              // Reaksi penggumpalan terjadi jika golongan darah Rh positif
+              reactionResult = gameState.donorBloodType.includes('+');
+          }
+          
+          showCoagulation(plateType, reactionResult);
+          
+          dropCount++;
+          if (dropCount === plates.length) {
+              setTimeout(() => {
+                  showBloodTypeSelectionInterface();
+              }, 1000);
+          }
+      }, 1000);
+  }
+
+  plates.forEach((plate, index) => {
+      setTimeout(() => {
+          createBloodDrop(plate);
+      }, index * 1000);
+  });
+
+  labBloodSampleEl.style.cursor = 'default';
+  labBloodSampleEl.removeEventListener('click', startBloodGroupTest);
+  messageEl.textContent = 'Melakukan tes golongan darah...';
+}
+
+function showCoagulation(plateType, isCoagulated) {
+  let resultEl;
+  switch (plateType) {
+      case 'A': resultEl = resultA; break;
+      case 'B': resultEl = resultB; break;
+      case 'Rh': resultEl = resultRh; break;
+  }
+
+  const offset = plateType === 'A' ? -120 : plateType === 'B' ? 0 : 120;
+  const color = isCoagulated ? '#4caf50' : '#f44336';
+
+  resultEl.style.display = 'block';
+  
+  if (isCoagulated) {
+      resultEl.innerHTML = `
+          <circle cx="${offset}" cy="0" r="15" fill="${color}" fill-opacity="0.5" />
+          <path d="M${offset-10} 0 L${offset} 10 L${offset+10} -10" 
+              stroke="${color}" stroke-width="2" fill="none" />
+      `;
+      showAlert(`Terjadi penggumpalan pada reagen ${plateType}`, 'success');
+  } else {
+      resultEl.innerHTML = `
+          <circle cx="${offset}" cy="0" r="15" fill="${color}" fill-opacity="0.5" />
+          <path d="M${offset-10} -10 L${offset+10} 10" stroke="${color}" stroke-width="2" />
+          <path d="M${offset-10} 10 L${offset+10} -10" stroke="${color}" stroke-width="2" />
+      `;
+      showAlert(`Tidak terjadi penggumpalan pada reagen ${plateType}`, 'error');
+  }
+}
+
+
+function showBloodTypeSelectionInterface() {
+  // Perbarui pesan
+  messageEl.textContent = 'Berdasarkan hasil tes, tentukan golongan darah.';
+  
+  // Dapatkan container pemilihan golongan darah
+  const selectionContainer = document.getElementById('blood-type-selection-container');
+  if (selectionContainer) {
+      // Tambahkan petunjuk tentang cara menentukan golongan darah
+      // Cek jika petunjuk belum ada
+      if (!selectionContainer.querySelector('.helper-box')) {
+          const helperBox = document.createElement('div');
+          helperBox.className = 'helper-box';
+          helperBox.innerHTML = `
+              <h4 class="font-bold text-blue-700 mb-2">Cara Menentukan Golongan Darah:</h4>
+              <ul class="list-disc list-inside text-gray-700 space-y-1">
+                  <li>Jika terjadi penggumpalan di reagen A: mengandung antigen A</li>
+                  <li>Jika terjadi penggumpalan di reagen B: mengandung antigen B</li>
+                  <li>Jika terjadi penggumpalan di reagen Rh: Rhesus positif (+)</li>
+                  <li>Golongan A: penggumpalan hanya di reagen A</li>
+                  <li>Golongan B: penggumpalan hanya di reagen B</li>
+                  <li>Golongan AB: penggumpalan di reagen A dan B</li>
+                  <li>Golongan O: tidak ada penggumpalan di reagen A dan B</li>
+              </ul>
+          `;
+          
+          // Sisipkan petunjuk di awal container
+          selectionContainer.insertBefore(helperBox, selectionContainer.firstChild);
+      }
+      
+      // Tampilkan container dengan animasi
+      selectionContainer.classList.remove('hidden');
+      selectionContainer.classList.add('fade-in');
+      
+      // Inisialisasi tombol jika belum dilakukan
+      if (!selectionContainer.dataset.initialized) {
+          // Event listener untuk tombol golongan darah
+          document.querySelectorAll('.blood-type-btn').forEach(btn => {
+              btn.addEventListener('click', function() {
+                  const type = this.textContent;
+                  selectBloodGroup(type);
+              });
+          });
+          
+          // Event listener untuk tombol rhesus
+          document.querySelectorAll('.rh-btn').forEach(btn => {
+              btn.addEventListener('click', function() {
+                  const rhFactor = this.textContent.includes('+') ? '+' : '-';
+                  selectRhFactor(rhFactor);
+              });
+          });
+          
+          // Event listener untuk tombol konfirmasi
+          const confirmBtn = document.getElementById('btn-confirm');
+          if (confirmBtn) {
+              confirmBtn.addEventListener('click', confirmBloodGroup);
+          }
+          
+          // Tandai sebagai sudah diinisialisasi
+          selectionContainer.dataset.initialized = "true";
+      }
+  }
+}
+
+function selectBloodGroup(group) {
+  // Reset semua tombol golongan darah ke style default
+  document.querySelectorAll('.blood-type-btn').forEach(btn => {
+      btn.classList.remove('selected');
+  });
+  
+  // Tambahkan class selected ke tombol yang diklik
+  const btnId = {
+      'A': 'btn-a',
+      'B': 'btn-b',
+      'AB': 'btn-ab',
+      'O': 'btn-o'
+  }[group];
+  
+  const btn = document.getElementById(btnId);
+  if (btn) {
+      btn.classList.add('selected');
+  }
+  
+  // Simpan golongan darah yang dipilih
+  gameState.selectedGroupABO = group;
+  
+  // Periksa apakah seleksi sudah lengkap
+  checkSelectionComplete();
+}
+
+
+function selectRhFactor(factor) {
+  // Reset semua tombol rhesus ke style default
+  document.querySelectorAll('.rh-btn').forEach(btn => {
+      btn.classList.remove('selected');
+  });
+  
+  // Tambahkan class selected ke tombol yang diklik
+  const btnId = factor === '+' ? 'btn-rh-pos' : 'btn-rh-neg';
+  const btn = document.getElementById(btnId);
+  if (btn) {
+      btn.classList.add('selected');
+  }
+  
+  // Simpan faktor Rh yang dipilih
+  gameState.selectedGroupRh = factor;
+  
+  // Periksa apakah seleksi sudah lengkap
+  checkSelectionComplete();
+}
+
+function checkSelectionComplete() {
+  // Jika golongan darah dan faktor Rh keduanya sudah dipilih, tampilkan tombol konfirmasi
+  if (gameState.selectedGroupABO && gameState.selectedGroupRh) {
+      const confirmSelection = document.getElementById('confirm-selection');
+      if (confirmSelection) {
+          confirmSelection.classList.remove('hidden');
+          // Tambahkan animasi fade-in
+          confirmSelection.classList.add('fade-in');
+      }
+  }
+}
+
+function confirmBloodGroup() {
+  // Gabungkan golongan darah dan faktor Rh yang dipilih
+  const selectedBloodType = gameState.selectedGroupABO + gameState.selectedGroupRh;
+  
+  // Periksa apakah pilihan benar
+  const isCorrect = selectedBloodType === gameState.donorBloodType;
+  
+  if (isCorrect) {
+      // Sembunyikan interface pemilihan golongan darah
+      const bloodTypeSelection = document.getElementById('blood-type-selection-container');
+      if (bloodTypeSelection) {
+          bloodTypeSelection.classList.add('hidden');
+      }
+      
+      // Tampilkan hasil tes dengan animasi
+      const resultDisplay = document.getElementById('test-result-display');
+      if (resultDisplay) {
+          resultDisplay.classList.remove('hidden');
+          resultDisplay.classList.add('success-pulse');
+          
+          // Perbarui elemen teks hasil
+          document.getElementById('result-text').textContent = `Golongan Darah: ${selectedBloodType}`;
+          
+          // Perbarui tampilan golongan darah
+          const resultBloodType = document.getElementById('result-blood-type');
+          if (resultBloodType) {
+              resultBloodType.textContent = selectedBloodType;
+          }
+      }
+      
+      // Tampilkan pesan berhasil
+      showAlert('Identifikasi golongan darah benar!', 'success');
+      
+      // Perbarui status game dan pesan
+      gameState.bloodGroupIdentified = true;
+      messageEl.textContent = 'Golongan darah telah diidentifikasi dengan benar. Klik tombol "Lanjut" untuk melakukan transfusi.';
+      
+      // Aktifkan tombol lanjut
+      nextBtn.disabled = false;
+  } else {
+      // Tampilkan pesan kesalahan
+      showAlert(`Identifikasi golongan darah salah! Silakan coba lagi.`, 'error');
+      
+      // Reset pilihan tapi biarkan interface tetap terbuka
+      resetBloodTypeSelection();
+      
+      // Tambahkan animasi flash error
+      const bloodTypeContainer = document.getElementById('blood-type-selection-container');
+      if (bloodTypeContainer) {
+          bloodTypeContainer.classList.add('flash-error');
+          setTimeout(() => {
+              bloodTypeContainer.classList.remove('flash-error');
+          }, 600);
+      }
+  } 
+  messageEl.textContent = 'Identifikasi golongan darah salah. Silakan coba lagi berdasarkan hasil tes.';
+    
+  // Animasi petunjuk visual tambahan
+  createHelpfulHint();
+}
+
+// Fungsi untuk membuat petunjuk visual ketika pengguna salah
+function createHelpfulHint() {
+  // Cek apakah elemen petunjuk sudah ada
+  let hintElement = document.querySelector('.blood-type-hint');
+  
+  // Jika sudah ada, hapus dulu untuk menghindari duplikasi
+  if (hintElement) {
+      hintElement.remove();
+  }
+  
+  // Buat elemen petunjuk baru
+  hintElement = document.createElement('div');
+  hintElement.className = 'blood-type-hint bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 animate-pulse';
+  
+  // Dapatkan golongan darah yang benar
+  const correctBloodType = gameState.donorBloodType;
+  
+  // Petunjuk berdasarkan hasil tes (tanpa memberikan jawaban langsung)
+  let hintText = '<h4 class="font-bold text-yellow-700 mb-1">Petunjuk:</h4><ul class="list-disc list-inside text-gray-700 space-y-1">';
+  
+  // Petunjuk untuk golongan ABO
+  if (correctBloodType.includes('A') && correctBloodType.includes('B')) {
+      // AB
+      hintText += '<li>Terjadi penggumpalan pada <strong>kedua reagen A dan B</strong></li>';
+  } else if (correctBloodType.includes('A')) {
+      // A
+      hintText += '<li>Terjadi penggumpalan pada <strong>reagen A saja</strong></li>';
+  } else if (correctBloodType.includes('B')) {
+      // B
+      hintText += '<li>Terjadi penggumpalan pada <strong>reagen B saja</strong></li>';
+  } else {
+      // O
+      hintText += '<li>Tidak terjadi penggumpalan pada <strong>reagen A maupun B</strong></li>';
+  }
+  
+  // Petunjuk untuk Rhesus
+  if (correctBloodType.includes('+')) {
+      hintText += '<li>Terjadi penggumpalan pada <strong>reagen Rh</strong></li>';
+  } else {
+      hintText += '<li>Tidak terjadi penggumpalan pada <strong>reagen Rh</strong></li>';
+  }
+  
+  hintText += '</ul>';
+  
+  // Masukkan teks petunjuk ke elemen
+  hintElement.innerHTML = hintText;
+  
+  // Masukkan elemen petunjuk ke dalam container
+  const bloodTypeSelection = document.getElementById('blood-type-selection-container');
+  if (bloodTypeSelection) {
+      // Masukkan setelah elemen pertama (judul)
+      const firstChild = bloodTypeSelection.firstChild;
+      bloodTypeSelection.insertBefore(hintElement, firstChild.nextSibling);
+  }
+}
+
+
+function resetBloodTypeSelection() {
+  // Reset semua tombol golongan darah
+  document.querySelectorAll('.blood-type-btn').forEach(btn => {
+      btn.classList.remove('selected');
+  });
+  
+  // Reset semua tombol rhesus
+  document.querySelectorAll('.rh-btn').forEach(btn => {
+      btn.classList.remove('selected');
+  });
+  
+  // Sembunyikan tombol konfirmasi
+  const confirmSelection = document.getElementById('confirm-selection');
+  if (confirmSelection) {
+      confirmSelection.classList.add('hidden');
+  }
+  
+  // Reset nilai yang dipilih
+  gameState.selectedGroupABO = '';
+  gameState.selectedGroupRh = '';
+}
+
+
+// Update moveToNextStage to properly hide the HTML elements when moving to the next stage
+function moveToNextStage() {
+  nextBtn.disabled = true;
+
+  if (currentStage === 'donor' && gameState.bandageApplied) {
+      showTransition('Laboratorium', 'Saatnya menentukan golongan darah di laboratorium.');
+      setTimeout(() => {
+          currentStage = 'laboratory';
+          startLaboratoryStage();
+          controls.style.display = 'none'; // Sembunyikan kontrol untuk tahap laboratorium
+          updateControlsForStage('laboratory');
+      }, 2000);
+  }
+  else if (currentStage === 'laboratory' && gameState.bloodGroupIdentified) {
+      // Sembunyikan elemen terkait pemilihan golongan darah
+      const bloodTypeSelection = document.getElementById('blood-type-selection-container');
+      if (bloodTypeSelection) {
+          bloodTypeSelection.classList.add('hidden');
+      }
+      
+      const testResultDisplay = document.getElementById('test-result-display');
+      if (testResultDisplay) {
+          testResultDisplay.classList.add('hidden');
+      }
+      
+      showTransition('Transfusi Darah', 'Gunakan kantung darah untuk transfusi kepada pasien.');
+      setTimeout(() => {
+          currentStage = 'transfusion';
+          startTransfusionStage();
+          updateControlsForStage('transfusion');
+      }, 2000);
+  }
+  else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
+      showTransition('Selesai', 'Transfusi darah telah berhasil dilakukan.');
+      setTimeout(() => {
+          messageEl.textContent = 'Simulator selesai. Refresh halaman untuk memulai kembali.';
+          showAlert('Transfusi darah berhasil!', 'success');
+      }, 2000);
+  }
+}
+
+// Improved transfusion stage with enhanced drag and drop
+function startTransfusionStage() {
+    // Hide laboratory elements
+    laboratoryEl.style.display = 'none';
+    
+    // Show transfusion scene
+    fadeInElement(transfusionRoomEl);
+    
+    // Show blood bag with correct blood type
+    bloodTypeText.textContent = gameState.donorBloodType;
+    bloodBagEl.style.display = 'block';
+    
+    // Position the blood bag for better visibility - di posisi awal yang lebih terlihat
+    bloodBagEl.style.position = 'absolute';
+    bloodBagEl.style.top = '100px';
+    bloodBagEl.style.left = '200px';
+    bloodBagEl.style.cursor = 'grab';
+    bloodBagEl.style.zIndex = '100';
+
+    // Make sure the transfusion tube is hidden initially
+    var tubeElement = document.getElementById('transfusion-tube');
+    if (tubeElement) {
+        tubeElement.style.display = 'none';
+    }
+    
+    // Highlight drop zone for better visibility
+    dropZoneEl.classList.add('drop-zone-highlight');
+    
+    // Make IV stand more prominent
+    transfusionStandEl.classList.add('stand-highlight');
+    
+    messageEl.textContent = 'Pasang kantung darah pada tiang infus dengan cara drag & drop.';
+    showAlert('Drag kantung darah ke tiang infus untuk memulai transfusi', 'info');
+    
+    // Setup drag and drop for blood bag
+    setupBloodBagDragAndDrop();
+}
+
+// Drag and drop functionality
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let isTransfusionComplete = false;
+
+function setupBloodBagDragAndDrop() {
+    // Remove any existing event listeners
+    bloodBagEl.removeEventListener('mousedown', startDrag);
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('mouseup', dragEnd);
+    
+    // Add new mouse down event listener
+    bloodBagEl.addEventListener('mousedown', startDrag);
+    
+    // Change cursor style when hovering over blood bag
+    bloodBagEl.style.cursor = 'grab';
+}
+
+function startDrag(e) {
+    if (currentStage !== 'transfusion' || isTransfusionComplete) return;
+    
+    // Change cursor style when dragging
+    bloodBagEl.style.cursor = 'grabbing';
+    
+    // Get initial mouse position
+    const rect = bloodBagEl.getBoundingClientRect();
+    dragOffsetX = e.clientX - rect.left;
+    dragOffsetY = e.clientY - rect.top;
+    
+    // Add move and end event listeners
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', dragEnd);
+    
+    isDragging = true;
+    e.preventDefault();
+}
+
+function dragMove(e) {
+    if (!isDragging) return;
+    
+    // Calculate new position relative to the scene content
+    const sceneRect = sceneContent.getBoundingClientRect();
+    const x = e.clientX - sceneRect.left - dragOffsetX;
+    const y = e.clientY - sceneRect.top - dragOffsetY;
+    
+    // Move the blood bag with absolute positioning
+    bloodBagEl.style.position = 'absolute';
+    bloodBagEl.style.left = x + 'px';
+    bloodBagEl.style.top = y + 'px';
+    
+    // Highlight drop zone when blood bag is being dragged
+    const bagRect = bloodBagEl.getBoundingClientRect();
+    const dropRect = dropZoneEl.getBoundingClientRect();
+    
+    if (isOverlapping(bagRect, dropRect)) {
+        dropZoneEl.classList.add('drop-zone-active');
+    } else {
+        dropZoneEl.classList.remove('drop-zone-active');
+    }
+}
+
+function dragEnd() {
+    if (!isDragging) return;
+    
+    // Cek apakah dijatuhkan pada tiang
+    const bagRect = bloodBagEl.getBoundingClientRect();
+    const dropRect = dropZoneEl.getBoundingClientRect();
+    
+    // Reset drag state
+    isDragging = false;
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('mouseup', dragEnd);
+    bloodBagEl.style.cursor = 'grab';
+    
+    if (isOverlapping(bagRect, dropRect)) {
+        // Set transition untuk animasi smooth
+        bloodBagEl.style.transition = 'all 0.3s ease';
+        
+        // Get scene dimensions for positioning
+        const sceneRect = sceneContent.getBoundingClientRect();
+        
+        // Dapatkan posisi drop zone dengan tepat
+        const dropZoneRect = dropZoneEl.getBoundingClientRect();
+        
+        // Hitung posisi yang lebih tepat untuk kantong darah
+        // Sesuaikan dengan posisi drop zone
+        const leftPos = (dropZoneRect.left - sceneRect.left) - 20; // Lebih ke kiri dari drop zone
+        const topPos = (dropZoneRect.top - sceneRect.top) - 5; // Sedikit di atas drop zone
+        
+        // Posisikan kantong darah dengan tepat
+        bloodBagEl.style.left = leftPos + 'px';
+        bloodBagEl.style.top = topPos + 'px';
+        
+        // Pastikan kantung darah tegak
+        bloodBagEl.style.transform = 'rotate(0deg)';
+        
+        // Tidak perlu drag lagi setelah berhasil ditempatkan
+        bloodBagEl.removeEventListener('mousedown', startDrag);
+        isTransfusionComplete = true;
+        
+        // Tampilkan selang transfusi dengan posisi yang tepat
+        setTimeout(() => {
+            var tubeElement = document.getElementById('transfusion-tube');
+            
+            if (!tubeElement) {
+                tubeElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                tubeElement.id = "transfusion-tube";
+                document.querySelector(".transfusion-room svg").appendChild(tubeElement);
+            }
+            
+            tubeElement.setAttribute('stroke', '#e53935');
+            tubeElement.setAttribute('stroke-width', '3');
+            tubeElement.setAttribute('fill', 'none');
+            tubeElement.setAttribute('stroke-dasharray', '5,5');
+            
+            // Sesuaikan path selang berdasarkan posisi baru kantong darah
+            const startX = leftPos + 40; // Mulai dari sisi kanan kantong darah
+            const startY = topPos + 40; // Mulai dari bagian bawah kantong darah
+            
+            // Path yang disesuaikan untuk terhubung dari kantong ke pasien
+            tubeElement.setAttribute('d', `M${startX} ${startY} C${startX} ${startY+50}, 400 250, 240 300`);
+            tubeElement.style.display = 'block';
+
+            // Make drop zone invisible but still functional
+            dropZoneEl.style.opacity = '0';
+            dropZoneEl.style.pointerEvents = 'auto';
+
+            // Make instruction text invisible
+            instructionText.style.opacity = '0'; 
+            instructionText.style.pointerEvents = 'auto';
+
+            startTransfusionAnimation(tubeElement);
+        }, 300);
+        
+        // Tampilkan pesan sukses
+        showAlert('Kantung darah berhasil dipasang!', 'success');
+        messageEl.textContent = 'Transfusi darah sedang berlangsung...';
+    } else {
+        // Jika tidak di drop zone, kembali ke posisi awal
+        bloodBagEl.style.transition = 'all 0.3s ease';
+        bloodBagEl.style.left = '200px';
+        bloodBagEl.style.top = '100px';
+        
+        // Hapus highlight drop zone
+        dropZoneEl.classList.remove('drop-zone-active');
+    }
+}
+
+function isOverlapping(rect1, rect2) {
+    return !(rect1.right < rect2.left || 
+        rect1.left > rect2.right || 
+        rect1.bottom < rect2.top || 
+        rect1.top > rect2.bottom);
+}
+
+// PERBAIKAN: Menerima element sebagai parameter
+function startTransfusionAnimation(tubeElement) {
+    // Add blood flow animation class to tube
+    tubeElement.classList.add('blood-flow');
+    
+    // Perbaiki CSS untuk animasi blood flow agar lebih jelas terlihat
+    const style = document.createElement('style');
+    style.textContent = `
+        .blood-flow {
+            stroke-dasharray: 10, 5;
+            animation: flow 5s linear infinite;
+        }
+        
+        @keyframes flow {
+            from {
+                stroke-dashoffset: 1000;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            from { r: 5; fill: #e53935; }
+            to { r: 7; fill: #c62828; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Create drip animation if exists
+    const drip = document.getElementById('drip');
+    if (drip) {
+        drip.style.display = 'block';
+    } else {
+        // Buat elemen tetesan jika belum ada
+        const dropSvg = document.querySelector(".transfusion-room svg");
+        const newDrip = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        newDrip.id = "drip";
+        newDrip.setAttribute('cx', parseFloat(bloodBagEl.style.left) + 20);
+        newDrip.setAttribute('cy', '145');
+        newDrip.setAttribute('r', '3');
+        newDrip.setAttribute('fill', '#e53935');
+        
+        // Tambahkan animasi ke tetesan
+        const animate1 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+        animate1.setAttribute('attributeName', 'cy');
+        animate1.setAttribute('from', '145');
+        animate1.setAttribute('to', '180');
+        animate1.setAttribute('dur', '1s');
+        animate1.setAttribute('repeatCount', 'indefinite');
+        
+        const animate2 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+        animate2.setAttribute('attributeName', 'opacity');
+        animate2.setAttribute('from', '1');
+        animate2.setAttribute('to', '0');
+        animate2.setAttribute('dur', '1s');
+        animate2.setAttribute('repeatCount', 'indefinite');
+        
+        newDrip.appendChild(animate1);
+        newDrip.appendChild(animate2);
+        dropSvg.appendChild(newDrip);
+    }
+    
+    // Update patient appearance gradually
+    setTimeout(() => {
+        // Cari elemen pasien dan ubah warnanya secara bertahap
+        const patientElements = document.querySelectorAll('.patient-in-bed rect, .patient-in-bed circle');
+        patientElements.forEach(el => {
+            if (el.getAttribute('fill') === '#f5cba7') {
+                el.style.transition = 'fill 2s';
+                el.style.fill = '#ffccbc';
+            }
+        });
+        
+        // Tambahkan animasi pada transfusion point
+        const transfusionPoint = document.getElementById('transfusion-point');
+        if (transfusionPoint) {
+            transfusionPoint.style.animation = 'pulse 1s infinite alternate';
+        }
+        
+        // Perbarui pesan di panel bawah
+        showAlert('Transfusi darah berhasil!', 'success');
+        // Perbarui pesan di panel bawah
+        showAlert('Transfusi darah berhasil!', 'success');
+        messageEl.textContent = 'Transfusi darah selesai. Klik tombol "Lanjut" untuk mengakhiri simulasi.';
+        
+        // Enable dan tampilkan tombol "Lanjut"
+        gameState.transfusionComplete = true;
+        nextBtn.disabled = false;
+        nextBtn.style.display = 'block';
+        nextBtn.style.opacity = '1';
+    } , 2000);}
+
+  function fadeInElement(element) {
+      element.style.display = 'block';
+      element.classList.add('fade-in');
+  }
+  
+  function showTransition(title, description) {
+      stageTitle.textContent = title;
+      stageDesc.textContent = description;
+      transitionOverlay.classList.add('active');
+      
+      setTimeout(() => {
+      transitionOverlay.classList.remove('active');
+      }, 2000);
+  }
+  
+  function showAlert(message, type = 'info') {
+      alertEl.textContent = message;
+      alertEl.style.display = 'block';
+      
+      // Set color based on type
+      switch(type) {
+      case 'success':
+          alertEl.style.backgroundColor = '#4CAF50';
+          break;
+      case 'error':
+          alertEl.style.backgroundColor = '#f44336';
+          break;
+      default:
+          alertEl.style.backgroundColor = '#2196F3';
+      }
+      
+      setTimeout(() => {
+      alertEl.style.display = 'none';
+      }, 3000);
+  }
+  </script>
   </body>
 </html>
