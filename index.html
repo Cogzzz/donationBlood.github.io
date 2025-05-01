@@ -998,7 +998,7 @@
             <div id="blood-type-selection-container" class="bg-white rounded-lg shadow-md p-4 mb-4 hidden transition-all duration-300">
               <!-- Petunjuk akan ditambahkan secara dinamis via JavaScript -->
               
-              <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Tentukan golongan darah:</h3>
+                <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Determine blood type:</h3>
               
               <!-- Tombol Golongan Darah dengan Warna yang Lebih Menarik -->
               <div class="flex justify-center space-x-3 mb-4">
@@ -1009,7 +1009,7 @@
               </div>
               
               <!-- Tombol Rhesus -->
-              <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Tentukan Rhesus:</h3>
+              <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Determmine Rhesus:</h3>
               <div class="flex justify-center space-x-3 mb-4">
                 <button id="btn-rh-pos" class="rh-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">Rh+</button>
                 <button id="btn-rh-neg" class="rh-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">Rh-</button>
@@ -1028,20 +1028,20 @@
             
             <!-- Tampilan Hasil Tes dengan Efek Transisi -->
             <div id="test-result-display" class="bg-white rounded-lg shadow-md p-5 mb-4 hidden transition-all duration-500 transform">
-              <h3 id="result-text" class="text-xl font-bold text-center text-gray-800 mb-2">Golongan Darah: ?</h3>
+              <h3 id="result-text" class="text-xl font-bold text-center text-gray-800 mb-2">Blood Type: ?</h3>
               <div class="flex justify-center">
                 <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
                   <span id="result-blood-type" class="text-3xl font-bold text-red-600">?</span>
                 </div>
               </div>
-              <p class="text-center text-gray-600 mt-3">Golongan darah berhasil diidentifikasi</p>
+              <p class="text-center text-gray-600 mt-3">Blood type successfully identified</p>
             </div>
     
-            <div class="message" id="message">Pilih alat untuk memulai donor darah</div>
+            <div class="message" id="message">Choose a tool to start blood donation</div>
     
-            <button class="btn" id="next-btn" disabled>Lanjut</button>
+            <button class="btn" id="next-btn" disabled>Next</button>
     
-            <div class="alert" id="alert">Pesan alert</div>
+            <div class="alert" id="alert">Alert message</div>
         </div>
 
         <div id="quiz" class="hidden p-6">
@@ -2309,7 +2309,7 @@ function updateControlsForStage(stage) {
                     <rect x="10" y="25" width="40" height="10" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
                     <circle cx="10" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
                     <circle cx="50" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
-                    <text x="30" y="55" text-anchor="middle" font-size="8">Kapas Alkohol</text>
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Alcohol Cotton</text>
                 </svg>
             `);
             
@@ -2319,7 +2319,7 @@ function updateControlsForStage(stage) {
                     <rect x="40" y="27" width="15" height="6" fill="#e0e0e0" stroke="#bdbdbd" />
                     <path d="M55 30 L60 30" stroke="#bdbdbd" stroke-width="1" />
                     <rect x="5" y="27" width="5" height="6" fill="#42a5f5" />
-                    <text x="30" y="55" text-anchor="middle" font-size="8">Jarum Suntik</text>
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Syringe</text>
                 </svg>
             `);
             
@@ -2331,7 +2331,7 @@ function updateControlsForStage(stage) {
                     <line x1="25" y1="20" x2="25" y2="40" stroke="#ff9800" stroke-width="1" />
                     <line x1="35" y1="20" x2="35" y2="40" stroke="#ff9800" stroke-width="1" />
                     <line x1="45" y1="20" x2="45" y2="40" stroke="#ff9800" stroke-width="1" />
-                    <text x="30" y="55" text-anchor="middle" font-size="8">Plester</text>
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Plaster</text>
                 </svg>
             `);
             break;
@@ -2342,7 +2342,7 @@ function updateControlsForStage(stage) {
                     <path d="M15 15 L45 15 L45 40 Q30 50 15 40 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="1" />
                     <circle cx="30" cy="25" r="6" fill="white" stroke="#7b1fa2" stroke-width="1" />
                     <text x="30" y="28" text-anchor="middle" font-size="6">A+</text>
-                    <text x="30" y="55" text-anchor="middle" font-size="8">Kantung Darah</text>
+                    <text x="30" y="55" text-anchor="middle" font-size="8">Blood Bladder</text>
                 </svg>
             `);
             break;
@@ -2371,7 +2371,7 @@ function selectItem(item) {
     items.forEach(i => i.classList.remove('selected'));
     item.classList.add('selected');
     selectedItem = item;
-    messageEl.textContent = `Anda memilih ${item.title || item.dataset.item}. Klik pada lengan pasien untuk menggunakan.`;
+    messageEl.textContent = `You select ${item.title || item.dataset.item}. Click on the patient's arm to use.`;
 }
 
 function useItemOnArm(item) {
@@ -2380,41 +2380,41 @@ function useItemOnArm(item) {
             if (!gameState.armCleaned) {
                 cleanArm();
             } else {
-                showAlert('Lengan sudah dibersihkan');
+                showAlert('Arms have been cleaned');
             }
             break;
         case 'syringe':
             if (gameState.armCleaned && !gameState.bloodCollected) {
                 collectBlood();
             } else if (!gameState.armCleaned) {
-                showAlert('Bersihkan lengan terlebih dahulu dengan kapas alkohol');
+                showAlert('Clean the arm first with an alcohol swab');
             } else {
-                showAlert('Darah sudah diambil');
+                showAlert('Blood has been taken');
             }
             break;
         case 'bandage':
             if (gameState.bloodCollected && !gameState.bandageApplied) {
                 applyBandage();
             } else if (!gameState.bloodCollected) {
-                showAlert('Ambil darah terlebih dahulu');
+                showAlert('Draw blood first');
             } else {
-                showAlert('Plester sudah dipasang');
+                showAlert('Plaster has been applied');
             }
             break;
         case 'test':
             if (gameState.bloodCollected && !gameState.testDone) {
                 testBlood();
             } else if (!gameState.bloodCollected) {
-                showAlert('Ambil darah terlebih dahulu');
+                showAlert('Draw blood first');
             } else {
-                showAlert('Tes sudah dilakukan');
+                showAlert('The test has been done');
             }
             break;
         case 'bag':
             if (currentStage === 'transfusion') {
                 useBloodBag();
             } else {
-                showAlert('Kantung darah akan digunakan pada tahap transfusi');
+                showAlert('Blood bags will be used at the transfusion stage');
             }
             break;
     }
@@ -2423,15 +2423,15 @@ function useItemOnArm(item) {
 function cleanArm() {
     cleanedAreaEl.style.display = 'block';
     gameState.armCleaned = true;
-    messageEl.textContent = 'Lengan telah dibersihkan. Ambil darah dengan jarum suntik.';
-    showAlert('Lengan telah dibersihkan!');
+    messageEl.textContent = 'The arm has been cleaned. Draw blood with a syringe.';
+    showAlert('Arm has been cleaned!');
 }
 
 function collectBlood() {
     bloodSampleEl.style.display = 'block';
     gameState.bloodCollected = true;
-    messageEl.textContent = 'Darah telah diambil. Pasang plester pada lengan.';
-    showAlert('Darah berhasil diambil!');
+    messageEl.textContent = 'Blood has been drawn. Put a plaster on the arm.';
+    showAlert('Blood successfully drawn!');
 
     const bloodSample = document.getElementById('blood-sample');
     bloodSample.style.top = '100px';
@@ -2441,30 +2441,30 @@ function collectBlood() {
 function applyBandage() {
     bandageEl.style.display = 'block';
     gameState.bandageApplied = true;
-    messageEl.textContent = 'Plester telah dipasang. Klik tombol "Lanjut" untuk melakukan tes darah.';
-    showAlert('Plester dipasang, donor darah selesai!');
+    messageEl.textContent = 'The plaster has been applied. Click the “Next” button to perform the blood test.';
+    showAlert('Plaster applied, blood donation completed blood donation completed!');
     nextBtn.disabled = false;
 }
 
 function testBlood() {
     testResultEl.style.display = 'block';
-    testResultEl.innerHTML = `<strong>Golongan Darah:</strong><br>${gameState.donorBloodType}`;
+    testResultEl.innerHTML = `<strong>Blood Type:</strong><br>${gameState.donorBloodType}`;
     gameState.testDone = true;
-    messageEl.textContent = 'Tes darah telah dilakukan. Golongan darah telah diidentifikasi.';
-    showAlert(`Golongan darah diidentifikasi: ${gameState.donorBloodType}`);
+    messageEl.textContent = 'Blood tests have been conducted. Blood type has been identified.';
+    showAlert(`Blood type identified: ${gameState.donorBloodType}`);
     nextBtn.disabled = false;
 }
 
 function useBloodBag() {
-    messageEl.textContent = 'Pasang kantung darah pada tiang infus dan hubungkan ke pasien.';
-    showAlert('Gunakan kantung darah untuk transfusi');
+    messageEl.textContent = 'Attach the blood bag to the infusion pole and connect it to the patient..';
+    showAlert('Use blood bags for transfusion');
 }
 
 function moveToNextStage() {
     nextBtn.disabled = true;
 
     if (currentStage === 'donor' && gameState.bandageApplied) {
-        showTransition('Laboratorium', 'Saatnya menentukan golongan darah di laboratorium.');
+        showTransition('Laboratorium', 'Time to determine your blood type at the lab.');
         setTimeout(() => {
             currentStage = 'laboratory';
             startLaboratoryStage();
@@ -2473,7 +2473,7 @@ function moveToNextStage() {
         }, 2000);
     }
     else if (currentStage === 'laboratory' && gameState.bloodGroupIdentified) {
-        showTransition('Transfusi Darah', 'Gunakan kantung darah untuk transfusi kepada pasien.');
+        showTransition('Transfusi Darah', 'Use blood bags for transfusion to patients.');
         setTimeout(() => {
             currentStage = 'transfusion';
             startTransfusionStage();
@@ -2481,10 +2481,10 @@ function moveToNextStage() {
         }, 2000);
     }
     else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
-        showTransition('Selesai', 'Transfusi darah telah berhasil dilakukan.');
+        showTransition('Selesai', 'Blood transfusion has been successfully performed.');
         setTimeout(() => {
-            messageEl.textContent = 'Simulator selesai. Refresh halaman untuk memulai kembali.';
-            showAlert('Transfusi darah berhasil!');
+            messageEl.textContent = 'Simulator is complete. Refresh the page to start over.';
+            showAlert('Blood transfusion was successful!');
         }, 2000);
     }
 }
@@ -2513,7 +2513,7 @@ function startLaboratoryStage() {
   generateRandomBloodType();
   
   // Tampilkan pesan yang menginstruksikan pengguna
-  messageEl.textContent = 'Tes golongan darah dengan meneteskan sampel darah ke plate pengujian, klik pada sampel darah.';
+  messageEl.textContent = 'Blood type test by dropping a blood sample onto the testing plate, click on the blood sample.';
   
   // Jadikan sampel darah laboratorium dapat diklik
   labBloodSampleEl.style.cursor = 'pointer';
@@ -2533,7 +2533,7 @@ function generateRandomBloodType() {
   // Tetapkan golongan darah acak ke gameState
   gameState.donorBloodType = randomBloodGroup + randomRhFactor;
   
-  console.log("Golongan darah yang dihasilkan: " + gameState.donorBloodType);
+  console.log("Blood type produced: " + gameState.donorBloodType);
 }
 
 
@@ -2590,7 +2590,7 @@ function startBloodGroupTest() {
 
   labBloodSampleEl.style.cursor = 'default';
   labBloodSampleEl.removeEventListener('click', startBloodGroupTest);
-  messageEl.textContent = 'Melakukan tes golongan darah...';
+  messageEl.textContent = 'Conduct blood type tests...';
 }
 
 function showCoagulation(plateType, isCoagulated) {
@@ -2612,21 +2612,21 @@ function showCoagulation(plateType, isCoagulated) {
           <path d="M${offset-10} 0 L${offset} 10 L${offset+10} -10" 
               stroke="${color}" stroke-width="2" fill="none" />
       `;
-      showAlert(`Terjadi penggumpalan pada reagen ${plateType}`, 'success');
+      showAlert(`Terjadi penggumpalan reagen ${plateType}`, 'success');
   } else {
       resultEl.innerHTML = `
           <circle cx="${offset}" cy="0" r="15" fill="${color}" fill-opacity="0.5" />
           <path d="M${offset-10} -10 L${offset+10} 10" stroke="${color}" stroke-width="2" />
           <path d="M${offset-10} 10 L${offset+10} -10" stroke="${color}" stroke-width="2" />
       `;
-      showAlert(`Tidak terjadi penggumpalan pada reagen ${plateType}`, 'error');
+      showAlert(`No clumping of reagents ${plateType}`, 'error');
   }
 }
 
 
 function showBloodTypeSelectionInterface() {
   // Perbarui pesan
-  messageEl.textContent = 'Berdasarkan hasil tes, tentukan golongan darah.';
+  messageEl.textContent = 'Based on the test results, determine the blood type.';
   
   // Dapatkan container pemilihan golongan darah
   const selectionContainer = document.getElementById('blood-type-selection-container');
@@ -2637,15 +2637,15 @@ function showBloodTypeSelectionInterface() {
           const helperBox = document.createElement('div');
           helperBox.className = 'helper-box';
           helperBox.innerHTML = `
-              <h4 class="font-bold text-blue-700 mb-2">Cara Menentukan Golongan Darah:</h4>
+              <h4 class="font-bold text-blue-700 mb-2">How to determine blood type:</h4>
               <ul class="list-disc list-inside text-gray-700 space-y-1">
-                  <li>Jika terjadi penggumpalan di reagen A: mengandung antigen A</li>
-                  <li>Jika terjadi penggumpalan di reagen B: mengandung antigen B</li>
-                  <li>Jika terjadi penggumpalan di reagen Rh: Rhesus positif (+)</li>
-                  <li>Golongan A: penggumpalan hanya di reagen A</li>
-                  <li>Golongan B: penggumpalan hanya di reagen B</li>
-                  <li>Golongan AB: penggumpalan di reagen A dan B</li>
-                  <li>Golongan O: tidak ada penggumpalan di reagen A dan B</li>
+                  <li>If clumping occurs in reagent A: contains antigen A/li>
+                  <li>If clumping occurs in reagent B: contains antigen A B</li>
+                  <li>If clumping occurs in the Rh reagent: Rhesus positive (+)</li>
+                  <li>Type A: clumping only in reagent A</li>
+                  <li>Type B: clumping only in reagent B</li>
+                  <li>Type AB: clumping in reagents A and B</li>
+                  <li>Type O: no clumping in reagents A and B</li>
               </ul>
           `;
           
@@ -2767,7 +2767,7 @@ function confirmBloodGroup() {
           resultDisplay.classList.add('success-pulse');
           
           // Perbarui elemen teks hasil
-          document.getElementById('result-text').textContent = `Golongan Darah: ${selectedBloodType}`;
+          document.getElementById('result-text').textContent = `Blood Type: ${selectedBloodType}`;
           
           // Perbarui tampilan golongan darah
           const resultBloodType = document.getElementById('result-blood-type');
@@ -2777,7 +2777,7 @@ function confirmBloodGroup() {
       }
       
       // Tampilkan pesan berhasil
-      showAlert('Identifikasi golongan darah benar!', 'success');
+      showAlert('Blood group identification is correct!', 'success');
       
       // Perbarui status game dan pesan
       gameState.bloodGroupIdentified = true;
@@ -2787,7 +2787,7 @@ function confirmBloodGroup() {
       nextBtn.disabled = false;
   } else {
       // Tampilkan pesan kesalahan
-      showAlert(`Identifikasi golongan darah salah! Silakan coba lagi.`, 'error');
+      showAlert(`Incorrect blood type identification! Please try again.`, 'error');
       
       // Reset pilihan tapi biarkan interface tetap terbuka
       resetBloodTypeSelection();
@@ -2801,7 +2801,7 @@ function confirmBloodGroup() {
           }, 600);
       }
   } 
-  messageEl.textContent = 'Identifikasi golongan darah salah. Silakan coba lagi berdasarkan hasil tes.';
+  messageEl.textContent = 'Incorrect blood type identification. Please try again based on the test results.';
     
   // Animasi petunjuk visual tambahan
   createHelpfulHint();
@@ -2825,28 +2825,28 @@ function createHelpfulHint() {
   const correctBloodType = gameState.donorBloodType;
   
   // Petunjuk berdasarkan hasil tes (tanpa memberikan jawaban langsung)
-  let hintText = '<h4 class="font-bold text-yellow-700 mb-1">Petunjuk:</h4><ul class="list-disc list-inside text-gray-700 space-y-1">';
+  let hintText = '<h4 class="font-bold text-yellow-700 mb-1">Hint:</h4><ul class="list-disc list-inside text-gray-700 space-y-1">';
   
   // Petunjuk untuk golongan ABO
   if (correctBloodType.includes('A') && correctBloodType.includes('B')) {
       // AB
-      hintText += '<li>Terjadi penggumpalan pada <strong>kedua reagen A dan B</strong></li>';
+      hintText += '<li>Clumping occurs <strong>both reagents A and B</strong></li>';
   } else if (correctBloodType.includes('A')) {
       // A
-      hintText += '<li>Terjadi penggumpalan pada <strong>reagen A saja</strong></li>';
+      hintText += '<li>Clumping occurs in <strong>reagent A only</strong></li>';
   } else if (correctBloodType.includes('B')) {
       // B
-      hintText += '<li>Terjadi penggumpalan pada <strong>reagen B saja</strong></li>';
+      hintText += '<li>Clumping occurs in <strong>reagent B only</strong></li>';
   } else {
       // O
-      hintText += '<li>Tidak terjadi penggumpalan pada <strong>reagen A maupun B</strong></li>';
+      hintText += '<li>No clumping occurs in <strong>reagents A or B</strong></li>';
   }
   
   // Petunjuk untuk Rhesus
   if (correctBloodType.includes('+')) {
-      hintText += '<li>Terjadi penggumpalan pada <strong>reagen Rh</strong></li>';
+      hintText += '<li>Clumping occurs in <strong>reagent Rh</strong></li>';
   } else {
-      hintText += '<li>Tidak terjadi penggumpalan pada <strong>reagen Rh</strong></li>';
+      hintText += '<li>No clumping occurs in <strong>reagent Rh</strong></li>';
   }
   
   hintText += '</ul>';
@@ -2920,10 +2920,10 @@ function moveToNextStage() {
       }, 2000);
   }
   else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
-      showTransition('Selesai', 'Transfusi darah telah berhasil dilakukan.');
+      showTransition('Completed', 'Blood transfusion was successfully.');
       setTimeout(() => {
-          messageEl.textContent = 'Simulator selesai. Refresh halaman untuk memulai kembali.';
-          showAlert('Transfusi darah berhasil!', 'success');
+          messageEl.textContent = 'Simulator is complete. Refresh the page to start over.';
+          showAlert('Blood transfusion was successful!', 'success');
       }, 2000);
   }
 }
@@ -2959,8 +2959,8 @@ function startTransfusionStage() {
     // Make IV stand more prominent
     transfusionStandEl.classList.add('stand-highlight');
     
-    messageEl.textContent = 'Pasang kantung darah pada tiang infus dengan cara drag & drop.';
-    showAlert('Drag kantung darah ke tiang infus untuk memulai transfusi', 'info');
+    messageEl.textContent = 'Attach the blood bag to the infusion pole by drag & drop.';
+    showAlert('Drag the blood bag to the infusion pole to start the transfusion', 'info');
     
     // Setup drag and drop for blood bag
     setupBloodBagDragAndDrop();
@@ -3102,8 +3102,8 @@ function dragEnd() {
         }, 300);
         
         // Tampilkan pesan sukses
-        showAlert('Kantung darah berhasil dipasang!', 'success');
-        messageEl.textContent = 'Transfusi darah sedang berlangsung...';
+        showAlert('Blood bag successfully placed!', 'success');
+        messageEl.textContent = 'Blood transfusion is in progress....';
     } else {
         // Jika tidak di drop zone, kembali ke posisi awal
         bloodBagEl.style.transition = 'all 0.3s ease';
@@ -3206,7 +3206,7 @@ function startTransfusionAnimation(tubeElement) {
         showAlert('Transfusi darah berhasil!', 'success');
         // Perbarui pesan di panel bawah
         showAlert('Transfusi darah berhasil!', 'success');
-        messageEl.textContent = 'Transfusi darah selesai. Klik tombol "Lanjut" untuk mengakhiri simulasi.';
+        messageEl.textContent = 'The blood transfusion is complete. Click the “Next” button to end the simulation.';
         
         // Enable dan tampilkan tombol "Lanjut"
         gameState.transfusionComplete = true;
