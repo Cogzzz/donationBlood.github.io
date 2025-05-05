@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMI Blood Heroes - Admin Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Chart.js for analytics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+      .sidebar-link.active {
+        background-color: #ef4444;
+        color: white;
+      }
+      
+      .sidebar-link:hover:not(.active) {
+        background-color: #fee2e2;
+      }
+      
+      .tab-content {
+        display: none;
+      }
+      
+      .tab-content.active {
+        display: block;
+      }
+      
+      .blood-type-card {
+        transition: all 0.3s ease;
+      }
+      
+      .blood-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      
+      .quiz-question {
+        transition: all 0.2s ease;
+      }
+      
+      .quiz-question:hover {
+        background-color: #f9fafb;
+      }
+      
+      .notification-dot {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 8px;
+        height: 8px;
+        background-color: #ef4444;
+        border-radius: 50%;
+      }
+
+      /* Animation for data refreshing */
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
+      
+      .pulse-animation {
+        animation: pulse 1.5s infinite;
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d1d5db;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="bg-white w-64 min-h-screen shadow-md fixed left-0 top-0 z-10 hidden md:block">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center space-x-2">
+          <img src="img/blood.png" alt="PMI Blood Heroes Logo" class="h-8 w-8 rounded-full object-cover" />
+          <div>
+            <div class="font-bold text-lg text-gray-800">PMI Blood Heroes</div>
+            <div class="text-xs text-gray-500">Admin Dashboard</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="py-4">
+        <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Main
+        </div>
+        
+        <a href="#dashboard" class="sidebar-link active flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-tachometer-alt w-5 text-center mr-2"></i>
+          Dashboard
+        </a>
+        
+        <a href="#blood-inventory" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-fill-drip w-5 text-center mr-2"></i>
+          Blood Inventory
+        </a>
+        
+        <a href="#quiz-management" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-question-circle w-5 text-center mr-2"></i>
+          Quiz Management
+        </a>
+        
+        <a href="#simulation" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-gamepad w-5 text-center mr-2"></i>
+          Simulation Settings
+        </a>
+        
+        <a href="#users" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-users w-5 text-center mr-2"></i>
+          User Management
+        </a>
+        
+        <a href="#rewards" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-gift w-5 text-center mr-2"></i>
+          Rewards Program
+        </a>
+        
+        <a href="#educational" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-book-medical w-5 text-center mr-2"></i>
+          Educational Content
+        </a>
+        
+        <div class="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          System
+        </div>
+        
+        <a href="#settings" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-cog w-5 text-center mr-2"></i>
+          Settings
+        </a>
+        
+        <a href="#" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+          <i class="fas fa-sign-out-alt w-5 text-center mr-2"></i>
+          Logout
+        </a>
+      </div>
+    </aside>
+    
+    <!-- Mobile sidebar toggle -->
+    <div class="fixed bottom-4 right-4 md:hidden z-50">
+      <button id="mobile-menu-button" class="bg-red-600 text-white rounded-full p-3 shadow-lg">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    
+    <!-- Mobile sidebar -->
+    <div id="mobile-sidebar" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden">
+      <div class="bg-white w-64 min-h-screen shadow-md animate-slide-in">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+          <div class="flex items-center space-x-2">
+            <img src="img/blood.png" alt="PMI Blood Heroes Logo" class="h-8 w-8 rounded-full object-cover" />
+            <div>
+              <div class="font-bold text-lg text-gray-800">PMI Blood Heroes</div>
+              <div class="text-xs text-gray-500">Admin Dashboard</div>
+            </div>
+          </div>
+          <button id="close-sidebar" class="text-gray-500">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <!-- Same links as desktop sidebar -->
+        <div class="py-4">
+          <a href="#dashboard" class="sidebar-link active flex items-center px-4 py-3 text-gray-800">
+            <i class="fas fa-tachometer-alt w-5 text-center mr-2"></i>
+            Dashboard
+          </a>
+          
+          <a href="#blood-inventory" class="sidebar-link flex items-center px-4 py-3 text-gray-800">
+            <i class="fas fa-fill-drip w-5 text-center mr-2"></i>
+            Blood Inventory
+          </a>
+          
+          <!-- Other links... -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="ml-0 md:ml-64 flex-1">
+      <!-- Top Navigation -->
+      <nav class="bg-white shadow-md py-3 px-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <button id="sidebar-toggle" class="text-gray-500 mr-4 md:hidden">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="text-lg font-semibold text-gray-800">Dashboard</div>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="notification-dot"></span>
+              </button>
+            </div>
+            
+            <div class="relative">
+              <button id="user-menu-button" class="flex items-center focus:outline-none">
+                <img src="img/admin.png" alt="Admin Profile" class="h-8 w-8 rounded-full object-cover" />
+                <span class="ml-2 font-medium text-sm hidden sm:block">Budi Santoso</span>
+                <i class="fas fa-chevron-down text-xs ml-2 hidden sm:block"></i>
+              </button>
+              
+              <!-- User dropdown menu -->
+              <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                <div class="border-t border-gray-100"></div>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      
+      <!-- Content Area -->
+      <div class="p-4 sm:p-6">
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Total Users Card -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-sm font-medium text-gray-500">Total Users</div>
+                  <div class="text-2xl font-bold text-gray-800 mt-1">2,845</div>
+                </div>
+                <div class="bg-blue-100 p-2 rounded-lg">
+                  <i class="fas fa-users text-blue-500"></i>
+                </div>
+              </div>
+              <div class="flex items-center mt-3">
+                <span class="text-green-500 text-sm flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 12.5%
+                </span>
+                <span class="text-gray-500 text-sm ml-2">vs last month</span>
+              </div>
+            </div>
+            
+            <!-- Total Donations Card -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-sm font-medium text-gray-500">Total Donations</div>
+                  <div class="text-2xl font-bold text-gray-800 mt-1">564</div>
+                </div>
+                <div class="bg-red-100 p-2 rounded-lg">
+                  <i class="fas fa-heart text-red-500"></i>
+                </div>
+              </div>
+              <div class="flex items-center mt-3">
+                <span class="text-green-500 text-sm flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 8.2%
+                </span>
+                <span class="text-gray-500 text-sm ml-2">vs last month</span>
+              </div>
+            </div>
+            
+            <!-- Quiz Completions -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-sm font-medium text-gray-500">Quiz Completions</div>
+                  <div class="text-2xl font-bold text-gray-800 mt-1">1,248</div>
+                </div>
+                <div class="bg-yellow-100 p-2 rounded-lg">
+                  <i class="fas fa-question-circle text-yellow-500"></i>
+                </div>
+              </div>
+              <div class="flex items-center mt-3">
+                <span class="text-green-500 text-sm flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 23.7%
+                </span>
+                <span class="text-gray-500 text-sm ml-2">vs last month</span>
+              </div>
+            </div>
+            
+            <!-- Sim Completions -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-sm font-medium text-gray-500">Sim Completions</div>
+                  <div class="text-2xl font-bold text-gray-800 mt-1">752</div>
+                </div>
+                <div class="bg-purple-100 p-2 rounded-lg">
+                  <i class="fas fa-gamepad text-purple-500"></i>
+                </div>
+              </div>
+              <div class="flex items-center mt-3">
+                <span class="text-green-500 text-sm flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 15.3%
+                </span>
+                <span class="text-gray-500 text-sm ml-2">vs last month</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Blood Inventory Overview -->
+            <div class="bg-white rounded-lg shadow-md p-4 lg:col-span-2">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Blood Inventory Overview</h2>
+                <div class="text-sm text-gray-500">Last updated: Today, 10:45 AM</div>
+              </div>
+              <div>
+                <canvas id="bloodInventoryChart" height="250"></canvas>
+              </div>
+            </div>
+            
+            <!-- Critical Blood Types -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Critical Blood Types</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">View All</button>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                      <span class="text-red-600 font-bold">AB-</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="font-medium">AB Negative</div>
+                      <div class="text-sm text-gray-500">7 units available</div>
+                    </div>
+                  </div>
+                  <div class="text-red-600 font-medium">Critical</div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                      <span class="text-red-600 font-bold">B-</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="font-medium">B Negative</div>
+                      <div class="text-sm text-gray-500">12 units available</div>
+                    </div>
+                  </div>
+                  <div class="text-red-600 font-medium">Critical</div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                      <span class="text-red-600 font-bold">A-</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="font-medium">A Negative</div>
+                      <div class="text-sm text-gray-500">18 units available</div>
+                    </div>
+                  </div>
+                  <div class="text-red-600 font-medium">Critical</div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                      <span class="text-red-600 font-bold">O-</span>
+                    </div>
+                    <div class="ml-3">
+                      <div class="font-medium">O Negative</div>
+                      <div class="text-sm text-gray-500">32 units available</div>
+                    </div>
+                  </div>
+                  <div class="text-yellow-600 font-medium">Low</div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <button class="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200">
+                  Request Emergency Donation
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <!-- Recent Donations -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Recent Donations</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">View All</button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full">
+                  <thead>
+                    <tr class="text-left text-gray-500 text-sm">
+                      <th class="py-2 px-3">Donor</th>
+                      <th class="py-2 px-3">Blood Type</th>
+                      <th class="py-2 px-3">Date</th>
+                      <th class="py-2 px-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="Donor" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Siti Nuraini</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">A+</td>
+                      <td class="py-3 px-3">Today, 9:30 AM</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Completed</span>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="Donor" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Arif Hidayat</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">O+</td>
+                      <td class="py-3 px-3">Today, 8:15 AM</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Completed</span>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="Donor" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Dian Permata</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">B-</td>
+                      <td class="py-3 px-3">Yesterday, 4:45 PM</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Completed</span>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="Donor" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Joko Widodo</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">AB+</td>
+                      <td class="py-3 px-3">Yesterday, 2:10 PM</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Completed</span>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="Donor" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Ratna Dewi</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">A-</td>
+                      <td class="py-3 px-3">Yesterday, 10:30 AM</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Completed</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Recent Quiz Activity -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Recent Quiz Activity</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">View All</button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full">
+                  <thead>
+                    <tr class="text-left text-gray-500 text-sm">
+                      <th class="py-2 px-3">User</th>
+                      <th class="py-2 px-3">Quiz Name</th>
+                      <th class="py-2 px-3">Score</th>
+                      <th class="py-2 px-3">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="User" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Budi_Smart</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">Blood Donation Basics</td>
+                      <td class="py-3 px-3">
+                        <span class="font-medium">90%</span>
+                      </td>
+                      <td class="py-3 px-3">Today, 11:20 AM</td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="User" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Sinta22</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">Blood Types Advanced</td>
+                      <td class="py-3 px-3">
+                        <span class="font-medium">85%</span>
+                      </td>
+                      <td class="py-3 px-3">Today, 10:45 AM</td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="User" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Maya_SMA</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">Blood Donation FAQ</td>
+                      <td class="py-3 px-3">
+                        <span class="font-medium">100%</span>
+                      </td>
+                      <td class="py-3 px-3">Today, 9:15 AM</td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="User" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Rudi_PMI</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">Blood Components</td>
+                      <td class="py-3 px-3">
+                        <span class="font-medium">75%</span>
+                      </td>
+                      <td class="py-3 px-3">Yesterday, 3:30 PM</td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">
+                        <div class="flex items-center">
+                          <img src="img/user.png" alt="User" class="h-8 w-8 rounded-full object-cover" />
+                          <div class="ml-2">Dinda09</div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3">Donation Process</td>
+                      <td class="py-3 px-3">
+                        <span class="font-medium">95%</span>
+                      </td>
+                      <td class="py-3 px-3">Yesterday, 1:45 PM</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Blood Inventory Tab -->
+        <div id="blood-inventory-tab" class="tab-content">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Blood Inventory Management</h1>
+            <p class="text-gray-600">Monitor and manage available blood units across all types.</p>
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-800">Current Blood Stock</h2>
+              
+              <div class="flex items-center space-x-2 mt-3 sm:mt-0">
+                <div class="relative">
+                  <input type="text" placeholder="Search blood type..." class="border border-gray-300 rounded-lg px-3 py-2 w-48 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" />
+                  <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                
+                <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                  <i class="fas fa-plus mr-1"></i> Add Blood Stock
+                </button>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Blood Type Cards -->
+              <div class="blood-type-card bg-white border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                    <span class="text-red-600 font-bold text-lg">A+</span>
+                  </div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-sync-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-medium">A Positive</span>
+                  <span class="text-green-600 font-medium">Available</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                  <div class="bg-green-600 h-2.5 rounded-full" style="width: 85%"></div>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-500">85 units</span>
+                  <span class="text-gray-500">100 units max</span>
+                </div>
+                <div class="mt-3 space-x-2">
+                  <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input type="number" value="1" class="w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm" />
+                  <button class="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                  <button class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm font-medium">
+                    Update
+                  </button>
+                </div>
+              </div>
+              
+              <div class="blood-type-card bg-white border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                    <span class="text-red-600 font-bold text-lg">B+</span>
+                  </div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-sync-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-medium">B Positive</span>
+                  <span class="text-yellow-600 font-medium">Low</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                  <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 43%"></div>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-500">43 units</span>
+                  <span class="text-gray-500">100 units max</span>
+                </div>
+                <div class="mt-3 space-x-2">
+                  <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input type="number" value="1" class="w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm" />
+                  <button class="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                  <button class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm font-medium">
+                    Update
+                  </button>
+                </div>
+              </div>
+              
+              <div class="blood-type-card bg-white border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                    <span class="text-red-600 font-bold text-lg">AB+</span>
+                  </div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-sync-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-medium">AB Positive</span>
+                  <span class="text-red-600 font-medium">Critical</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                  <div class="bg-red-600 h-2.5 rounded-full" style="width: 25%"></div>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-500">25 units</span>
+                  <span class="text-gray-500">100 units max</span>
+                </div>
+                <div class="mt-3 space-x-2">
+                  <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input type="number" value="1" class="w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm" />
+                  <button class="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                  <button class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm font-medium">
+                    Update
+                  </button>
+                </div>
+              </div>
+              
+              <div class="blood-type-card bg-white border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                    <span class="text-red-600 font-bold text-lg">O+</span>
+                  </div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-sync-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-medium">O Positive</span>
+                  <span class="text-yellow-600 font-medium">Low</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                  <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 60%"></div>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-500">60 units</span>
+                  <span class="text-gray-500">100 units max</span>
+                </div>
+                <div class="mt-3 space-x-2">
+                  <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input type="number" value="1" class="w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm" />
+                  <button class="bg-green-100 hover:bg-green-200 text-green-700 px-2 py-1 rounded text-sm font-medium">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                  <button class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm font-medium">
+                    Update
+                  </button>
+                </div>
+              </div>
+              
+              <!-- More blood type cards will go here (A-, B-, AB-, O-) -->
+            </div>
+            
+            <!-- Blood Expiry Tracker -->
+            <div class="mt-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Blood Expiry Tracker</h3>
+              <div class="overflow-x-auto">
+                <table class="min-w-full">
+                  <thead>
+                    <tr class="text-left text-gray-500 text-sm border-b">
+                      <th class="py-2 px-3">Batch ID</th>
+                      <th class="py-2 px-3">Blood Type</th>
+                      <th class="py-2 px-3">Units</th>
+                      <th class="py-2 px-3">Collection Date</th>
+                      <th class="py-2 px-3">Expiry Date</th>
+                      <th class="py-2 px-3">Status</th>
+                      <th class="py-2 px-3">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">BATCH-2345</td>
+                      <td class="py-3 px-3">A+</td>
+                      <td class="py-3 px-3">15</td>
+                      <td class="py-3 px-3">Apr 15, 2025</td>
+                      <td class="py-3 px-3">May 27, 2025</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Valid</span>
+                      </td>
+                      <td class="py-3 px-3">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">BATCH-2344</td>
+                      <td class="py-3 px-3">B+</td>
+                      <td class="py-3 px-3">8</td>
+                      <td class="py-3 px-3">Apr 10, 2025</td>
+                      <td class="py-3 px-3">May 22, 2025</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Valid</span>
+                      </td>
+                      <td class="py-3 px-3">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">BATCH-2341</td>
+                      <td class="py-3 px-3">AB+</td>
+                      <td class="py-3 px-3">5</td>
+                      <td class="py-3 px-3">Apr 01, 2025</td>
+                      <td class="py-3 px-3">May 13, 2025</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Expiring Soon</span>
+                      </td>
+                      <td class="py-3 px-3">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="text-sm">
+                      <td class="py-3 px-3">BATCH-2339</td>
+                      <td class="py-3 px-3">O-</td>
+                      <td class="py-3 px-3">10</td>
+                      <td class="py-3 px-3">Mar 25, 2025</td>
+                      <td class="py-3 px-3">May 06, 2025</td>
+                      <td class="py-3 px-3">
+                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">Critical</span>
+                      </td>
+                      <td class="py-3 px-3">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recent Donation Requests & Campaigns -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Donation Requests</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">View All</button>
+              </div>
+              <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="flex items-center">
+                        <span class="text-red-600 font-medium">Emergency</span>
+                        <span class="mx-2 text-gray-400">•</span>
+                        <span class="text-gray-600 text-sm">2 hours ago</span>
+                      </div>
+                      <div class="font-medium mt-1">RSUD Dr. Soetomo</div>
+                      <div class="text-sm text-gray-600 mt-1">Need 5 units of B- for surgery patient</div>
+                    </div>
+                    <button class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700">
+                      Fulfill
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="flex items-center">
+                        <span class="text-yellow-600 font-medium">Urgent</span>
+                        <span class="mx-2 text-gray-400">•</span>
+                        <span class="text-gray-600 text-sm">4 hours ago</span>
+                      </div>
+                      <div class="font-medium mt-1">RS Premier Surabaya</div>
+                      <div class="text-sm text-gray-600 mt-1">Need 3 units of AB+ for cancer patient</div>
+                    </div>
+                    <button class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700">
+                      Fulfill
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="flex items-center">
+                        <span class="text-green-600 font-medium">Regular</span>
+                        <span class="mx-2 text-gray-400">•</span>
+                        <span class="text-gray-600 text-sm">Yesterday</span>
+                      </div>
+                      <div class="font-medium mt-1">RS Siloam Surabaya</div>
+                      <div class="text-sm text-gray-600 mt-1">Need 10 units of O+ for general supply</div>
+                    </div>
+                    <button class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700">
+                      Fulfill
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Active Campaigns</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">Create Campaign</button>
+              </div>
+              <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="font-medium">Emergency Blood Drive</div>
+                      <div class="text-sm text-gray-600 mt-1">Goal: 100 donors | Current: 62</div>
+                      <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div class="bg-red-600 h-2 rounded-full" style="width: 62%"></div>
+                      </div>
+                      <div class="text-sm text-gray-600 mt-2">Ends in 3 days</div>
+                    </div>
+                    <div class="flex flex-col space-y-2">
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                      </button>
+                      <button class="text-red-600 hover:text-red-800 text-sm">
+                        <i class="fas fa-chart-bar mr-1"></i> Stats
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="font-medium">University Blood Drive</div>
+                      <div class="text-sm text-gray-600 mt-1">Goal: 50 donors | Current: 38</div>
+                      <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div class="bg-red-600 h-2 rounded-full" style="width: 76%"></div>
+                      </div>
+                      <div class="text-sm text-gray-600 mt-2">Ends in 1 week</div>
+                    </div>
+                    <div class="flex flex-col space-y-2">
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                      </button>
+                      <button class="text-red-600 hover:text-red-800 text-sm">
+                        <i class="fas fa-chart-bar mr-1"></i> Stats
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="font-medium">World Blood Donor Day</div>
+                      <div class="text-sm text-gray-600 mt-1">Goal: 200 donors | Current: 85</div>
+                      <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div class="bg-red-600 h-2 rounded-full" style="width: 42%"></div>
+                      </div>
+                      <div class="text-sm text-gray-600 mt-2">Ends in 3 weeks</div>
+                    </div>
+                    <div class="flex flex-col space-y-2">
+                      <button class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                      </button>
+                      <button class="text-red-600 hover:text-red-800 text-sm">
+                        <i class="fas fa-chart-bar mr-1"></i> Stats
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quiz Management Tab -->
+        <div id="quiz-management-tab" class="tab-content">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Quiz Management</h1>
+            <p class="text-gray-600">Create and manage educational quizzes for the application.</p>
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-800">Quiz Categories</h2>
+              
+              <div class="flex items-center space-x-2 mt-3 sm:mt-0">
+                <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                  <i class="fas fa-plus mr-1"></i> Add Category
+                </button>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="border border-gray-200 rounded-lg p-4 hover:border-red-500 transition duration-200">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="font-medium text-lg">Blood Donation Basics</div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">Introductory questions about blood donation process and requirements.</p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="flex items-center mr-4">
+                    <i class="fas fa-question-circle mr-1"></i> 10 questions
+                  </span>
+                  <span class="flex items-center">
+                    <i class="fas fa-user mr-1"></i> 840 completions
+                  </span>
+                </div>
+              </div>
+              
+              <div class="border border-gray-200 rounded-lg p-4 hover:border-red-500 transition duration-200">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="font-medium text-lg">Blood Types Advanced</div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">Detailed questions about blood types, compatibility, and transfusion.</p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="flex items-center mr-4">
+                    <i class="fas fa-question-circle mr-1"></i> 15 questions
+                  </span>
+                  <span class="flex items-center">
+                    <i class="fas fa-user mr-1"></i> 562 completions
+                  </span>
+                </div>
+              </div>
+              
+              <div class="border border-gray-200 rounded-lg p-4 hover:border-red-500 transition duration-200">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="font-medium text-lg">Blood Components</div>
+                  <div class="flex">
+                    <button class="text-gray-500 hover:text-gray-700 mr-2">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-600">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">Questions about different blood components and their functions.</p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="flex items-center mr-4">
+                    <i class="fas fa-question-circle mr-1"></i> 12 questions
+                  </span>
+                  <span class="flex items-center">
+                    <i class="fas fa-user mr-1"></i> 421 completions
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quiz Questions Section -->
+          <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-800">Quiz Questions</h2>
+              
+              <div class="flex items-center space-x-2 mt-3 sm:mt-0">
+                <div class="relative">
+                  <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500">
+                    <option>All Categories</option>
+                    <option>Blood Donation Basics</option>
+                    <option>Blood Types Advanced</option>
+                    <option>Blood Components</option>
+                  </select>
+                </div>
+                
+                <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                  <i class="fas fa-plus mr-1"></i> Add Question
+                </button>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <!-- Question Card 1 -->
+              <div class="quiz-question border border-gray-200 rounded-lg p-4">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Blood Donation Basics</span>
+                      <span class="ml-2 text-gray-500 text-sm">Question ID: Q-1001</span>
+                    </div>
+                    <div class="text-gray-800 font-medium mb-2">How long does it take for the body to replace plasma after donating blood?</div>
+                    
+                    <div class="pl-4 mt-2 text-gray-600">
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-green-500 flex items-center justify-center mr-2">
+                          <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                        <span>24 hours (Correct)</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>12 hours</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>36 hours</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>48 hours</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex mt-3 space-x-2">
+                    <button class="text-blue-600 hover:text-blue-800 text-sm">
+                      <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button class="text-red-600 hover:text-red-800 text-sm">
+                      <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-800 text-sm">
+                      <i class="fas fa-chart-bar mr-1"></i> Stats
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Question Card 2 -->
+              <div class="quiz-question border border-gray-200 rounded-lg p-4">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Blood Types Advanced</span>
+                      <span class="ml-2 text-gray-500 text-sm">Question ID: Q-2003</span>
+                    </div>
+                    <div class="text-gray-800 font-medium mb-2">What blood type is known as the universal donor?</div>
+                    
+                    <div class="pl-4 mt-2 text-gray-600">
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>A+</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>B-</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>AB+</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-green-500 flex items-center justify-center mr-2">
+                          <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                        <span>O- (Correct)</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex mt-3 space-x-2">
+                    <button class="text-blue-600 hover:text-blue-800 text-sm">
+                      <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button class="text-red-600 hover:text-red-800 text-sm">
+                      <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-800 text-sm">
+                      <i class="fas fa-chart-bar mr-1"></i> Stats
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Question Card 3 -->
+              <div class="quiz-question border border-gray-200 rounded-lg p-4">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Blood Donation Basics</span>
+                      <span class="ml-2 text-gray-500 text-sm">Question ID: Q-1008</span>
+                    </div>
+                    <div class="text-gray-800 font-medium mb-2">How many lives can one blood donation potentially save?</div>
+                    
+                    <div class="pl-4 mt-2 text-gray-600">
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>1 life</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-green-500 flex items-center justify-center mr-2">
+                          <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                        <span>Up to 3 lives (Correct)</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>Up to 5 lives</span>
+                      </div>
+                      <div class="flex items-center mb-1">
+                        <div class="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                        <span>Up to 10 lives</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex mt-3 space-x-2">
+                    <button class="text-blue-600 hover:text-blue-800 text-sm">
+                      <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button class="text-red-600 hover:text-red-800 text-sm">
+                      <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-800 text-sm">
+                      <i class="fas fa-chart-bar mr-1"></i> Stats
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Add New Question Modal (Hidden by default) -->
+            <div class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" id="add-question-modal">
+              <div class="bg-white rounded-lg max-w-3xl mx-auto mt-20 p-6">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-semibold text-gray-800">Add New Question</h3>
+                  <button class="text-gray-500 hover:text-gray-700" id="close-modal">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <form>
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-1">Category</label>
+                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500">
+                      <option>Blood Donation Basics</option>
+                      <option>Blood Types Advanced</option>
+                      <option>Blood Components</option>
+                    </select>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-1">Question</label>
+                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" rows="3" placeholder="Enter your question here..."></textarea>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-1">Options</label>
+                    
+                    <div class="space-y-3">
+                      <div class="flex items-center">
+                        <input type="radio" name="correct_answer" id="option1" class="mr-2" />
+                        <input type="text" placeholder="Option 1" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" />
+                      </div>
+                      
+                      <div class="flex items-center">
+                        <input type="radio" name="correct_answer" id="option2" class="mr-2" />
+                        <input type="text" placeholder="Option 2" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" />
+                      </div>
+                      
+                      <div class="flex items-center">
+                        <input type="radio" name="correct_answer" id="option3" class="mr-2" />
+                        <input type="text" placeholder="Option 3" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" />
+                      </div>
+                      
+                      <div class="flex items-center">
+                        <input type="radio" name="correct_answer" id="option4" class="mr-2" />
+                        <input type="text" placeholder="Option 4" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-1">Explanation (Optional)</label>
+                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Explanation for the correct answer..."></textarea>
+                  </div>
+                  
+                  <div class="flex justify-end space-x-3">
+                    <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200">
+                      Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200">
+                      Add Question
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Simulation Settings Tab -->
+        <div id="simulation-tab" class="tab-content">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Simulation Settings</h1>
+            <p class="text-gray-600">Configure blood donation simulation parameters and scenarios.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Simulation Tools -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Simulation Tools</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">
+                  <i class="fas fa-plus mr-1"></i> Add Tool
+                </button>
+              </div>
+              
+              <div class="space-y-3">
+                <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="rounded-lg p-3 bg-white border border-gray-300 mr-3">
+                        <svg viewBox="0 0 60 60" class="w-10 h-10">
+                          <rect x="10" y="25" width="40" height="10" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
+                          <circle cx="10" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
+                          <circle cx="50" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="font-medium">Alcohol Cotton</div>
+                        <div class="text-sm text-gray-500">Used for cleaning donation site</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                      </label>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="rounded-lg p-3 bg-white border border-gray-300 mr-3">
+                        <svg viewBox="0 0 60 60" class="w-10 h-10">
+                          <rect x="10" y="25" width="30" height="10" rx="2" fill="#bbdefb" stroke="#1976d2" />
+                          <rect x="40" y="27" width="15" height="6" fill="#e0e0e0" stroke="#bdbdbd" />
+                          <path d="M55 30 L60 30" stroke="#bdbdbd" stroke-width="1" />
+                          <rect x="5" y="27" width="5" height="6" fill="#42a5f5" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="font-medium">Syringe</div>
+                        <div class="text-sm text-gray-500">Used for blood collection</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                      </label>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="rounded-lg p-3 bg-white border border-gray-300 mr-3">
+                        <svg viewBox="0 0 60 60" class="w-10 h-10">
+                          <rect x="10" y="25" width="40" height="10" rx="2" fill="#ffe0b2" stroke="#ff9800" />
+                          <rect x="20" y="25" width="20" height="10" fill="#f5f5f5" />
+                          <line x1="15" y1="20" x2="15" y2="40" stroke="#ff9800" stroke-width="1" />
+                          <line x1="25" y1="20" x2="25" y2="40" stroke="#ff9800" stroke-width="1" />
+                          <line x1="35" y1="20" x2="35" y2="40" stroke="#ff9800" stroke-width="1" />
+                          <line x1="45" y1="20" x2="45" y2="40" stroke="#ff9800" stroke-width="1" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="font-medium">Bandage</div>
+                        <div class="text-sm text-gray-500">Used after blood collection</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                      </label>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="rounded-lg p-3 bg-white border border-gray-300 mr-3">
+                        <svg viewBox="0 0 60 60" class="w-10 h-10">
+                          <path d="M15 15 L45 15 L45 40 Q30 50 15 40 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="1" />
+                          <circle cx="30" cy="25" r="6" fill="white" stroke="#7b1fa2" stroke-width="1" />
+                          <text x="30" y="28" text-anchor="middle" font-size="6">A+</text>
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="font-medium">Blood Bag</div>
+                        <div class="text-sm text-gray-500">Used for transfusion stage</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                      </label>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Simulation Stages -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Simulation Stages</h2>
+                <button class="text-red-600 hover:text-red-800 text-sm font-medium">
+                  <i class="fas fa-plus mr-1"></i> Add Stage
+                </button>
+              </div>
+              
+              <div class="space-y-3">
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="flex items-center">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-red-600 text-white text-sm mr-2">1</span>
+                        <span class="font-medium">Donor Stage</span>
+                      </div>
+                      <p class="text-sm text-gray-600 mt-2 ml-8">Blood collection from donor with proper procedure</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button class="text-gray-500 hover:text-gray-700 mr-2">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-cog"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="flex items-center">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-red-600 text-white text-sm mr-2">2</span>
+                        <span class="font-medium">Laboratory Stage</span>
+                      </div>
+                      <p class="text-sm text-gray-600 mt-2 ml-8">Blood type testing and identification</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button class="text-gray-500 hover:text-gray-700 mr-2">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-cog"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-3">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="flex items-center">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-red-600 text-white text-sm mr-2">3</span>
+                        <span class="font-medium">Transfusion Stage</span>
+                      </div>
+                      <p class="text-sm text-gray-600 mt-2 ml-8">Blood transfusion to recipient with compatibility check</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button class="text-gray-500 hover:text-gray-700 mr-2">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-cog"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <h3 class="font-medium text-gray-800 mb-2">Simulation Difficulty</h3>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-500">Easy</span>
+                  <div class="w-full mx-4">
+                    <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600" min="1" max="3" value="2">
+                  </div>
+                  <span class="text-sm text-gray-500">Hard</span>
+                </div>
+                <div class="text-center mt-2 text-sm text-gray-600">Current: Medium</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Blood Type Settings -->
+          <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-800">Blood Type Settings</h2>
+              <div class="text-sm text-gray-500">Last updated: May 01, 2025</div>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead>
+                  <tr class="text-left text-gray-500 text-sm border-b">
+                    <th class="py-2 px-3">Blood Type</th>
+                    <th class="py-2 px-3">Appearance Rate (%)</th>
+                    <th class="py-2 px-3">Difficulty Level</th>
+                    <th class="py-2 px-3">Test Result</th>
+                    <th class="py-2 px-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <tr class="text-sm">
+                    <td class="py-3 px-3">
+                      <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-2">
+                          <span class="text-red-600 font-bold">A+</span>
+                        </div>
+                        <span>A Positive</span>
+                      </div>
+                    </td>
+                    <td class="py-3 px-3">
+                      <input type="number" value="30" class="w-16 text-center border border-gray-300 rounded px-1 py-1" />
+                    </td>
+                    <td class="py-3 px-3">
+                      <select class="border border-gray-300 rounded px-2 py-1">
+                        <option>Easy</option>
+                        <option selected>Medium</option>
+                        <option>Hard</option>
+                      </select>
+                    </td>
+                    <td class="py-3 px-3">
+                      <div class="flex space-x-4">
+                        <div class="flex items-center">
+                          <span class="w-4 h-4 inline-block bg-green-500 rounded-full mr-1"></span>
+                          <span>A</span>
+                        </div>
+                        <div class="flex items-center">
+                          <span class="w-4 h-4 inline-block bg-red-500 rounded-full mr-1"></span>
+                          <span>B</span>
+                        </div>
+                        <div class="flex items-center">
+                          <span class="w-4 h-4 inline-block bg-green-500 rounded-full mr-1"></span>
+                          <span>Rh</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-3 px-3">
+                      <button class="text-blue-600 hover:text-blue-800 mr-2">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-redo"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  <tr class="text-sm">
+                    <td class="py-3 px-3">
+                      <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-2">
+                          <span class="text-red-600 font-bold">O-</span>
+                        </div>
+                        <span>O Negative</span>
+                      </div>
+                    </td>
+                    <td class="py-3 px-3">
+                      <input type="number" value="7" class="w-16 text-center border border-gray-300 rounded px-1 py-1" />
+                    </td>
+                    <td class="py-3 px-3">
+                      <select class="border border-gray-300 rounded px-2 py-1">
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option selected>Hard</option>
+                      </select>
+                    </td>
+                    <td class="py-3 px-3">
+                      <div class="flex space-x-4">
+                        <div class="flex items-center">
+                          <span class="w-4 h-4 inline-block bg-red-500 rounded-full mr-1"></span>
+                          <span>A</span>
+                        </div>
+                        <div class="flex items-center">
+                          <span class="w-4 h-4 inline-block bg-red-500 rounded-full mr-1"></span>
+                          <span>B</span>
+                        </div>
+                        <div class="flex items-center">
+                          <span class="w-4 h-4 inline-block bg-red-500 rounded-full mr-1"></span>
+                          <span>Rh</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-3 px-3">
+                      <button class="text-blue-600 hover:text-blue-800 mr-2">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-redo"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  <!-- More blood types would be listed here -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="mt-4 flex justify-end">
+              <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script>
+      // Wait for document to be fully loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar navigation
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const navTitle = document.querySelector('nav .text-lg');
+        
+        sidebarLinks.forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Hide all tab contents
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            // Show corresponding tab content
+            const tabId = this.getAttribute('href').substring(1);
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            
+            // Update navigation title
+            navTitle.textContent = this.textContent.trim();
+            
+            // Close mobile sidebar if open
+            document.getElementById('mobile-sidebar').classList.add('hidden');
+          });
+        });
+        
+        // User dropdown toggle
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userMenuButton.addEventListener('click', function() {
+          userDropdown.classList.toggle('hidden');
+        });
+        
+        // Close user dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+            userDropdown.classList.add('hidden');
+          }
+        });
+        
+        // Mobile menu button
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const closeSidebar = document.getElementById('close-sidebar');
+        
+        mobileMenuButton.addEventListener('click', function() {
+          mobileSidebar.classList.remove('hidden');
+        });
+        
+        closeSidebar.addEventListener('click', function() {
+          mobileSidebar.classList.add('hidden');
+        });
+        
+        // Blood inventory chart
+        const ctx = document.getElementById('bloodInventoryChart').getContext('2d');
+        
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+            datasets: [
+              {
+                label: 'Current Units',
+                data: [85, 18, 43, 12, 25, 7, 60, 32],
+                backgroundColor: [
+                  'rgba(76, 175, 80, 0.6)',
+                  'rgba(244, 67, 54, 0.6)',
+                  'rgba(255, 152, 0, 0.6)',
+                  'rgba(244, 67, 54, 0.6)',
+                  'rgba(244, 67, 54, 0.6)',
+                  'rgba(244, 67, 54, 0.6)',
+                  'rgba(255, 152, 0, 0.6)',
+                  'rgba(255, 152, 0, 0.6)'
+                ],
+                borderColor: [
+                  'rgb(76, 175, 80)',
+                  'rgb(244, 67, 54)',
+                  'rgb(255, 152, 0)',
+                  'rgb(244, 67, 54)',
+                  'rgb(244, 67, 54)',
+                  'rgb(244, 67, 54)',
+                  'rgb(255, 152, 0)',
+                  'rgb(255, 152, 0)'
+                ],
+                borderWidth: 1
+              },
+              {
+                label: 'Minimum Required',
+                data: [30, 20, 30, 20, 20, 15, 40, 25],
+                type: 'line',
+                borderColor: 'rgb(244, 67, 54)',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointBackgroundColor: 'rgb(244, 67, 54)',
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Units'
+                }
+              }
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html> 
