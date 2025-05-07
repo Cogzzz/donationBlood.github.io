@@ -3219,7 +3219,7 @@
       nextBtn.disabled = true;
 
       if (currentStage === 'donor' && gameState.bandageApplied) {
-        showTransition('Laboratorium', 'Saatnya menentukan golongan darah di laboratorium.');
+        showTransition('Laboratory', 'Time to determine your blood type at the lab.');
         setTimeout(() => {
           currentStage = 'laboratory';
           startLaboratoryStage();
@@ -3239,7 +3239,7 @@
           testResultDisplay.classList.add('hidden');
         }
 
-        showTransition('Transfusi Darah', 'Gunakan kantung darah untuk transfusi kepada pasien.');
+        showTransition('Blood Transfusion', 'Use blood bags for transfusion to patients.');
         setTimeout(() => {
           currentStage = 'transfusion';
           startTransfusionStage();
