@@ -1132,15 +1132,6 @@
     padding: 20px; 
     box-sizing: border-box;
   ">
-                  <h3 style="color: #1976d2; margin-bottom: 10px; font-size: 24px; text-align: center;">
-                    🏥 Blood Delivery Challenge 🩸
-                  </h3>
-                  <p
-                    style="color: #424242; margin-bottom: 15px; text-align: center; font-size: 16px; max-width: 600px;">
-                    Your mission: Safely deliver the collected blood to the hospital! Navigate through obstacles and
-                    collect additional blood units along the way.
-                  </p>
-
                   <canvas id="blood-run-canvas" width="700" height="220" style="
       background-color: #fff; 
       border: 3px solid #1976d2; 
@@ -1150,7 +1141,7 @@
     "></canvas>
 
                   <div
-                    style="margin-top: 15px; text-align: center; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 10px;">
+                    style="margin-top: 50px; text-align: center; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 10px;">
                     <div id="blood-run-instructions"
                       style="color: #333; font-size: 16px; margin-bottom: 8px; font-weight: bold;">
                       🎮 Press SPACE to jump • Collect 🩸 blood • Avoid obstacles • Reach the 🏥 hospital!
@@ -1158,9 +1149,9 @@
                     <div id="blood-run-status" style="color: #666; font-size: 14px; margin-bottom: 5px;">
                       Status: Ready to start
                     </div>
-                    <div id="blood-run-fps" style="font-size: 12px; color: #999;">
+                    <!-- <div id="blood-run-fps" style="font-size: 12px; color: #999;">
                       FPS: <span id="blood-run-fps-value">60</span>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -2651,7 +2642,7 @@
       bloodHeight: 60,
       bloodY: 0,
       collectedBlood: 0,
-      bloodGoal: 3, // Reduced goal for faster gameplay
+      bloodGoal: 5, // Reduced goal for faster gameplay
 
       lives: 3,
 
@@ -4197,4 +4188,5 @@
     }
   </script>
 </body>
+
 </html>
