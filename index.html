@@ -708,6 +708,97 @@
       color: #ff9800;
       font-weight: bold;
     }
+
+    /* Tap Game Styles */
+    #tap-game-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to bottom, #fff0f0, #ffe6e6);
+      display: none;
+      z-index: 2000;
+      overflow: hidden;
+    }
+
+    #tap-game-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #tap-canvas {
+      background: #fdfdfd;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #tap-hud {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #900;
+      font-size: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    #tap-blood-bag-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 150px;
+      height: 200px;
+      background: url('img/bagBlood.png') no-repeat center;
+      background-size: cover;
+    }
+
+    #tap-blood-fill {
+      position: absolute;
+      left: 15%;
+      bottom: 20%;
+      width: 70%;
+      height: 0%;
+      background: linear-gradient(to top, #d00, #ff4d4d);
+      border-radius: 6px;
+      transition: height 0.3s ease-out;
+      z-index: 1;
+    }
+
+    /* Fade overlay untuk transisi */
+    .fade-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(45deg, #fafafa, #fc5757);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      z-index: 1500;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .fade-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
   </style>
 </head>
 
@@ -2599,6 +2690,27 @@
       selectedGroupRh: '', // Untuk menyimpan pilihan rhesus
     };
 
+    // Tap game state
+    let tapGameState = {
+      active: false,
+      canvas: null,
+      ctx: null,
+      score: 0,
+      progress: 0,
+      maxProgress: 100,
+      gameTime: 0,
+      spawnTimer: 0,
+      circles: [],
+      maxCircles: 3,
+      radius: 50
+    };
+
+    // Tap game images
+    const tapBloodImage = new Image();
+    const tapBacteriaImage = new Image();
+    tapBloodImage.src = 'img/darahMerah.png';
+    tapBacteriaImage.src = 'img/bakteri.png';
+
     let bloodRunGame = {
       active: false,
       completed: false,
@@ -2730,6 +2842,210 @@
 
     // Setup initial controls for donor stage
     updateControlsForStage('donor');
+
+    function fadeToTapGame() {
+      const overlay = document.getElementById('main-fade-overlay');
+      const fadeText = document.getElementById('fade-text');
+
+      fadeText.textContent = 'Mengumpulkan darah dari donor...';
+      overlay.classList.add('active');
+
+      setTimeout(() => {
+        // Sembunyikan scene utama dan tampilkan tap game
+        document.getElementById('simulation').style.display = 'none';
+        document.getElementById('tap-game-overlay').style.display = 'block';
+
+        // Mulai tap game
+        initTapGame();
+
+        // Fade out overlay
+        setTimeout(() => {
+          overlay.classList.remove('active');
+        }, 500);
+      }, 1000);
+    }
+
+    function fadeBackToDonor() {
+      const overlay = document.getElementById('main-fade-overlay');
+      const fadeText = document.getElementById('fade-text');
+
+      fadeText.textContent = 'Kembali ke proses donor...';
+      overlay.classList.add('active');
+
+      setTimeout(() => {
+        // Sembunyikan tap game dan tampilkan scene utama
+        document.getElementById('tap-game-overlay').style.display = 'none';
+        document.getElementById('simulation').style.display = 'block';
+
+        // Update game state
+        gameState.bloodCollected = true;
+        messageEl.textContent = 'Pengambilan darah selesai. Pasang plaster pada lengan.';
+        showAlert('Darah berhasil dikumpulkan!');
+
+        // Fade out overlay
+        setTimeout(() => {
+          overlay.classList.remove('active');
+        }, 500);
+      }, 1000);
+    }
+
+    function initTapGame() {
+      tapGameState.canvas = document.getElementById('tap-canvas');
+      tapGameState.ctx = tapGameState.canvas.getContext('2d');
+      tapGameState.active = true;
+      tapGameState.score = 0;
+      tapGameState.progress = 0;
+      tapGameState.gameTime = 0;
+      tapGameState.spawnTimer = 0;
+      tapGameState.circles = [];
+
+      updateTapUI();
+
+      // Event listener untuk klik
+      tapGameState.canvas.addEventListener('click', handleTapClick);
+
+      // Mulai game loop
+      tapGameLoop();
+    }
+
+    function handleTapClick(e) {
+      const rect = tapGameState.canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      for (let i = 0; i < tapGameState.circles.length; i++) {
+        const c = tapGameState.circles[i];
+        const dx = mouseX - c.x;
+        const dy = mouseY - c.y;
+        if (Math.sqrt(dx * dx + dy * dy) < tapGameState.radius) {
+          if (c.type === 'bacteria') {
+            tapGameOver();
+            return;
+          } else {
+            c.shrinking = true;
+            c.frame = 10;
+            tapGameState.score += 5;
+            tapGameState.progress += 5;
+            if (tapGameState.progress > tapGameState.maxProgress) {
+              tapGameState.progress = tapGameState.maxProgress;
+            }
+            updateTapUI();
+            return;
+          }
+        }
+      }
+    }
+
+    function tapGameOver() {
+      alert("Kamu menekan bakteri! Coba lagi.");
+      tapGameState.score = 0;
+      tapGameState.progress = 0;
+      tapGameState.gameTime = 0;
+      tapGameState.spawnTimer = 0;
+      tapGameState.circles = [];
+      updateTapUI();
+    }
+
+    function spawnTapCircle() {
+      if (tapGameState.circles.length >= tapGameState.maxCircles) return;
+
+      let attempts = 0;
+      let newPos, newCircle;
+      do {
+        newPos = {
+          x: Math.random() * (tapGameState.canvas.width - tapGameState.radius * 2) + tapGameState.radius,
+          y: Math.random() * (tapGameState.canvas.height - tapGameState.radius * 2) + tapGameState.radius
+        };
+        newCircle = {
+          x: newPos.x,
+          y: newPos.y,
+          type: Math.random() < 0.25 ? 'bacteria' : 'blood',
+          shrinking: false,
+          frame: 10,
+          lifeTime: 240
+        };
+        attempts++;
+      } while (isTapOverlapping(newCircle) && attempts < 15);
+
+      if (attempts < 15) {
+        tapGameState.circles.push(newCircle);
+      }
+    }
+
+    function isTapOverlapping(newCircle) {
+      for (const c of tapGameState.circles) {
+        const dx = c.x - newCircle.x;
+        const dy = c.y - newCircle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < tapGameState.radius * 2.2) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function drawTapCircles() {
+      tapGameState.ctx.clearRect(0, 0, tapGameState.canvas.width, tapGameState.canvas.height);
+
+      for (let i = 0; i < tapGameState.circles.length; i++) {
+        const c = tapGameState.circles[i];
+        const r = c.shrinking ? tapGameState.radius * (c.frame / 10) : tapGameState.radius;
+        const size = r * 2;
+
+        let image = c.type === 'blood' ? tapBloodImage : tapBacteriaImage;
+        tapGameState.ctx.drawImage(image, c.x - r, c.y - r, size, size);
+
+        if (c.shrinking) {
+          c.frame--;
+          if (c.frame <= 0) {
+            tapGameState.circles.splice(i, 1);
+            i--;
+          }
+        } else {
+          c.lifeTime--;
+          if (c.lifeTime <= 0) {
+            tapGameState.circles.splice(i, 1);
+            i--;
+          }
+        }
+      }
+    }
+
+    function updateTapUI() {
+      document.getElementById('tap-score').innerText = tapGameState.score;
+      document.getElementById('tap-blood-fill').style.height = (tapGameState.progress / tapGameState.maxProgress) * 100 + '%';
+
+      if (tapGameState.progress >= tapGameState.maxProgress && tapGameState.active) {
+        tapGameState.active = false;
+        setTimeout(() => {
+          fadeBackToDonor();
+        }, 500);
+      }
+    }
+
+    function getTapSpawnRate() {
+      const baseRate = 300;
+      const minRate = 90;
+      const timeProgression = Math.min(tapGameState.gameTime / 3600, 1);
+      return baseRate - (baseRate - minRate) * timeProgression;
+    }
+
+    function tapGameLoop() {
+      if (!tapGameState.active) return;
+
+      tapGameState.gameTime++;
+      tapGameState.spawnTimer++;
+
+      drawTapCircles();
+
+      const currentSpawnRate = getTapSpawnRate();
+      if (tapGameState.spawnTimer >= currentSpawnRate) {
+        spawnTapCircle();
+        tapGameState.spawnTimer = 0;
+      }
+
+      requestAnimationFrame(tapGameLoop);
+    }
 
     function setupEventListeners() {
       // Arm interaction
@@ -2869,21 +3185,25 @@
     }
 
     function collectBlood() {
+      // Tampilkan sample darah
       bloodSampleEl.style.display = 'block';
-      gameState.bloodCollected = true;
-      messageEl.textContent = 'Blood has been drawn. Put a plaster on the arm.';
-      showAlert('Blood successfully drawn!');
+      messageEl.textContent = 'Mengambil darah... Proses pengumpulan darah dimulai.';
 
       const bloodSample = document.getElementById('blood-sample');
       bloodSample.style.top = '100px';
       bloodSample.style.right = '100px';
+
+      // Fade ke tap game
+      setTimeout(() => {
+        fadeToTapGame();
+      }, 1500);
     }
 
     function applyBandage() {
       bandageEl.style.display = 'block';
       gameState.bandageApplied = true;
-      messageEl.textContent = 'The plaster has been applied. Click the “Next” button to perform the blood test.';
-      showAlert('Plaster applied, blood donation completed blood donation completed!');
+      messageEl.textContent = 'Plaster telah dipasang. Proses donor darah selesai! Klik tombol "Lanjut" untuk melakukan tes darah.';
+      showAlert('Plaster dipasang, donor darah selesai!');
       nextBtn.disabled = false;
     }
 
@@ -4187,6 +4507,29 @@
       bloodRunGame.keyUpHandler = handleKeyUp;
     }
   </script>
+  <!-- Tap Game Overlay -->
+  <div id="tap-game-overlay">
+    <div id="tap-game-container">
+      <div id="tap-hud">
+        Total: <span id="tap-score">0</span> ml
+      </div>
+      <div id="tap-blood-bag-container">
+        <div id="tap-blood-fill"></div>
+      </div>
+      <canvas id="tap-canvas" width="800" height="600"></canvas>
+      <div style="margin-top: 20px; text-align: center; color: #666;">
+        <p>Klik tetesan darah merah, hindari bakteri!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fade Overlay -->
+  <div class="fade-overlay" id="main-fade-overlay">
+    <div id="fade-content">
+      <div style="font-size: 32px; margin-bottom: 20px;">🩸</div>
+      <div id="fade-text">Memulai proses pengambilan darah...</div>
+    </div>
+  </div>
 </body>
 
 </html>
