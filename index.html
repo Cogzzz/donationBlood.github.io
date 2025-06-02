@@ -157,15 +157,6 @@
 
     .patient {
       position: relative;
-      height: 350px;
-      width: 200px;
-    }
-
-    .arm {
-      position: absolute;
-      top: 100px;
-      right: -30px;
-      cursor: pointer;
     }
 
     .vein {
@@ -672,6 +663,51 @@
     #btn-confirm:hover {
       box-shadow: 0 4px 6px rgba(239, 68, 68, 0.25);
     }
+
+    .blood-run-game {
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      width: 100%;
+      height: 100%;
+      display: none;
+      /* Initially hidden */
+      position: relative;
+    }
+
+    #blood-run-canvas {
+      background-color: #fff;
+      border: 3px solid #1976d2;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    #blood-run-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .blood-run-complete {
+      animation: successPulse 1s ease-in-out;
+    }
+
+    /* Game status indicators */
+    #blood-run-status {
+      transition: color 0.3s ease;
+    }
+
+    #blood-run-status.playing {
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    #blood-run-status.completed {
+      color: #ff9800;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -903,42 +939,28 @@
         <div id="simulation">
           <div class="scene">
             <div class="scene-content" id="scene-content">
-              <div class="patient">
-                <svg width="200" height="350" viewBox="0 0 200 350">
-                  <!-- Patient body -->
-                  <rect x="50" y="50" width="100" height="200" rx="20" fill="#ffccbc" />
-                  <!-- Patient head -->
-                  <circle cx="100" cy="30" r="30" fill="#ffccbc" />
-                  <!-- Patient details -->
-                  <circle cx="90" cy="25" r="3" fill="#424242" /> <!-- Left eye -->
-                  <circle cx="110" cy="25" r="3" fill="#424242" /> <!-- Right eye -->
-                  <path d="M95 40 Q100 45 105 40" stroke="#424242" stroke-width="2" fill="none" /> <!-- Smile -->
-                </svg>
-                <div class="arm">
-                  <svg width="100" height="150" viewBox="0 0 100 150">
-                    <!-- Arm -->
-                    <rect x="10" y="10" width="40" height="130" rx="20" fill="#ffccbc" />
-                    <!-- Vein -->
-                    <path d="M25 40 L25 120" class="vein" />
-                    <!-- Cleaned area indicator (initially hidden) -->
-                    <circle id="cleaned-area" cx="25" cy="80" r="15" fill="rgba(200, 230, 255, 0.5)"
-                      style="display: none;" />
-                    <!-- Bandage (initially hidden) -->
-                    <rect id="bandage" x="10" y="70" width="40" height="20" rx="5" fill="#f5f5f5" stroke="#bdbdbd"
-                      stroke-width="1" style="display: none;" />
-                  </svg>
+              <div class="patient" style="position: relative; width: 500px; height: 350px;">
+                <img src="img/patient.png" alt="Patient" class="patient-image" style="width: 100%; height: 100%;" />
+
+                <!-- Area klik lengan -->
+                <div id="arm" style="position: absolute; top: 130px; left: 215px; width: 120px; height: 35px; 
+              cursor: pointer; background-color: rgba(255, 255, 255, 0); z-index: 4;">
+                </div>
+
+                <!-- Cleaned area dan bandage -->
+                <div id="cleaned-area"
+                  style="display: none; position: absolute; top: 130px; left: 215px; width: 30px; height: 30px; background: rgba(200, 230, 255, 0.5); border-radius: 50%; z-index: 6;">
+                </div>
+                <div id="bandage"
+                  style="display: none; position: absolute; top: 135px; left: 210px; width: 40px; height: 20px; background: #f5f5f5; border: 1px solid #bdbdbd; border-radius: 5px; z-index: 7; transform: rotate(90deg);">
                 </div>
               </div>
 
+
               <div class="blood-sample" id="blood-sample">
-                <svg width="40" height="80" viewBox="0 0 40 80">
-                  <!-- Test tube -->
-                  <rect x="5" y="5" width="30" height="70" rx="5" fill="white" stroke="#bdbdbd" stroke-width="2" />
-                  <!-- Blood -->
-                  <rect x="5" y="30" width="30" height="45" rx="5" fill="#e53935" />
-                  <!-- Tube cap -->
-                  <rect x="5" y="2" width="30" height="8" rx="2" fill="#7b1fa2" />
-                </svg>
+
+                <img src="img/serum.png" alt="Blood Sample" style="width: 80px; height: 100px;">
+
               </div>
 
               <div class="test-result" id="test-result"></div>
@@ -990,13 +1012,7 @@
 
                   <!-- Blood sample in lab -->
                   <g transform="translate(150, 150)" id="lab-blood-sample">
-                    <!-- Test tube -->
-                    <rect x="-15" y="-40" width="30" height="70" rx="5" fill="white" stroke="#bdbdbd"
-                      stroke-width="2" />
-                    <!-- Blood -->
-                    <rect x="-15" y="-10" width="30" height="40" rx="5" fill="#e53935" />
-                    <!-- Tube cap -->
-                    <rect x="-15" y="-45" width="30" height="8" rx="2" fill="#7b1fa2" />
+                    <image href="img/serum.png" x="-80" y="-40" width="80" height="100" />
                   </g>
 
                   <!-- Blood testing kit -->
@@ -1103,6 +1119,50 @@
                   <circle cx="670" cy="170" r="5" fill="#4caf50" />
                   <rect x="680" y="165" width="40" height="10" rx="2" fill="#f5f5f5" />
                 </svg>
+              </div>
+
+              <div class="blood-run-game" id="blood-run-game">
+                <div id="blood-run-container" style="
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%; 
+    height: 100%; 
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
+    padding: 20px; 
+    box-sizing: border-box;
+  ">
+                  <h3 style="color: #1976d2; margin-bottom: 10px; font-size: 24px; text-align: center;">
+                    🏥 Blood Delivery Challenge 🩸
+                  </h3>
+                  <p
+                    style="color: #424242; margin-bottom: 15px; text-align: center; font-size: 16px; max-width: 600px;">
+                    Your mission: Safely deliver the collected blood to the hospital! Navigate through obstacles and
+                    collect additional blood units along the way.
+                  </p>
+
+                  <canvas id="blood-run-canvas" width="700" height="220" style="
+      background-color: #fff; 
+      border: 3px solid #1976d2; 
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      margin: 10px 0;
+    "></canvas>
+
+                  <div
+                    style="margin-top: 15px; text-align: center; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 10px;">
+                    <div id="blood-run-instructions"
+                      style="color: #333; font-size: 16px; margin-bottom: 8px; font-weight: bold;">
+                      🎮 Press SPACE to jump • Collect 🩸 blood • Avoid obstacles • Reach the 🏥 hospital!
+                    </div>
+                    <div id="blood-run-status" style="color: #666; font-size: 14px; margin-bottom: 5px;">
+                      Status: Ready to start
+                    </div>
+                    <div id="blood-run-fps" style="font-size: 12px; color: #999;">
+                      FPS: <span id="blood-run-fps-value">60</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Transition overlay -->
@@ -2540,11 +2600,86 @@
       bandageApplied: false,
       bloodGroupTested: false,
       bloodGroupIdentified: false,
+      bloodDelivered: false, // Tambahan untuk Blood Run
       transfusionComplete: false,
       donorBloodType: 'A+', // Default blood type for donor
       recipientBloodType: 'A+', // Default blood type for recipient
       selectedGroupABO: '', // Untuk menyimpan pilihan golongan ABO
       selectedGroupRh: '', // Untuk menyimpan pilihan rhesus
+    };
+
+    let bloodRunGame = {
+      active: false,
+      completed: false,
+      canvas: null,
+      ctx: null,
+      animationId: null
+    };
+
+    // Blood Run Game State
+    let brGameState = {
+      boardWidth: 700,
+      boardHeight: 220,
+      dinosaurWidth: 88,
+      dinosaurHeight: 94,
+      dinosaurX: 50,
+      dinosaurY: 0,
+
+      cactus1Width: 110,
+      cactus2Width: 69,
+      cactusHeight: 70,
+      cactusX: 700,
+      cactusY: 0,
+
+      coneWidth: 70,
+      coneHeight: 70,
+
+      baseVelocityX: -480,
+      velocityX: -480,
+      velocityY: 0,
+      gravity: 2800,
+
+      speedMultiplier: 1.0,
+      speedIncreasePerBlood: 0.2,
+
+      gameOver: false,
+      score: 0,
+      cactusArray: [],
+      bloodArray: [],
+
+      bloodWidth: 50,
+      bloodHeight: 60,
+      bloodY: 0,
+      collectedBlood: 0,
+      bloodGoal: 3, // Reduced goal for faster gameplay
+
+      lives: 3,
+
+      hospitalWidth: 110,
+      hospitalHeight: 130,
+      hospital: null,
+      hospitalVisible: false,
+
+      runFrame: 0,
+      runFrameCount: 2,
+      animationTimer: 0,
+      animationDuration: 0.15,
+
+      lastTime: 0,
+      deltaTime: 0,
+      frameCount: 0,
+      fpsTimer: 0,
+      currentFPS: 60,
+
+      cactusSpawnTimer: 0,
+      bloodSpawnTimer: 0,
+      baseCactusSpawnInterval: 1.2,
+      baseBloodSpawnInterval: 1.5,
+      cactusSpawnInterval: 1.2,
+      bloodSpawnInterval: 1.5,
+
+      // Game images
+      images: {}
     };
 
     // Elements
@@ -2561,7 +2696,7 @@
     // Scene elements
     const patientEl = document.querySelector('.patient');
     const patientTargetEl = document.getElementById('patient-target');
-    const armEl = document.querySelector('.arm');
+    const armEl = document.querySelector('#arm');
     const cleanedAreaEl = document.getElementById('cleaned-area');
     const bandageEl = document.getElementById('bandage');
     const bloodSampleEl = document.getElementById('blood-sample');
@@ -2662,19 +2797,7 @@
                 </svg>
             `);
           break;
-
-        case 'transfusion':
-          addControlItem('bag', 'Kantung Darah', `
-                <svg viewBox="0 0 60 60">
-                    <path d="M15 15 L45 15 L45 40 Q30 50 15 40 Z" fill="#e53935" stroke="#7b1fa2" stroke-width="1" />
-                    <circle cx="30" cy="25" r="6" fill="white" stroke="#7b1fa2" stroke-width="1" />
-                    <text x="30" y="28" text-anchor="middle" font-size="6">A+</text>
-                    <text x="30" y="55" text-anchor="middle" font-size="8">Blood Bladder</text>
-                </svg>
-            `);
-          break;
       }
-
       setupControlItemListeners();
     }
 
@@ -2790,29 +2913,91 @@
     function moveToNextStage() {
       nextBtn.disabled = true;
 
+      console.log('🔄 Moving to next stage. Current stage:', currentStage);
+      console.log('📊 Game state:', gameState);
+
       if (currentStage === 'donor' && gameState.bandageApplied) {
-        showTransition('Laboratorium', 'Time to determine your blood type at the lab.');
+        showTransition('Laboratory', 'Time to determine your blood type at the lab.');
         setTimeout(() => {
           currentStage = 'laboratory';
           startLaboratoryStage();
-          controls.style.display = 'none'; // Hide controls for laboratory stage
+          controls.style.display = 'none';
           updateControlsForStage('laboratory');
         }, 2000);
       }
       else if (currentStage === 'laboratory' && gameState.bloodGroupIdentified) {
-        showTransition('Transfusi Darah', 'Use blood bags for transfusion to patients.');
+        console.log('🧪 Laboratory completed, moving to Blood Run...');
+
+        // Hide blood type selection elements
+        const bloodTypeSelection = document.getElementById('blood-type-selection-container');
+        if (bloodTypeSelection) {
+          bloodTypeSelection.classList.add('hidden');
+        }
+
+        const testResultDisplay = document.getElementById('test-result-display');
+        if (testResultDisplay) {
+          testResultDisplay.classList.add('hidden');
+        }
+
+        showTransition('Blood Delivery', 'Deliver the blood safely to the hospital!');
+        setTimeout(() => {
+          currentStage = 'blood-run';
+          console.log('🏃 Starting Blood Run game...');
+
+          // Check if function exists before calling
+          if (typeof startBloodRunGame === 'function') {
+            startBloodRunGame();
+          } else {
+            console.error('❌ startBloodRunGame function not found!');
+            showAlert('Blood Run game not available. Moving to transfusion.', 'error');
+            // Skip to transfusion if Blood Run fails
+            setTimeout(() => {
+              currentStage = 'transfusion';
+              startTransfusionStage();
+              updateControlsForStage('transfusion');
+              controls.style.display = 'none';
+            }, 1000);
+          }
+        }, 2000);
+      }
+      else if (currentStage === 'blood-run' && bloodRunGame && bloodRunGame.completed) {
+        console.log('🏥 Blood Run completed, moving to Transfusion...');
+
+        // Hide blood run game
+        const bloodRunGameEl = document.getElementById('blood-run-game');
+        if (bloodRunGameEl) {
+          bloodRunGameEl.style.display = 'none';
+        }
+
+        // Clean up event listeners
+        if (bloodRunGame.keyDownHandler) {
+          document.removeEventListener('keydown', bloodRunGame.keyDownHandler);
+        }
+        if (bloodRunGame.keyUpHandler) {
+          document.removeEventListener('keyup', bloodRunGame.keyUpHandler);
+        }
+
+        showTransition('Blood Transfusion', 'Use blood bags for transfusion to patients.');
         setTimeout(() => {
           currentStage = 'transfusion';
           startTransfusionStage();
           updateControlsForStage('transfusion');
+          controls.style.display = 'block';
         }, 2000);
       }
       else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
-        showTransition('Selesai', 'Blood transfusion has been successfully performed.');
+        showTransition('Completed', 'Blood transfusion was successful.');
         setTimeout(() => {
           messageEl.textContent = 'Simulator is complete. Refresh the page to start over.';
-          showAlert('Blood transfusion was successful!');
+          showAlert('Blood transfusion was successful!', 'success');
         }, 2000);
+      }
+      else {
+        console.log('❓ Stage transition condition not met');
+        console.log('Current stage:', currentStage);
+        console.log('Game state:', gameState);
+        console.log('Blood Run status:', bloodRunGame);
+        nextBtn.disabled = false; // Re-enable button if condition not met
       }
     }
 
@@ -3213,48 +3398,6 @@
       gameState.selectedGroupRh = '';
     }
 
-
-    // Update moveToNextStage to properly hide the HTML elements when moving to the next stage
-    function moveToNextStage() {
-      nextBtn.disabled = true;
-
-      if (currentStage === 'donor' && gameState.bandageApplied) {
-        showTransition('Laboratory', 'Time to determine your blood type at the lab.');
-        setTimeout(() => {
-          currentStage = 'laboratory';
-          startLaboratoryStage();
-          controls.style.display = 'none'; // Sembunyikan kontrol untuk tahap laboratorium
-          updateControlsForStage('laboratory');
-        }, 2000);
-      }
-      else if (currentStage === 'laboratory' && gameState.bloodGroupIdentified) {
-        // Sembunyikan elemen terkait pemilihan golongan darah
-        const bloodTypeSelection = document.getElementById('blood-type-selection-container');
-        if (bloodTypeSelection) {
-          bloodTypeSelection.classList.add('hidden');
-        }
-
-        const testResultDisplay = document.getElementById('test-result-display');
-        if (testResultDisplay) {
-          testResultDisplay.classList.add('hidden');
-        }
-
-        showTransition('Blood Transfusion', 'Use blood bags for transfusion to patients.');
-        setTimeout(() => {
-          currentStage = 'transfusion';
-          startTransfusionStage();
-          updateControlsForStage('transfusion');
-        }, 2000);
-      }
-      else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
-        showTransition('Completed', 'Blood transfusion was successfully.');
-        setTimeout(() => {
-          messageEl.textContent = 'Simulator is complete. Refresh the page to start over.';
-          showAlert('Blood transfusion was successful!', 'success');
-        }, 2000);
-      }
-    }
-
     // Improved transfusion stage with enhanced drag and drop
     function startTransfusionStage() {
       // Hide laboratory elements
@@ -3366,11 +3509,17 @@
       isDragging = false;
       document.removeEventListener('mousemove', dragMove);
       document.removeEventListener('mouseup', dragEnd);
-      bloodBagEl.style.cursor = 'grab';
+
+      // PERBAIKAN: Tambahkan pengecekan null untuk bloodBagEl
+      if (bloodBagEl) {
+        bloodBagEl.style.cursor = 'grab';
+      }
 
       if (isOverlapping(bagRect, dropRect)) {
         // Set transition untuk animasi smooth
-        bloodBagEl.style.transition = 'all 0.3s ease';
+        if (bloodBagEl) {
+          bloodBagEl.style.transition = 'all 0.3s ease';
+        }
 
         // Get scene dimensions for positioning
         const sceneRect = sceneContent.getBoundingClientRect();
@@ -3384,47 +3533,63 @@
         const topPos = (dropZoneRect.top - sceneRect.top) - 5; // Sedikit di atas drop zone
 
         // Posisikan kantong darah dengan tepat
-        bloodBagEl.style.left = leftPos + 'px';
-        bloodBagEl.style.top = topPos + 'px';
+        if (bloodBagEl) {
+          bloodBagEl.style.left = leftPos + 'px';
+          bloodBagEl.style.top = topPos + 'px';
+          bloodBagEl.style.transform = 'rotate(0deg)';
 
-        // Pastikan kantung darah tegak
-        bloodBagEl.style.transform = 'rotate(0deg)';
+          // Tidak perlu drag lagi setelah berhasil ditempatkan
+          bloodBagEl.removeEventListener('mousedown', startDrag);
+        }
 
-        // Tidak perlu drag lagi setelah berhasil ditempatkan
-        bloodBagEl.removeEventListener('mousedown', startDrag);
         isTransfusionComplete = true;
 
         // Tampilkan selang transfusi dengan posisi yang tepat
         setTimeout(() => {
+          // PERBAIKAN: Tambahkan pengecekan untuk transfusion room
+          const transfusionSvg = document.querySelector(".transfusion-room svg");
+          if (!transfusionSvg) {
+            console.error('Transfusion room SVG not found');
+            return;
+          }
+
           var tubeElement = document.getElementById('transfusion-tube');
 
           if (!tubeElement) {
             tubeElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
             tubeElement.id = "transfusion-tube";
-            document.querySelector(".transfusion-room svg").appendChild(tubeElement);
+            transfusionSvg.appendChild(tubeElement);
           }
 
-          tubeElement.setAttribute('stroke', '#e53935');
-          tubeElement.setAttribute('stroke-width', '3');
-          tubeElement.setAttribute('fill', 'none');
-          tubeElement.setAttribute('stroke-dasharray', '5,5');
+          // PERBAIKAN: Tambahkan pengecekan sebelum setAttribute
+          if (tubeElement) {
+            tubeElement.setAttribute('stroke', '#e53935');
+            tubeElement.setAttribute('stroke-width', '3');
+            tubeElement.setAttribute('fill', 'none');
+            tubeElement.setAttribute('stroke-dasharray', '5,5');
 
-          // Sesuaikan path selang berdasarkan posisi baru kantong darah
-          const startX = leftPos + 40; // Mulai dari sisi kanan kantong darah
-          const startY = topPos + 40; // Mulai dari bagian bawah kantong darah
+            // Sesuaikan path selang berdasarkan posisi baru kantong darah
+            const startX = leftPos + 40; // Mulai dari sisi kanan kantong darah
+            const startY = topPos + 40; // Mulai dari bagian bawah kantong darah
 
-          // Path yang disesuaikan untuk terhubung dari kantong ke pasien
-          tubeElement.setAttribute('d', `M${startX} ${startY} C${startX} ${startY + 50}, 400 250, 240 300`);
-          tubeElement.style.display = 'block';
+            // Path yang disesuaikan untuk terhubung dari kantong ke pasien
+            tubeElement.setAttribute('d', `M${startX} ${startY} C${startX} ${startY + 50}, 400 250, 240 300`);
+            tubeElement.style.display = 'block';
+          }
 
           // Make drop zone invisible but still functional
-          dropZoneEl.style.opacity = '0';
-          dropZoneEl.style.pointerEvents = 'auto';
+          if (dropZoneEl) {
+            dropZoneEl.style.opacity = '0';
+            dropZoneEl.style.pointerEvents = 'auto';
+          }
 
           // Make instruction text invisible
-          instructionText.style.opacity = '0';
-          instructionText.style.pointerEvents = 'auto';
+          if (instructionText) {
+            instructionText.style.opacity = '0';
+            instructionText.style.pointerEvents = 'auto';
+          }
 
+          // PERBAIKAN: Pass tubeElement dengan aman
           startTransfusionAnimation(tubeElement);
         }, 300);
 
@@ -3433,14 +3598,19 @@
         messageEl.textContent = 'Blood transfusion is in progress....';
       } else {
         // Jika tidak di drop zone, kembali ke posisi awal
-        bloodBagEl.style.transition = 'all 0.3s ease';
-        bloodBagEl.style.left = '200px';
-        bloodBagEl.style.top = '100px';
+        if (bloodBagEl) {
+          bloodBagEl.style.transition = 'all 0.3s ease';
+          bloodBagEl.style.left = '200px';
+          bloodBagEl.style.top = '100px';
+        }
 
         // Hapus highlight drop zone
-        dropZoneEl.classList.remove('drop-zone-active');
+        if (dropZoneEl) {
+          dropZoneEl.classList.remove('drop-zone-active');
+        }
       }
     }
+
 
     function isOverlapping(rect1, rect2) {
       return !(rect1.right < rect2.left ||
@@ -3452,30 +3622,32 @@
     // PERBAIKAN: Menerima element sebagai parameter
     function startTransfusionAnimation(tubeElement) {
       // Add blood flow animation class to tube
-      tubeElement.classList.add('blood-flow');
+      if (tubeElement) {
+        tubeElement.classList.add('blood-flow');
+      }
 
       // Perbaiki CSS untuk animasi blood flow agar lebih jelas terlihat
       const style = document.createElement('style');
       style.textContent = `
-        .blood-flow {
-            stroke-dasharray: 10, 5;
-            animation: flow 5s linear infinite;
+    .blood-flow {
+        stroke-dasharray: 10, 5;
+        animation: flow 5s linear infinite;
+    }
+    
+    @keyframes flow {
+        from {
+            stroke-dashoffset: 1000;
         }
-        
-        @keyframes flow {
-            from {
-                stroke-dashoffset: 1000;
-            }
-            to {
-                stroke-dashoffset: 0;
-            }
+        to {
+            stroke-dashoffset: 0;
         }
-        
-        @keyframes pulse {
-            from { r: 5; fill: #e53935; }
-            to { r: 7; fill: #c62828; }
-        }
-    `;
+    }
+    
+    @keyframes pulse {
+        from { r: 5; fill: #e53935; }
+        to { r: 7; fill: #c62828; }
+    }
+`;
       document.head.appendChild(style);
 
       // Create drip animation if exists
@@ -3485,32 +3657,40 @@
       } else {
         // Buat elemen tetesan jika belum ada
         const dropSvg = document.querySelector(".transfusion-room svg");
-        const newDrip = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        newDrip.id = "drip";
-        newDrip.setAttribute('cx', parseFloat(bloodBagEl.style.left) + 20);
-        newDrip.setAttribute('cy', '145');
-        newDrip.setAttribute('r', '3');
-        newDrip.setAttribute('fill', '#e53935');
+        if (dropSvg) {
+          const newDrip = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          newDrip.id = "drip";
+          newDrip.setAttribute('cx', parseFloat(bloodBagEl.style.left) + 20);
+          newDrip.setAttribute('cy', '145');
+          newDrip.setAttribute('r', '3');
+          newDrip.setAttribute('fill', '#e53935');
 
-        // Tambahkan animasi ke tetesan
-        const animate1 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
-        animate1.setAttribute('attributeName', 'cy');
-        animate1.setAttribute('from', '145');
-        animate1.setAttribute('to', '180');
-        animate1.setAttribute('dur', '1s');
-        animate1.setAttribute('repeatCount', 'indefinite');
+          // Tambahkan animasi ke tetesan
+          const animate1 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+          animate1.setAttribute('attributeName', 'cy');
+          animate1.setAttribute('from', '145');
+          animate1.setAttribute('to', '180');
+          animate1.setAttribute('dur', '1s');
+          animate1.setAttribute('repeatCount', 'indefinite');
 
-        const animate2 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
-        animate2.setAttribute('attributeName', 'opacity');
-        animate2.setAttribute('from', '1');
-        animate2.setAttribute('to', '0');
-        animate2.setAttribute('dur', '1s');
-        animate2.setAttribute('repeatCount', 'indefinite');
+          const animate2 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+          animate2.setAttribute('attributeName', 'opacity');
+          animate2.setAttribute('from', '1');
+          animate2.setAttribute('to', '0');
+          animate2.setAttribute('dur', '1s');
+          animate2.setAttribute('repeatCount', 'indefinite');
 
-        newDrip.appendChild(animate1);
-        newDrip.appendChild(animate2);
-        dropSvg.appendChild(newDrip);
+          newDrip.appendChild(animate1);
+          newDrip.appendChild(animate2);
+          dropSvg.appendChild(newDrip);
+        }
       }
+
+      // PERBAIKAN: Hapus atau komentari baris bermasalah ini
+      // document.getElementById("arm-coord").addEventListener("click", function () {
+      //   alert("Area tangan (arm) diklik!");
+      //   // Ganti ini dengan logika game kamu, misalnya: mulai proses donor darah
+      // });
 
       // Update patient appearance gradually
       setTimeout(() => {
@@ -3530,10 +3710,8 @@
         }
 
         // Perbarui pesan di panel bawah
-        showAlert('Transfusi darah berhasil!', 'success');
-        // Perbarui pesan di panel bawah
-        showAlert('Transfusi darah berhasil!', 'success');
-        messageEl.textContent = 'The blood transfusion is complete. Click the “Next” button to end the simulation.';
+        showAlert('Blood transfusion successful!', 'success');
+        messageEl.textContent = 'The blood transfusion is complete. Click the "Next" button to end the simulation.';
 
         // Enable dan tampilkan tombol "Lanjut"
         gameState.transfusionComplete = true;
@@ -3577,7 +3755,446 @@
         alertEl.style.display = 'none';
       }, 3000);
     }
+
+    function startBloodRunGame() {
+      // Hide laboratory elements
+      laboratoryEl.style.display = 'none';
+
+      // Hide blood type selection elements
+      const bloodTypeSelection = document.getElementById('blood-type-selection-container');
+      if (bloodTypeSelection) {
+        bloodTypeSelection.classList.add('hidden');
+      }
+
+      const testResultDisplay = document.getElementById('test-result-display');
+      if (testResultDisplay) {
+        testResultDisplay.classList.add('hidden');
+      }
+
+      // Show blood run game
+      const bloodRunGameEl = document.getElementById('blood-run-game');
+      bloodRunGameEl.style.display = 'block';
+
+      // Hide controls
+      controls.style.display = 'none';
+
+      // Initialize game
+      initBloodRunGame();
+
+      messageEl.textContent = 'Deliver the blood to the hospital! Press SPACE to jump over obstacles.';
+      showAlert('Blood delivery mission started!', 'info');
+    }
+
+    function initBloodRunGame() {
+      bloodRunGame.canvas = document.getElementById('blood-run-canvas');
+      bloodRunGame.ctx = bloodRunGame.canvas.getContext('2d');
+
+      // Initialize game state
+      brGameState.boardWidth = bloodRunGame.canvas.width;
+      brGameState.boardHeight = bloodRunGame.canvas.height;
+      brGameState.dinosaurY = brGameState.boardHeight - brGameState.dinosaurHeight;
+      brGameState.cactusY = brGameState.boardHeight - brGameState.cactusHeight;
+      brGameState.bloodY = brGameState.boardHeight - brGameState.bloodHeight - 10;
+      brGameState.cactusX = brGameState.boardWidth;
+
+      brGameState.hospital = {
+        x: brGameState.boardWidth,
+        y: brGameState.boardHeight - brGameState.hospitalHeight,
+        width: brGameState.hospitalWidth,
+        height: brGameState.hospitalHeight
+      };
+
+      // Initialize dinosaur
+      brGameState.dinosaur = {
+        x: brGameState.dinosaurX,
+        y: brGameState.dinosaurY,
+        width: brGameState.dinosaurWidth,
+        height: brGameState.dinosaurHeight,
+        img: null,
+        isRunning: true
+      };
+
+      // Load images
+      loadBloodRunImages();
+
+      // Reset game state
+      resetBloodRunGame();
+
+      // Start game loop
+      bloodRunGame.active = true;
+      brGameState.lastTime = 0;
+      bloodRunGameLoop(0);
+
+      // Add event listeners
+      addBloodRunEventListeners();
+    }
+
+    function loadBloodRunImages() {
+      const imageList = [
+        { name: 'dinosaurRun1', src: 'img/Ghibli Run-High.png' },
+        { name: 'dinosaurRun2', src: 'img/Ghibli Run-Pass.png' },
+        { name: 'dinosaurDead', src: 'img/ghibli dead.png' },
+        { name: 'dinosaurJump', src: 'img/Ghibli Jump.png' },
+        { name: 'cactus1', src: 'img/semak.png' },
+        { name: 'cactus2', src: 'img/kucing.png' },
+        { name: 'cactus3', src: 'img/cone1.png' },
+        { name: 'blood', src: 'img/bloodpixel.png' },
+        { name: 'hospital', src: 'img/hospital1.png' }
+      ];
+
+      imageList.forEach(item => {
+        const img = new Image();
+        img.src = item.src;
+        brGameState.images[item.name] = img;
+      });
+
+      // Set initial dinosaur image
+      setTimeout(() => {
+        brGameState.dinosaur.img = brGameState.images.dinosaurRun1;
+      }, 100);
+    }
+
+    function resetBloodRunGame() {
+      brGameState.gameOver = false;
+      brGameState.score = 0;
+      brGameState.cactusArray = [];
+      brGameState.bloodArray = [];
+      brGameState.collectedBlood = 0;
+      brGameState.lives = 3;
+      brGameState.speedMultiplier = 1.0;
+      brGameState.velocityX = brGameState.baseVelocityX;
+      brGameState.velocityY = 0;
+      brGameState.hospitalVisible = false;
+      brGameState.hospital.x = brGameState.boardWidth;
+      brGameState.dinosaur.y = brGameState.dinosaurY;
+      brGameState.dinosaur.isRunning = true;
+      brGameState.runFrame = 0;
+      brGameState.animationTimer = 0;
+      brGameState.cactusSpawnTimer = 0;
+      brGameState.bloodSpawnTimer = 0;
+      brGameState.cactusSpawnInterval = brGameState.baseCactusSpawnInterval;
+      brGameState.bloodSpawnInterval = brGameState.baseBloodSpawnInterval;
+      brGameState.frameCount = 0;
+      brGameState.fpsTimer = 0;
+    }
+
+    function bloodRunGameLoop(currentTime) {
+      if (!bloodRunGame.active) return;
+
+      // Calculate delta time
+      if (brGameState.lastTime === 0) brGameState.lastTime = currentTime;
+      brGameState.deltaTime = (currentTime - brGameState.lastTime) / 1000;
+      brGameState.lastTime = currentTime;
+
+      // Cap delta time
+      brGameState.deltaTime = Math.min(brGameState.deltaTime, 0.033);
+
+      // Update FPS
+      brGameState.frameCount++;
+      brGameState.fpsTimer += brGameState.deltaTime;
+      if (brGameState.fpsTimer >= 1.0) {
+        brGameState.currentFPS = Math.round(brGameState.frameCount / brGameState.fpsTimer);
+        const fpsElement = document.getElementById('blood-run-fps-value');
+        if (fpsElement) fpsElement.textContent = brGameState.currentFPS;
+        brGameState.frameCount = 0;
+        brGameState.fpsTimer = 0;
+      }
+
+      updateBloodRun(brGameState.deltaTime);
+      drawBloodRun();
+
+      if (bloodRunGame.active) {
+        bloodRunGame.animationId = requestAnimationFrame(bloodRunGameLoop);
+      }
+    }
+
+    function updateBloodRun(dt) {
+      if (brGameState.gameOver) {
+        // Check for completion
+        if (brGameState.collectedBlood >= brGameState.bloodGoal &&
+          brGameState.hospitalVisible &&
+          collision(brGameState.dinosaur, brGameState.hospital)) {
+          completeBloodRunGame();
+        }
+        return;
+      }
+
+      // Update timers
+      brGameState.cactusSpawnTimer += dt;
+      brGameState.bloodSpawnTimer += dt;
+
+      // Spawn objects
+      if (brGameState.cactusSpawnTimer >= brGameState.cactusSpawnInterval) {
+        placeCactusBloodRun();
+        brGameState.cactusSpawnTimer = 0;
+      }
+
+      if (brGameState.bloodSpawnTimer >= brGameState.bloodSpawnInterval) {
+        placeBloodBloodRun();
+        brGameState.bloodSpawnTimer = 0;
+      }
+
+      // Physics
+      brGameState.velocityY += brGameState.gravity * dt;
+      brGameState.dinosaur.y += brGameState.velocityY * dt;
+
+      if (brGameState.dinosaur.y > brGameState.dinosaurY) {
+        brGameState.dinosaur.y = brGameState.dinosaurY;
+        brGameState.velocityY = 0;
+        brGameState.dinosaur.isRunning = true;
+      }
+
+      // Animation
+      if (brGameState.dinosaur.isRunning && brGameState.images.dinosaurRun1) {
+        brGameState.animationTimer += dt;
+        if (brGameState.animationTimer >= brGameState.animationDuration) {
+          brGameState.runFrame = (brGameState.runFrame + 1) % brGameState.runFrameCount;
+          brGameState.dinosaur.img = brGameState.runFrame === 0 ?
+            brGameState.images.dinosaurRun1 : brGameState.images.dinosaurRun2;
+          brGameState.animationTimer = 0;
+        }
+      }
+
+      // Update obstacles
+      for (let i = 0; i < brGameState.cactusArray.length; i++) {
+        const c = brGameState.cactusArray[i];
+        c.x += brGameState.velocityX * dt;
+
+        if (c.x + c.width < 0) {
+          brGameState.cactusArray.splice(i, 1);
+          i--;
+          continue;
+        }
+
+        if (collision(brGameState.dinosaur, c)) {
+          brGameState.cactusArray.splice(i, 1);
+          i--;
+          brGameState.lives--;
+          if (brGameState.lives <= 0) {
+            brGameState.gameOver = true;
+            brGameState.dinosaur.img = brGameState.images.dinosaurDead;
+          }
+        }
+      }
+
+      // Update blood
+      for (let i = 0; i < brGameState.bloodArray.length; i++) {
+        const b = brGameState.bloodArray[i];
+        b.x += brGameState.velocityX * dt;
+
+        if (b.x + b.width < 0) {
+          brGameState.bloodArray.splice(i, 1);
+          i--;
+          continue;
+        }
+
+        if (collision(brGameState.dinosaur, b)) {
+          brGameState.collectedBlood++;
+          brGameState.bloodArray.splice(i, 1);
+          i--;
+
+          // Speed increase
+          brGameState.speedMultiplier = Math.min(brGameState.speedMultiplier + brGameState.speedIncreasePerBlood, 1.8);
+          brGameState.velocityX = brGameState.baseVelocityX * brGameState.speedMultiplier;
+
+          // Update spawn intervals
+          brGameState.cactusSpawnInterval = Math.max(0.6, brGameState.baseCactusSpawnInterval / brGameState.speedMultiplier);
+          brGameState.bloodSpawnInterval = Math.max(0.8, brGameState.baseBloodSpawnInterval / brGameState.speedMultiplier);
+
+          if (brGameState.collectedBlood >= brGameState.bloodGoal) {
+            brGameState.hospitalVisible = true;
+            brGameState.hospital.x = brGameState.boardWidth;
+          }
+        }
+      }
+
+      // Update hospital
+      if (brGameState.hospitalVisible) {
+        brGameState.hospital.x += brGameState.velocityX * dt;
+        if (collision(brGameState.dinosaur, brGameState.hospital)) {
+          brGameState.gameOver = true;
+          completeBloodRunGame();
+        }
+      }
+
+      // Update score
+      brGameState.score += Math.floor(dt * 60);
+    }
+
+    function drawBloodRun() {
+      const ctx = bloodRunGame.ctx;
+      const canvas = bloodRunGame.canvas;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw dinosaur
+      if (brGameState.dinosaur.img) {
+        ctx.drawImage(brGameState.dinosaur.img, brGameState.dinosaur.x, brGameState.dinosaur.y,
+          brGameState.dinosaur.width, brGameState.dinosaur.height);
+      }
+
+      // Draw obstacles
+      brGameState.cactusArray.forEach(c => {
+        if (c.img) ctx.drawImage(c.img, c.x, c.y, c.width, c.height);
+      });
+
+      // Draw blood
+      brGameState.bloodArray.forEach(b => {
+        if (b.img) ctx.drawImage(b.img, b.x, b.y, b.width, b.height);
+      });
+
+      // Draw hospital
+      if (brGameState.hospitalVisible && brGameState.images.hospital) {
+        ctx.drawImage(brGameState.images.hospital, brGameState.hospital.x, brGameState.hospital.y,
+          brGameState.hospital.width, brGameState.hospital.height);
+      }
+
+      // Draw UI
+      ctx.fillStyle = 'black';
+      ctx.font = '18px Arial';
+      ctx.fillText("Score: " + brGameState.score, 10, 25);
+      ctx.fillText("Blood: " + brGameState.collectedBlood + "/" + brGameState.bloodGoal, 10, 45);
+      ctx.fillText("Lives: " + brGameState.lives, 10, 65);
+      ctx.fillText("Speed: " + (brGameState.speedMultiplier * 100).toFixed(0) + "%", 10, 85);
+
+      if (brGameState.gameOver) {
+        const msg = (brGameState.collectedBlood >= brGameState.bloodGoal &&
+          brGameState.hospitalVisible &&
+          collision(brGameState.dinosaur, brGameState.hospital))
+          ? "Blood delivered successfully!"
+          : "Game Over! Press SPACE to retry";
+
+        ctx.fillStyle = 'red';
+        ctx.font = 'bold 20px Arial';
+        const textWidth = ctx.measureText(msg).width;
+        ctx.fillText(msg, (canvas.width - textWidth) / 2, canvas.height / 2);
+      }
+    }
+
+    function placeCactusBloodRun() {
+      if (brGameState.gameOver) return;
+
+      const chance = Math.random();
+      let cactus;
+
+      if (chance > 0.85) {
+        cactus = {
+          x: brGameState.cactusX,
+          y: brGameState.boardHeight - brGameState.coneHeight,
+          width: brGameState.coneWidth,
+          height: brGameState.coneHeight,
+          img: brGameState.images.cactus3
+        };
+      } else if (chance > 0.6) {
+        cactus = {
+          x: brGameState.cactusX,
+          y: brGameState.cactusY,
+          width: brGameState.cactus2Width,
+          height: brGameState.cactusHeight,
+          img: brGameState.images.cactus2
+        };
+      } else if (chance > 0.4) {
+        cactus = {
+          x: brGameState.cactusX,
+          y: brGameState.cactusY,
+          width: brGameState.cactus1Width,
+          height: brGameState.cactusHeight,
+          img: brGameState.images.cactus1
+        };
+      }
+
+      if (cactus) brGameState.cactusArray.push(cactus);
+      if (brGameState.cactusArray.length > 10) brGameState.cactusArray.shift();
+    }
+
+    function placeBloodBloodRun() {
+      if (brGameState.gameOver || brGameState.collectedBlood >= brGameState.bloodGoal) return;
+
+      if (Math.random() > 0.7) {
+        const newBlood = {
+          x: brGameState.boardWidth + (Math.random() * 100),
+          y: brGameState.bloodY,
+          width: brGameState.bloodWidth,
+          height: brGameState.bloodHeight,
+          img: brGameState.images.blood
+        };
+
+        // Simple position check
+        let safe = true;
+        for (let cactus of brGameState.cactusArray) {
+          if (Math.abs(newBlood.x - cactus.x) < 100) {
+            safe = false;
+            break;
+          }
+        }
+
+        if (safe) brGameState.bloodArray.push(newBlood);
+      }
+
+      if (brGameState.bloodArray.length > 10) brGameState.bloodArray.shift();
+    }
+
+    function collision(a, b) {
+      return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+      );
+    }
+
+    function completeBloodRunGame() {
+      bloodRunGame.completed = true;
+      bloodRunGame.active = false;
+
+      if (bloodRunGame.animationId) {
+        cancelAnimationFrame(bloodRunGame.animationId);
+      }
+
+      setTimeout(() => {
+        showAlert('Blood delivery mission completed!', 'success');
+        messageEl.textContent = 'Blood successfully delivered! Click "Next" to proceed to transfusion.';
+        nextBtn.disabled = false;
+      }, 1000);
+    }
+
+    function addBloodRunEventListeners() {
+      let spacePressed = false;
+
+      function handleKeyDown(e) {
+        if (e.code === 'Space' && bloodRunGame.active) {
+          e.preventDefault();
+
+          if (!spacePressed) {
+            spacePressed = true;
+
+            if (!brGameState.gameOver && brGameState.dinosaur.y === brGameState.dinosaurY) {
+              brGameState.velocityY = -850;
+              brGameState.dinosaur.img = brGameState.images.dinosaurJump;
+              brGameState.dinosaur.isRunning = false;
+            }
+
+            if (brGameState.gameOver && !bloodRunGame.completed) {
+              resetBloodRunGame();
+              brGameState.dinosaur.img = brGameState.images.dinosaurRun1;
+            }
+          }
+        }
+      }
+
+      function handleKeyUp(e) {
+        if (e.code === 'Space') {
+          spacePressed = false;
+        }
+      }
+
+      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keyup', handleKeyUp);
+
+      // Store references for cleanup
+      bloodRunGame.keyDownHandler = handleKeyDown;
+      bloodRunGame.keyUpHandler = handleKeyUp;
+    }
   </script>
 </body>
-
 </html>

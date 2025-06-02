@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blood Delivery Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #game-canvas {
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        #instructions {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        #fps-counter {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas" width="750" height="250"></canvas>
+        <div id="instructions">
+            <p>Tekan SPASI untuk melompat. Kumpulkan darah & antarkan ke rumah sakit!</p>
+        </div>
+        <div id="fps-counter">FPS: <span id="fps-value">60</span></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const fpsElement = document.getElementById('fps-value');
+
+        const boardWidth = canvas.width;
+        const boardHeight = canvas.height;
+
+        const dinosaurWidth = 88;
+        const dinosaurHeight = 94;
+        const dinosaurX = 50;
+        let dinosaurY = boardHeight - dinosaurHeight;
+
+        const cactus1Width = 110;
+        const cactus2Width = 69;
+        const cactusHeight = 70;
+        const cactusX = 700;
+        const cactusY = boardHeight - cactusHeight;
+
+        const coneWidth = 70;
+        const coneHeight = 70;
+
+        // Kecepatan base (pixels per detik, bukan per frame)
+        const baseVelocityX = -480; // 480 pixels per detik (lebih cepat)
+        let velocityX = baseVelocityX;
+        let velocityY = 0;
+        const gravity = 3500; // pixels per detik² (gravitasi lebih kuat)
+        
+        // Speed multiplier untuk setiap darah yang dikumpulkan
+        let speedMultiplier = 1.0;
+        const speedIncreasePerBlood = 0.2; // 20% peningkatan per darah (mentok di 200%)
+
+        let gameOver = false;
+        let score = 0;
+        let cactusArray = [];
+        let bloodArray = [];
+
+        const bloodWidth = 50;
+        const bloodHeight = 60;
+        const bloodY = boardHeight - bloodHeight - 10;
+        let collectedBlood = 0;
+        const bloodGoal = 5;
+
+        let lives = 3;
+
+        const hospitalImg = new Image();
+        hospitalImg.src = "img/hospital1.png";
+
+        const hospitalWidth = 110;
+        const hospitalHeight = 130;
+
+        const hospital = {
+            x: boardWidth,
+            y: boardHeight - hospitalHeight,
+            width: hospitalWidth,
+            height: hospitalHeight
+        };
+
+        let hospitalVisible = false;
+
+        let runFrame = 0;
+        const runFrameCount = 2;
+        let animationTimer = 0;
+        const animationDuration = 0.15; // detik per frame animasi
+
+        // Delta time variables
+        let lastTime = 0;
+        let deltaTime = 0;
+        
+        // FPS tracking
+        let frameCount = 0;
+        let fpsTimer = 0;
+        let currentFPS = 60;
+
+        // Timer variables (dalam detik)
+        let cactusSpawnTimer = 0;
+        let bloodSpawnTimer = 0;
+        const baseCactusSpawnInterval = 1.0; // detik (lebih sering)
+        const baseBloodSpawnInterval = 1.2; // detik (lebih sering)
+        let cactusSpawnInterval = baseCactusSpawnInterval;
+        let bloodSpawnInterval = baseBloodSpawnInterval;
+
+        const dinosaurRun1 = new Image();
+        const dinosaurRun2 = new Image();
+        const dinosaurDeadImg = new Image();
+        const dinosaurJumpImg = new Image();
+        const cactus1Img = new Image();
+        const cactus2Img = new Image();
+        const cactus3Img = new Image();
+        const bloodImg = new Image();
+
+        dinosaurRun1.src = 'img/Ghibli Run-High.png';
+        dinosaurRun2.src = 'img/Ghibli Run-Pass.png';
+        dinosaurDeadImg.src = 'img/ghibli dead.png';
+        dinosaurJumpImg.src = 'img/Ghibli Jump.png';
+        cactus1Img.src = 'img/semak.png';
+        cactus2Img.src = 'img/kucing.png';
+        cactus3Img.src = 'img/cone1.png';
+        bloodImg.src = 'img/bloodpixel.png';
+
+        const dinosaur = {
+            x: dinosaurX,
+            y: dinosaurY,
+            width: dinosaurWidth,
+            height: dinosaurHeight,
+            img: dinosaurRun1,
+            isRunning: true
+        };
+
+        function collision(a, b) {
+            return (
+                a.x < b.x + b.width &&
+                a.x + a.width > b.x &&
+                a.y < b.y + b.height &&
+                a.y + a.height > b.y
+            );
+        }
+
+        function isPositionSafeForBlood(x, y, width, height) {
+            const bloodObj = { x: x, y: y, width: width, height: height };
+            
+            for (let cactus of cactusArray) {
+                const bufferedCactus = {
+                    x: cactus.x - 30,
+                    y: cactus.y,
+                    width: cactus.width + 60,
+                    height: cactus.height
+                };
+                
+                if (collision(bloodObj, bufferedCactus)) {
+                    return false;
+                }
+            }
+            
+            for (let blood of bloodArray) {
+                const bufferedBlood = {
+                    x: blood.x - 20,
+                    y: blood.y,
+                    width: blood.width + 40,
+                    height: blood.height
+                };
+                
+                if (collision(bloodObj, bufferedBlood)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function placeCactus() {
+            if (gameOver) return;
+            const chance = Math.random();
+            let cactus;
+            if (chance > 0.9) {
+                cactus = { x: cactusX, y: boardHeight - coneHeight, width: coneWidth, height: coneHeight, img: cactus3Img };
+            } else if (chance > 0.7) {
+                cactus = { x: cactusX, y: cactusY, width: cactus2Width, height: cactusHeight, img: cactus2Img };
+            } else if (chance > 0.5) {
+                cactus = { x: cactusX, y: cactusY, width: cactus1Width, height: cactusHeight, img: cactus1Img };
+            }
+            if (cactus) cactusArray.push(cactus);
+            if (cactusArray.length > 10) cactusArray.shift();
+        }
+
+        function placeBlood() {
+            if (gameOver || collectedBlood >= bloodGoal) return;
+            
+            if (Math.random() > 0.85) {
+                let attempts = 0;
+                let maxAttempts = 10;
+                let bloodPlaced = false;
+                
+                while (attempts < maxAttempts && !bloodPlaced) {
+                    const bloodX = boardWidth + (Math.random() * 100);
+                    
+                    const newBlood = {
+                        x: bloodX,
+                        y: bloodY,
+                        width: bloodWidth,
+                        height: bloodHeight,
+                        img: bloodImg
+                    };
+                    
+                    if (isPositionSafeForBlood(bloodX, bloodY, bloodWidth, bloodHeight)) {
+                        bloodArray.push(newBlood);
+                        bloodPlaced = true;
+                    }
+                    
+                    attempts++;
+                }
+            }
+            
+            if (bloodArray.length > 10) bloodArray.shift();
+        }
+
+        function update(dt) {
+            if (gameOver) return;
+
+            // Update timers
+            cactusSpawnTimer += dt;
+            bloodSpawnTimer += dt;
+
+            // Spawn objects berdasarkan timer
+            if (cactusSpawnTimer >= cactusSpawnInterval) {
+                placeCactus();
+                cactusSpawnTimer = 0;
+            }
+
+            if (bloodSpawnTimer >= bloodSpawnInterval) {
+                placeBlood();
+                bloodSpawnTimer = 0;
+            }
+
+            // Physics update dengan delta time
+            velocityY += gravity * dt;
+            dinosaur.y += velocityY * dt;
+
+            if (dinosaur.y > dinosaurY) {
+                dinosaur.y = dinosaurY;
+                velocityY = 0;
+                dinosaur.isRunning = true;
+            }
+
+            // Animation update
+            if (dinosaur.isRunning) {
+                animationTimer += dt;
+                if (animationTimer >= animationDuration) {
+                    runFrame = (runFrame + 1) % runFrameCount;
+                    dinosaur.img = runFrame === 0 ? dinosaurRun1 : dinosaurRun2;
+                    animationTimer = 0;
+                }
+            }
+
+            // Update rintangan
+            for (let i = 0; i < cactusArray.length; i++) {
+                const c = cactusArray[i];
+                c.x += velocityX * dt;
+                
+                if (c.x + c.width < 0) {
+                    cactusArray.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                
+                if (collision(dinosaur, c)) {
+                    cactusArray.splice(i, 1);
+                    i--;
+                    lives--;
+                    if (lives <= 0) {
+                        gameOver = true;
+                        dinosaur.img = dinosaurDeadImg;
+                    }
+                }
+            }
+
+            // Update darah
+            for (let i = 0; i < bloodArray.length; i++) {
+                const b = bloodArray[i];
+                b.x += velocityX * dt;
+                
+                if (b.x + b.width < 0) {
+                    bloodArray.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                
+                if (collision(dinosaur, b)) {
+                    collectedBlood++;
+                    bloodArray.splice(i, 1);
+                    i--;
+
+                    // Speed increase dengan cap maksimal 200%
+                    speedMultiplier = Math.min(speedMultiplier + speedIncreasePerBlood, 2.0);
+                    velocityX = baseVelocityX * speedMultiplier;
+
+                    // Update spawn intervals berdasarkan speed multiplier
+                    cactusSpawnInterval = Math.max(0.4, baseCactusSpawnInterval / speedMultiplier);
+                    bloodSpawnInterval = Math.max(0.5, baseBloodSpawnInterval / speedMultiplier);
+
+                    if (collectedBlood >= bloodGoal) {
+                        hospitalVisible = true;
+                        hospital.x = boardWidth;
+                    }
+                }
+            }
+
+            // Update hospital
+            if (hospitalVisible) {
+                hospital.x += velocityX * dt;
+                if (collision(dinosaur, hospital)) {
+                    gameOver = true;
+                }
+            }
+
+            // Update score berdasarkan waktu, bukan frame
+            score += Math.floor(dt * 60); // Equivalent to 1 point per frame at 60fps
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, boardWidth, boardHeight);
+            ctx.drawImage(dinosaur.img, dinosaur.x, dinosaur.y, dinosaur.width, dinosaur.height);
+
+            cactusArray.forEach(c => ctx.drawImage(c.img, c.x, c.y, c.width, c.height));
+            bloodArray.forEach(b => ctx.drawImage(b.img, b.x, b.y, b.width, b.height));
+            if (hospitalVisible) {
+                ctx.drawImage(hospitalImg, hospital.x, hospital.y, hospital.width, hospital.height);
+            }
+
+            ctx.fillStyle = 'black';
+            ctx.font = '24px Courier';
+            ctx.fillText("Score: " + score, 10, 25);
+            ctx.fillText("Blood: " + collectedBlood + "/" + bloodGoal, 10, 50);
+            ctx.fillText("Lives: " + lives, 10, 75);
+            ctx.fillText("Speed: " + (speedMultiplier * 100).toFixed(0) + "%", 10, 100);
+
+            if (gameOver) {
+                const msg = (collectedBlood >= bloodGoal && collision(dinosaur, hospital))
+                    ? "Berhasil mengantar darah!"
+                    : "Game Over!";
+                ctx.fillText(msg, 10, 125);
+            }
+        }
+
+        function gameLoop(currentTime) {
+            // Hitung delta time (dalam detik)
+            if (lastTime === 0) lastTime = currentTime;
+            deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            // Cap delta time untuk mencegah frame skip yang ekstrem
+            deltaTime = Math.min(deltaTime, 0.033); // maksimal 33ms (30fps minimum)
+
+            // Update FPS counter
+            frameCount++;
+            fpsTimer += deltaTime;
+            if (fpsTimer >= 1.0) {
+                currentFPS = Math.round(frameCount / fpsTimer);
+                fpsElement.textContent = currentFPS;
+                frameCount = 0;
+                fpsTimer = 0;
+            }
+
+            update(deltaTime);
+            draw();
+            
+            if (!gameOver) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        let isJumping = false;
+        let spacePressed = false;
+
+        document.addEventListener('keydown', function (e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                
+                // Langsung proses saat key ditekan (tidak tunggu keyup)
+                if (!spacePressed) {
+                    spacePressed = true;
+                    
+                    if (!gameOver && dinosaur.y === dinosaurY) {
+                        velocityY = -1050; // pixels per detik (lompat lebih tinggi dan responsif)
+                        dinosaur.img = dinosaurJumpImg;
+                        dinosaur.isRunning = false;
+                        isJumping = true;
+                    }
+
+                    if (gameOver) {
+                        // Reset game
+                        dinosaur.y = dinosaurY;
+                        dinosaur.img = dinosaurRun1;
+                        dinosaur.isRunning = true;
+                        velocityY = 0;
+                        velocityX = baseVelocityX;
+                        speedMultiplier = 1.0; // Reset speed multiplier
+                        cactusArray = [];
+                        bloodArray = [];
+                        score = 0;
+                        collectedBlood = 0;
+                        lives = 3;
+                        gameOver = false;
+                        hospitalVisible = false;
+                        hospital.x = boardWidth;
+                        isJumping = false;
+                        
+                        // Reset timers
+                        cactusSpawnTimer = 0;
+                        bloodSpawnTimer = 0;
+                        cactusSpawnInterval = baseCactusSpawnInterval;
+                        bloodSpawnInterval = baseBloodSpawnInterval;
+                        animationTimer = 0;
+                        lastTime = 0;
+                        
+                        requestAnimationFrame(gameLoop);
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('keyup', function (e) {
+            if (e.code === 'Space') {
+                spacePressed = false;
+                if (dinosaur.y === dinosaurY) {
+                    isJumping = false;
+                }
+            }
+        });
+
+        // Start game
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+
+</html>
