@@ -369,6 +369,7 @@
     .blood-flow {
       stroke-dasharray: 10, 5;
       animation: flow 5s linear infinite;
+      z-index: 5;
     }
 
     @keyframes flow {
@@ -665,7 +666,7 @@
     }
 
     .blood-run-game {
-      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      background: linear-gradient(135deg, #e3f2fd 0%, #ffeaea 100%);
       width: 100%;
       height: 100%;
       display: none;
@@ -675,9 +676,10 @@
 
     #blood-run-canvas {
       background-color: #fff;
-      border: 3px solid #1976d2;
+      border: 3px solid #ff3434;
       border-radius: 15px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      margin: 10px 0;
     }
 
     #blood-run-container {
@@ -686,6 +688,7 @@
       align-items: center;
       width: 100%;
       height: 100%;
+      background: linear-gradient(135deg, #ffe3e3 0%, #ffeaea 100%);
       padding: 20px;
       box-sizing: border-box;
     }
@@ -730,6 +733,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      overflow: hidden;
     }
 
     #tap-canvas {
@@ -737,19 +741,48 @@
       border: 2px solid #ccc;
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 1;
     }
 
+    .help-btn-inline {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      margin-left: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+    }
+
+    .help-btn-inline:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+      background: linear-gradient(45deg, #764ba2, #667eea);
+    }
+
+
     #tap-hud {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      color: #900;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
       font-size: 20px;
-      background: rgba(255, 255, 255, 0.9);
       padding: 10px 15px;
       border-radius: 10px;
+      background: rgba(255, 255, 255, 0.9);
       box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 10;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
     #tap-blood-bag-container {
@@ -760,18 +793,20 @@
       height: 200px;
       background: url('img/bagBlood.png') no-repeat center;
       background-size: cover;
+      z-index: 1;
     }
 
     #tap-blood-fill {
       position: absolute;
-      left: 15%;
-      bottom: 20%;
-      width: 70%;
-      height: 0%;
+      bottom: 600px;
+      right: 48px;
+      width: 95px;
+      height: 0px;
+      max-height: 104px;
       background: linear-gradient(to top, #d00, #ff4d4d);
       border-radius: 6px;
       transition: height 0.3s ease-out;
-      z-index: 1;
+      z-index: 2;
     }
 
     /* Fade overlay untuk transisi */
@@ -799,10 +834,373 @@
       opacity: 1;
       pointer-events: all;
     }
+
+    @keyframes skillCheckFeedback {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(-10px) scale(1.2);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px) scale(0.8);
+      }
+    }
+
+    .skill-check-container {
+      font-family: 'Arial', sans-serif;
+    }
+
+    .skill-check-needle {
+      transition: none;
+    }
+
+    .safe-zone,
+    .bonus-zone {
+      transition: all 0.3s ease;
+    }
+
+    .drop-zone-active {
+      stroke: #4caf50 !important;
+      stroke-width: 4 !important;
+      fill: rgba(76, 175, 80, 0.2) !important;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2500;
+      backdrop-filter: blur(5px);
+    }
+
+    .popup-container {
+      background: linear-gradient(135deg, #ff9191 0%, #de5c5c 100%);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .popup-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .popup-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .popup-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .game-elements {
+      display: flex;
+      justify-content: space-around;
+      margin: 25px 0;
+    }
+
+    .element {
+      text-align: center;
+      flex: 1;
+      margin: 0 15px;
+    }
+
+    .element-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .blood-element .element-icon {
+      background: linear-gradient(45deg, #ff4757, #ff3742);
+      color: white;
+    }
+
+    .bacteria-element .element-icon {
+      background: linear-gradient(45deg, #2ed573, #1dd1a1);
+      color: white;
+    }
+
+    .element-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .element-desc {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.4;
+    }
+
+    .instructions {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 25px 0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .instruction-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .instruction-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .instruction-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+    }
+
+    .instruction-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .instruction-number {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 12px;
+      font-size: 12px;
+    }
+
+    .popup-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .btn-popup {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-play {
+      background: linear-gradient(45deg, #ff4757, #ff3742);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    }
+
+    .btn-play:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+    }
+
+    .btn-close {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Legend Container - Updated for PNG icons */
+    .legend-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(5px);
+      z-index: 10;
+      max-width: 250px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: white;
+    }
+
+    .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .legend-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Hide legend container initially */
+    .legend-container.hidden {
+      display: none;
+    }
   </style>
 </head>
 
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
+  <!-- How to Play Popup -->
+  <div id="howToPlayPopup" class="popup-overlay hidden">
+    <div class="popup-container">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+
+      <div class="popup-header">
+        <h2 class="popup-title">🩸How To Play</h2>
+        <p class="popup-subtitle">Collect blood, avoid bacteria!</p>
+      </div>
+
+      <div class="game-elements">
+        <div class="element blood-element">
+          <div class="element-icon">
+            <img src="img/darahMerah.png" alt="Blood Cell" style="width: 50px; height: 50px; border-radius: 50%;">
+          </div>
+          <h3 class="element-title">Red Blood Cells</h3>
+          <p class="element-desc">Click to collect and proceed to the next stage</p>
+        </div>
+
+        <div class="element bacteria-element">
+          <div class="element-icon">
+            <img src="img/bakteri.png" alt="Bacteria" style="width: 50px; height: 50px; border-radius: 50%;">
+          </div>
+          <h3 class="element-title">Bacteria</h3>
+          <p class="element-desc">Avoid! Will make you game over</p>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h3 class="instruction-title">📋 Game Instructions</h3>
+        <ul class="instruction-list">
+          <li class="instruction-item">
+            <span class="instruction-number">1</span>
+            Click on red blood cells (🩸) to collect blood
+          </li>
+          <li class="instruction-item">
+            <span class="instruction-number">2</span>
+            Avoid green bacteria (🦠) to avoid game over
+          </li>
+          <li class="instruction-item">
+            <span class="instruction-number">3</span>
+            Pantau kantong darah di kanan atas untuk melihat progress
+          </li>
+          <li class="instruction-item">
+            <span class="instruction-number">4</span>
+            collect it then it will proceed to the next stage
+          </li>
+        </ul>
+      </div>
+
+      <div class="popup-buttons">
+        <button class="btn-popup btn-play" onclick="startGame()">🎮 Games Start</button>
+        <button class="btn-popup btn-close" onclick="closePopup()">❌ Close</button>
+      </div>
+    </div>
+  </div>
   <header class="bg-white text-black shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
@@ -891,7 +1289,8 @@
           <span class="slide-badge">Join Today</span>
           <h1 class="text-4xl md:text-5xl font-bold mb-6">Become a Blood Donation Hero</h1>
           <p class="text-xl mb-8">
-            Play and learn about the importance of blood donation. Earn points, challenge friends, and discover how one
+            Play and learn about the importance of blood donation. Earn points, challenge friends, and
+            discover how one
             blood bag can save up to three lives!
           </p>
           <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -962,7 +1361,8 @@
           <div class="p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-3">Blood Donation Simulation</h3>
             <p class="text-gray-600 mb-4">
-              Experience what it's like to be a medical professional managing the blood donation process, from
+              Experience what it's like to be a medical professional managing the blood donation process,
+              from
               screening to distribution.
             </p>
             <a href="#simulation"
@@ -980,7 +1380,8 @@
           <div class="p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-3">Interactive Quiz</h3>
             <p class="text-gray-600 mb-4">
-              Test your knowledge about blood donation through quizzes with various difficulty levels and earn virtual
+              Test your knowledge about blood donation through quizzes with various difficulty levels and
+              earn virtual
               rewards.
             </p>
             <a href="#quiz"
@@ -998,7 +1399,8 @@
           <div class="p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-3">Educational Materials</h3>
             <p class="text-gray-600 mb-4">
-              Learn about different blood products, blood needs, storage, processing, and blood donation activities.
+              Learn about different blood products, blood needs, storage, processing, and blood donation
+              activities.
             </p>
             <a href="#education"
               class="block text-center bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">Learn
@@ -1065,7 +1467,8 @@
                   <!-- Patient details -->
                   <circle cx="90" cy="25" r="3" fill="#424242" /> <!-- Left eye -->
                   <circle cx="110" cy="25" r="3" fill="#424242" /> <!-- Right eye -->
-                  <path d="M95 45 Q100 40 105 45" stroke="#424242" stroke-width="2" fill="none" /> <!-- Frown (sick) -->
+                  <path d="M95 45 Q100 40 105 45" stroke="#424242" stroke-width="2" fill="none" />
+                  <!-- Frown (sick) -->
                 </svg>
                 <div class="arm">
                   <svg width="100" height="150" viewBox="0 0 100 150">
@@ -1157,92 +1560,58 @@
                   <!-- Background wall elements -->
                   <rect x="0" y="0" width="800" height="450" fill="#e8f5e9" />
 
-                  <!-- Hospital bed - shifted left -->
-                  <g class="hospital-bed" transform="translate(150, 230)">
-                    <!-- Bed frame -->
-                    <rect x="0" y="100" width="300" height="20" rx="5" fill="#42a5f5" stroke="#1976d2"
-                      stroke-width="2" />
-                    <!-- Mattress -->
-                    <rect x="0" y="80" width="290" height="20" rx="5" fill="white" stroke="#bdbdbd" stroke-width="1" />
-                    <!-- Pillow -->
-                    <rect x="0" y="75" width="60" height="15" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
-                    <!-- Legs -->
-                    <rect x="20" y="120" width="10" height="30" fill="#1976d2" />
-                    <rect x="270" y="120" width="10" height="30" fill="#1976d2" />
-
-                    <!-- Patient in bed -->
-                    <g class="patient-in-bed">
-                      <rect x="30" y="50" width="240" height="40" rx="10" fill="#f5cba7" /> <!-- Body -->
-                      <circle cx="50" cy="40" r="20" fill="#f5cba7" /> <!-- Head -->
-                      <circle cx="43" cy="35" r="3" fill="#424242" /> <!-- Left eye -->
-                      <circle cx="57" cy="35" r="3" fill="#424242" /> <!-- Right eye -->
-                      <path d="M43 45 Q50 42 57 45" stroke="#424242" stroke-width="2" fill="none" />
-                      <!-- Slight smile -->
-                      <rect x="30" y="90" width="240" height="20" rx="10" fill="#e0e0e0" /> <!-- Blanket -->
-                    </g>
-
-                    <!-- Patient arm -->
-                    <rect x="80" y="30" width="20" height="60" rx="10" fill="#f5cba7" />
-                    <path d="M90 50 L90 90" stroke="#5c6bc0" stroke-width="2" stroke-opacity="0.7" /> <!-- Vein -->
-                    <circle id="transfusion-point" cx="90" cy="70" r="5" fill="#e53935" /> <!-- Transfusion point -->
-                  </g>
-
-                  <!-- IV Stand - repositioned to match the image -->
-                  <g class="transfusion-stand" id="transfusion-stand" transform="translate(520, 100)">
-                    <!-- Stand pole -->
-                    <rect x="0" y="30" width="10" height="200" fill="#757575" stroke="#424242" stroke-width="1" />
-                    <!-- Stand base -->
-                    <path d="M-30 230 L40 230 L25 250 L-15 250 Z" fill="#757575" stroke="#424242" stroke-width="1" />
-                    <!-- Hook - pemindahan posisi hook agar sesuai dengan gambar -->
-                    <path d="M10 30 L30 30 L30 50" fill="none" stroke="#757575" stroke-width="3" />
-
-                    <!-- Drop zone - repositioned to match the image -->
-                    <rect id="drop-zone" x="20" y="35" width="35" height="50" stroke="#e53935" stroke-width="3"
-                      stroke-dasharray="5" fill="rgba(255,235,238,0.3)" rx="5" class="drop-zone-highlight" />
-
-                    <!-- Instruction text -->
-                    <text id="instruction-text" x="45" y="65" text-anchor="middle" font-size="10" fill="#d32f2f"
-                      transform="rotate(-90, 45, 65)">Pasang di sini</text>
-                  </g>
-
                   <!-- Medical equipment - adds realism -->
                   <rect x="650" y="150" width="80" height="40" rx="5" fill="#e0e0e0" stroke="#bdbdbd" />
                   <circle cx="670" cy="170" r="5" fill="#4caf50" />
                   <rect x="680" y="165" width="40" height="10" rx="2" fill="#f5f5f5" />
                 </svg>
+
+                <!-- Patient dengan gambar - menggantikan hospital bed dan patient SVG -->
+                <div class="patient-in-bed"
+                  style="position: absolute; top: 110px; left: 40px; width: 500px; height: 350px;">
+                  <!-- di ubah -->
+                  <img src="img/pasien2.png" alt="Patient" class="patient-image" style="width: 100%; height: 100%;" />
+
+                  <!-- Area klik lengan - menggunakan ID lama -->
+                  <div id="transfusion-point" style="position: absolute; top: 130px; left: 215px; width: 120px; height: 35px; 
+          cursor: pointer; background-color: rgba(255, 255, 255, 0); z-index: 4;">
+                  </div>
+                </div>
+
+                <!-- IV Stand - repositioned to match the image -->
+                <div style="position: absolute; top: 100px; left: 520px;">
+                  <svg width="100" height="300" viewBox="0 0 100 300">
+                    <g class="transfusion-stand" id="transfusion-stand">
+                      <!-- Stand pole -->
+                      <rect x="45" y="30" width="10" height="200" fill="#757575" stroke="#424242" stroke-width="1" />
+                      <!-- Stand base -->
+                      <path d="M15 230 L85 230 L70 250 L30 250 Z" fill="#757575" stroke="#424242" stroke-width="1" />
+                      <!-- Hook -->
+                      <path d="M55 30 L75 30 L75 50" fill="none" stroke="#757575" stroke-width="3" />
+
+                      <!-- Drop zone -->
+                      <rect id="drop-zone" x="65" y="35" width="35" height="50" stroke="#e53935" stroke-width="3"
+                        stroke-dasharray="5" fill="rgba(255,235,238,0.3)" rx="5" class="drop-zone-highlight" />
+
+                      <!-- Instruction text -->
+                      <text id="instruction-text" x="90" y="65" text-anchor="middle" font-size="10" fill="#d32f2f"
+                        transform="rotate(-90, 90, 65)">Pasang di
+                        sini</text>
+                    </g>
+                  </svg>
+                </div>
               </div>
 
               <div class="blood-run-game" id="blood-run-game">
-                <div id="blood-run-container" style="
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    width: 100%; 
-    height: 100%; 
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
-    padding: 20px; 
-    box-sizing: border-box;
-  ">
-                  <canvas id="blood-run-canvas" width="700" height="220" style="
-      background-color: #fff; 
-      border: 3px solid #1976d2; 
-      border-radius: 15px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-      margin: 10px 0;
-    "></canvas>
-
+                <div id="blood-run-container">
+                  <canvas id="blood-run-canvas" width="700" height="220"></canvas>
                   <div
                     style="margin-top: 50px; text-align: center; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 10px;">
                     <div id="blood-run-instructions"
                       style="color: #333; font-size: 16px; margin-bottom: 8px; font-weight: bold;">
-                      🎮 Press SPACE to jump • Collect 🩸 blood • Avoid obstacles • Reach the 🏥 hospital!
+                      🎮 Press SPACE to jump • Collect 🩸 blood • Avoid obstacles • Reach the 🏥
+                      hospital!
                     </div>
-                    <div id="blood-run-status" style="color: #666; font-size: 14px; margin-bottom: 5px;">
-                      Status: Ready to start
-                    </div>
-                    <!-- <div id="blood-run-fps" style="font-size: 12px; color: #999;">
-                      FPS: <span id="blood-run-fps-value">60</span>
-                    </div> -->
                   </div>
                 </div>
               </div>
@@ -1250,24 +1619,22 @@
               <!-- Transition overlay -->
               <div class="transition-overlay" id="transition-overlay">
                 <div class="stage-title" id="stage-title">Stage Title</div>
-                <div class="stage-desc" id="stage-desc">Stage description goes here with important information about
+                <div class="stage-desc" id="stage-desc">Stage description goes here with important
+                  information about
                   this stage.</div>
               </div>
             </div>
           </div>
 
           <div class="controls" id="controls">
-            <!-- Isi Item keperluan alat donor darah, item akan di panggil dari script -->
           </div>
 
-          <!-- New placement: Blood type selection interface OUTSIDE scene but BEFORE message -->
           <div id="blood-type-selection-container"
             class="bg-white rounded-lg shadow-md p-4 mb-4 hidden transition-all duration-300">
-            <!-- Petunjuk akan ditambahkan secara dinamis via JavaScript -->
 
             <h3 class="text-lg font-bold text-center text-gray-800 mb-3">Determine blood type:</h3>
 
-            <!-- Tombol Golongan Darah dengan Warna yang Lebih Menarik -->
+            <!-- Tombol Golongan Darah  -->
             <div class="flex justify-center space-x-3 mb-4">
               <button id="btn-a"
                 class="blood-type-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">A</button>
@@ -1288,11 +1655,11 @@
                 class="rh-btn w-16 h-12 border-2 border-gray-300 rounded-md hover:bg-red-50 hover:border-red-500 focus:outline-none transition-all duration-200 font-bold text-lg text-red-800">Rh-</button>
             </div>
 
-            <!-- Tombol Konfirmasi dengan Efek Hover -->
+            <!-- Tombol Konfirmasi -->
             <div id="confirm-selection" class="flex justify-center hidden">
               <button id="btn-confirm"
                 class="w-40 h-12 bg-red-600 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none transform hover:scale-105 transition-all duration-200 flex items-center justify-center">
-                <span>Konfirmasi</span>
+                <span>Confirm</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -1302,7 +1669,7 @@
             </div>
           </div>
 
-          <!-- Tampilan Hasil Tes dengan Efek Transisi -->
+          <!-- Tampilan Hasil Tes -->
           <div id="test-result-display"
             class="bg-white rounded-lg shadow-md p-5 mb-4 hidden transition-all duration-500 transform">
             <h3 id="result-text" class="text-xl font-bold text-center text-gray-800 mb-2">Blood Type: ?</h3>
@@ -1356,7 +1723,8 @@
               </ul>
             </div>
 
-            <p class="text-gray-600 mb-8">Test your knowledge about blood donation with this interactive quiz!</p>
+            <p class="text-gray-600 mb-8">Test your knowledge about blood donation with this interactive
+              quiz!</p>
 
             <button id="start-quiz"
               class="bg-red-600 text-white py-3 px-8 rounded-lg hover:bg-red-700 transition duration-300 pulse-animation">
@@ -1443,7 +1811,8 @@
                 1
               </div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">R</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">R
+                </div>
                 <span class="font-medium">Rizky_88</span>
               </div>
               <div class="font-bold">950</div>
@@ -1453,7 +1822,8 @@
                 2
               </div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">A</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">A
+                </div>
                 <span class="font-medium">Andi123</span>
               </div>
               <div class="font-bold">820</div>
@@ -1464,23 +1834,28 @@
                 3
               </div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">F</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">F
+                </div>
                 <span class="font-medium">Fitri_PMI</span>
               </div>
               <div class="font-bold">790</div>
             </li>
             <li class="flex items-center p-4">
-              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">4</div>
+              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">
+                4</div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">S</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">S
+                </div>
                 <span class="font-medium">SandiW</span>
               </div>
               <div class="font-bold">715</div>
             </li>
             <li class="flex items-center p-4">
-              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">5</div>
+              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">
+                5</div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">D</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">D
+                </div>
                 <span class="font-medium">DewiAnggraini</span>
               </div>
               <div class="font-bold">690</div>
@@ -1496,7 +1871,8 @@
                 1
               </div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">B</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">B
+                </div>
                 <span class="font-medium">Budi_Smart</span>
               </div>
               <div class="font-bold">850</div>
@@ -1506,7 +1882,8 @@
                 2
               </div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">S</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">S
+                </div>
                 <span class="font-medium">Sinta22</span>
               </div>
               <div class="font-bold">810</div>
@@ -1517,23 +1894,28 @@
                 3
               </div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">M</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">M
+                </div>
                 <span class="font-medium">Maya_SMA</span>
               </div>
               <div class="font-bold">780</div>
             </li>
             <li class="flex items-center p-4">
-              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">4</div>
+              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">
+                4</div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">R</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">R
+                </div>
                 <span class="font-medium">Rudi_PMI</span>
               </div>
               <div class="font-bold">760</div>
             </li>
             <li class="flex items-center p-4">
-              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">5</div>
+              <div class="text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4">
+                5</div>
               <div class="flex items-center flex-grow">
-                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">D</div>
+                <div class="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center mr-3">D
+                </div>
                 <span class="font-medium">Dinda09</span>
               </div>
               <div class="font-bold">705</div>
@@ -1590,11 +1972,13 @@
           <div class="flex flex-col md:flex-row gap-6 mb-8">
             <div class="md:w-2/3">
               <p class="text-gray-600 mb-4">
-                The circulatory system is the body's transportation network, responsible for delivering oxygen,
+                The circulatory system is the body's transportation network, responsible for delivering
+                oxygen,
                 nutrients, hormones, and immune cells to tissues while removing waste products.
               </p>
               <p class="text-gray-600 mb-4">
-                At the center of this system is the heart, a powerful muscle that pumps blood throughout the body. The
+                At the center of this system is the heart, a powerful muscle that pumps blood throughout
+                the body. The
                 average adult has about 5-6 liters of blood circulating in their body.
               </p>
             </div>
@@ -1606,7 +1990,8 @@
 
           <h4 class="text-xl font-bold text-gray-700 mb-2">Blood: The River of Life</h4>
           <p class="text-gray-600 mb-4">
-            Blood is a specialized body fluid that consists of cells suspended in a liquid called plasma. It makes up
+            Blood is a specialized body fluid that consists of cells suspended in a liquid called plasma. It
+            makes up
             approximately 7-8% of human body weight.
           </p>
 
@@ -1643,15 +2028,18 @@
                   </div>
                 </div>
               </div>
-              <p class="text-xs text-gray-500 mt-2 text-center">Visual representation of blood composition</p>
+              <p class="text-xs text-gray-500 mt-2 text-center">Visual representation of blood composition
+              </p>
             </div>
           </div>
 
           <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
             <h5 class="font-bold text-red-700 mb-1">Did You Know?</h5>
             <p class="text-gray-700">
-              The average adult has around 5-6 liters of blood in their body, which is replenished constantly. When
-              you donate blood (450ml), your body replaces the fluid portion within 24 hours and the cellular
+              The average adult has around 5-6 liters of blood in their body, which is replenished
+              constantly. When
+              you donate blood (450ml), your body replaces the fluid portion within 24 hours and the
+              cellular
               components within a few weeks.
             </p>
           </div>
@@ -1663,7 +2051,8 @@
 
           <h4 class="text-xl font-bold text-gray-700 mb-2">Blood Types and Compatibility</h4>
           <p class="text-gray-600 mb-4">
-            Blood types are determined by the presence or absence of certain antigens on the surface of red blood
+            Blood types are determined by the presence or absence of certain antigens on the surface of red
+            blood
             cells. The two main classification systems are ABO and Rh factor.
           </p>
 
@@ -1758,7 +2147,8 @@
               </div>
               <div class="p-4">
                 <p class="text-gray-600 mb-3">
-                  Yellowish liquid component of blood that contains proteins, clotting factors, and other substances.
+                  Yellowish liquid component of blood that contains proteins, clotting factors, and
+                  other substances.
                 </p>
                 <h6 class="font-bold text-gray-700 mb-1">Used for:</h6>
                 <ul class="list-disc list-inside text-gray-600 mb-3">
@@ -1798,7 +2188,8 @@
               </div>
               <div class="p-4">
                 <p class="text-gray-600 mb-3">
-                  Concentrated portion of plasma containing clotting factors like fibrinogen, Factor VIII, and von
+                  Concentrated portion of plasma containing clotting factors like fibrinogen, Factor
+                  VIII, and von
                   Willebrand factor.
                 </p>
                 <h6 class="font-bold text-gray-700 mb-1">Used for:</h6>
@@ -1823,16 +2214,19 @@
             <div class="md:w-1/2">
               <h4 class="text-xl font-bold text-gray-700 mb-4">Why Is Blood Always Needed?</h4>
               <p class="text-gray-600 mb-4">
-                Blood cannot be manufactured or synthesized — it can only come from generous donors. Even with medical
+                Blood cannot be manufactured or synthesized — it can only come from generous donors.
+                Even with medical
                 advances, there is no substitute for human blood.
               </p>
               <p class="text-gray-600 mb-4">
-                Every day, hospitals need fresh supplies of blood for routine surgeries, emergency situations, and
+                Every day, hospitals need fresh supplies of blood for routine surgeries, emergency
+                situations, and
                 ongoing treatments for chronic conditions.
               </p>
               <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
                 <p class="text-gray-700 font-medium">
-                  Every 2 seconds, someone needs blood — that's approximately 43,000 units needed daily.
+                  Every 2 seconds, someone needs blood — that's approximately 43,000 units needed
+                  daily.
                 </p>
               </div>
             </div>
@@ -1850,7 +2244,8 @@
               </div>
               <h5 class="font-bold text-gray-800 mb-2">Surgery and Trauma Patients</h5>
               <p class="text-gray-600">
-                Patients undergoing major surgeries or experiencing traumatic injuries often require blood
+                Patients undergoing major surgeries or experiencing traumatic injuries often require
+                blood
                 transfusions to replace lost blood and stabilize their condition.
               </p>
             </div>
@@ -1861,7 +2256,8 @@
               </div>
               <h5 class="font-bold text-gray-800 mb-2">Mothers and Newborns</h5>
               <p class="text-gray-600">
-                Women experiencing complications during childbirth may need blood transfusions. Premature and ill
+                Women experiencing complications during childbirth may need blood transfusions.
+                Premature and ill
                 newborns often need blood components.
               </p>
             </div>
@@ -1872,7 +2268,8 @@
               </div>
               <h5 class="font-bold text-gray-800 mb-2">Cancer Patients</h5>
               <p class="text-gray-600">
-                Many cancer treatments affect the body's ability to produce blood cells. Transfusions help patients
+                Many cancer treatments affect the body's ability to produce blood cells. Transfusions
+                help patients
                 maintain strength during chemotherapy and radiation.
               </p>
             </div>
@@ -1883,7 +2280,8 @@
               </div>
               <h5 class="font-bold text-gray-800 mb-2">Chronic Disease Patients</h5>
               <p class="text-gray-600">
-                People with sickle cell disease, thalassemia, and hemophilia require regular blood transfusions
+                People with sickle cell disease, thalassemia, and hemophilia require regular blood
+                transfusions
                 throughout their lives.
               </p>
             </div>
@@ -1894,7 +2292,8 @@
               </div>
               <h5 class="font-bold text-gray-800 mb-2">Accident Victims</h5>
               <p class="text-gray-600">
-                A single car accident victim can require up to 100 units of blood. Emergency responders need immediate
+                A single car accident victim can require up to 100 units of blood. Emergency responders
+                need immediate
                 access to blood to save lives.
               </p>
             </div>
@@ -1905,7 +2304,8 @@
               </div>
               <h5 class="font-bold text-gray-800 mb-2">Burn Victims</h5>
               <p class="text-gray-600">
-                People with severe burns often need plasma transfusions to replace lost fluids and help maintain blood
+                People with severe burns often need plasma transfusions to replace lost fluids and help
+                maintain blood
                 pressure.
               </p>
             </div>
@@ -2098,17 +2498,20 @@
         <div>
           <h3 class="text-xl font-bold mb-4">About PMI Blood Heroes</h3>
           <p class="text-gray-300">
-            An interactive educational platform that aims to raise awareness about the importance of blood donation
+            An interactive educational platform that aims to raise awareness about the importance of blood
+            donation
             among teenagers, especially middle and high school students.
           </p>
         </div>
         <div>
           <h3 class="text-xl font-bold mb-4">Important Links</h3>
           <ul class="space-y-2 text-gray-300">
-            <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation Locations</a></li>
+            <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation Locations</a>
+            </li>
             <li><a href="#" class="hover:text-red-400 transition duration-300">Mobile Unit Schedule</a></li>
             <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation FAQ</a></li>
-            <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation Requirements</a></li>
+            <li><a href="#" class="hover:text-red-400 transition duration-300">Blood Donation
+                Requirements</a></li>
             <li><a href="#" class="hover:text-red-400 transition duration-300">Contact PMI</a></li>
           </ul>
         </div>
@@ -2847,7 +3250,7 @@
       const overlay = document.getElementById('main-fade-overlay');
       const fadeText = document.getElementById('fade-text');
 
-      fadeText.textContent = 'Mengumpulkan darah dari donor...';
+      fadeText.textContent = 'Collecting blood from donors...';
       overlay.classList.add('active');
 
       setTimeout(() => {
@@ -2869,7 +3272,7 @@
       const overlay = document.getElementById('main-fade-overlay');
       const fadeText = document.getElementById('fade-text');
 
-      fadeText.textContent = 'Kembali ke proses donor...';
+      fadeText.textContent = 'Back to the donor process...';
       overlay.classList.add('active');
 
       setTimeout(() => {
@@ -2879,8 +3282,8 @@
 
         // Update game state
         gameState.bloodCollected = true;
-        messageEl.textContent = 'Pengambilan darah selesai. Pasang plaster pada lengan.';
-        showAlert('Darah berhasil dikumpulkan!');
+        messageEl.textContent = 'Blood collection is complete. Place a plaster on the arm.';
+        showAlert('Blood successfully collected!');
 
         // Fade out overlay
         setTimeout(() => {
@@ -2904,6 +3307,15 @@
       // Event listener untuk klik
       tapGameState.canvas.addEventListener('click', handleTapClick);
 
+      // Show legend
+      const legend = document.getElementById('tap-legend');
+      if (legend) {
+        legend.classList.remove('hidden');
+      }
+
+      // Show intro popup
+      showTapGameIntro();
+
       // Mulai game loop
       tapGameLoop();
     }
@@ -2924,8 +3336,8 @@
           } else {
             c.shrinking = true;
             c.frame = 10;
-            tapGameState.score += 5;
-            tapGameState.progress += 5;
+            tapGameState.score += 10;
+            tapGameState.progress += 10;
             if (tapGameState.progress > tapGameState.maxProgress) {
               tapGameState.progress = tapGameState.maxProgress;
             }
@@ -2937,7 +3349,7 @@
     }
 
     function tapGameOver() {
-      alert("Kamu menekan bakteri! Coba lagi.");
+      alert("You're suppressing bacteria! Try again.");
       tapGameState.score = 0;
       tapGameState.progress = 0;
       tapGameState.gameTime = 0;
@@ -3013,8 +3425,8 @@
 
     function updateTapUI() {
       document.getElementById('tap-score').innerText = tapGameState.score;
-      document.getElementById('tap-blood-fill').style.height = (tapGameState.progress / tapGameState.maxProgress) * 100 + '%';
-
+      const fillPercentage = (tapGameState.progress / tapGameState.maxProgress) * 13;
+      document.getElementById('tap-blood-fill').style.height = fillPercentage + '%';
       if (tapGameState.progress >= tapGameState.maxProgress && tapGameState.active) {
         tapGameState.active = false;
         setTimeout(() => {
@@ -3073,7 +3485,7 @@
 
       switch (stage) {
         case 'donor':
-          addControlItem('cotton', 'Kapas Alkohol', `
+          addControlItem('cotton', 'Alcohol Cotton', `
                 <svg viewBox="0 0 60 60">
                     <rect x="10" y="25" width="40" height="10" rx="5" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="1" />
                     <circle cx="10" cy="30" r="8" fill="#fff" stroke="#bdbdbd" />
@@ -3082,7 +3494,7 @@
                 </svg>
             `);
 
-          addControlItem('syringe', 'Jarum Suntik', `
+          addControlItem('syringe', 'Syringe', `
                 <svg viewBox="0 0 60 60">
                     <rect x="10" y="25" width="30" height="10" rx="2" fill="#bbdefb" stroke="#1976d2" />
                     <rect x="40" y="27" width="15" height="6" fill="#e0e0e0" stroke="#bdbdbd" />
@@ -3092,7 +3504,7 @@
                 </svg>
             `);
 
-          addControlItem('bandage', 'Plester', `
+          addControlItem('bandage', 'Bandage', `
                 <svg viewBox="0 0 60 60">
                     <rect x="10" y="25" width="40" height="10" rx="2" fill="#ffe0b2" stroke="#ff9800" />
                     <rect x="20" y="25" width="20" height="10" fill="#f5f5f5" />
@@ -3187,7 +3599,7 @@
     function collectBlood() {
       // Tampilkan sample darah
       bloodSampleEl.style.display = 'block';
-      messageEl.textContent = 'Mengambil darah... Proses pengumpulan darah dimulai.';
+      messageEl.textContent = 'Taking blood... The blood collection process begins.';
 
       const bloodSample = document.getElementById('blood-sample');
       bloodSample.style.top = '100px';
@@ -3202,8 +3614,8 @@
     function applyBandage() {
       bandageEl.style.display = 'block';
       gameState.bandageApplied = true;
-      messageEl.textContent = 'Plaster telah dipasang. Proses donor darah selesai! Klik tombol "Lanjut" untuk melakukan tes darah.';
-      showAlert('Plaster dipasang, donor darah selesai!');
+      messageEl.textContent = 'The Bandage has been applied. The blood donation process is complete! Click the “Next” button to take a blood test.';
+      showAlert('Bandage applied, blood donation completed!');
       nextBtn.disabled = false;
     }
 
@@ -3293,7 +3705,7 @@
           currentStage = 'transfusion';
           startTransfusionStage();
           updateControlsForStage('transfusion');
-          controls.style.display = 'block';
+          controls.style.display = 'none';
         }, 2000);
       }
       else if (currentStage === 'transfusion' && gameState.transfusionComplete) {
@@ -3435,7 +3847,7 @@
           <path d="M${offset - 10} 0 L${offset} 10 L${offset + 10} -10" 
               stroke="${color}" stroke-width="2" fill="none" />
       `;
-        showAlert(`Terjadi penggumpalan reagen ${plateType}`, 'success');
+        showAlert(`Reagent clumping occurs ${plateType}`, 'success');
       } else {
         resultEl.innerHTML = `
           <circle cx="${offset}" cy="0" r="15" fill="${color}" fill-opacity="0.5" />
@@ -3462,7 +3874,7 @@
           helperBox.innerHTML = `
               <h4 class="font-bold text-blue-700 mb-2">How to determine blood type:</h4>
               <ul class="list-disc list-inside text-gray-700 space-y-1">
-                  <li>If clumping occurs in reagent A: contains antigen A/li>
+                  <li>If clumping occurs in reagent A: contains antigen A</li>
                   <li>If clumping occurs in reagent B: contains antigen A B</li>
                   <li>If clumping occurs in the Rh reagent: Rhesus positive (+)</li>
                   <li>Type A: clumping only in reagent A</li>
@@ -3604,7 +4016,7 @@
 
         // Perbarui status game dan pesan
         gameState.bloodGroupIdentified = true;
-        messageEl.textContent = 'Golongan darah telah diidentifikasi dengan benar. Klik tombol "Lanjut" untuk melakukan transfusi.';
+        messageEl.textContent = 'The blood type has been correctly identified. Click the “Next” button to perform the transfusion.';
 
         // Aktifkan tombol lanjut
         nextBtn.disabled = false;
@@ -3624,7 +4036,7 @@
           }, 600);
         }
       }
-      messageEl.textContent = 'Incorrect blood type identification. Please try again based on the test results.';
+      messageEl.textContent = 'The blood type has been correctly identified. Click the “Next” button to perform the transfusion.';
 
       // Animasi petunjuk visual tambahan
       createHelpfulHint();
@@ -3930,43 +4342,60 @@
         rect1.top > rect2.bottom);
     }
 
-    // PERBAIKAN: Menerima element sebagai parameter
     function startTransfusionAnimation(tubeElement) {
-      // Add blood flow animation class to tube
+      // Inisialisasi skill check system
+      skillCheckSystem = new SkillCheckSystem();
+
+      // Tambahkan skill check UI ke patient container
+      const patientContainer = document.querySelector('.patient-in-bed');
+      if (patientContainer) {
+        const skillCheckUI = skillCheckSystem.createSkillCheckUI();
+        patientContainer.appendChild(skillCheckUI);
+      }
+
+      // Reset transfusion progress
+      transfusionProgress = 100;
+      isTransfusingActive = true;
+
+      // Update progress bar jika ada
+      updateTransfusionProgressUI();
+
+      // Mulai interval transfusi
+      transfusionInterval = setInterval(() => {
+        processTransfusionProgress();
+      }, 1000); // Setiap 1.5 detik
+
+      // Animasi selang (kode asli Anda yang sudah ada)
       if (tubeElement) {
         tubeElement.classList.add('blood-flow');
       }
 
-      // Perbaiki CSS untuk animasi blood flow agar lebih jelas terlihat
+      // Perbaiki CSS untuk animasi blood flow
       const style = document.createElement('style');
       style.textContent = `
     .blood-flow {
         stroke-dasharray: 10, 5;
         animation: flow 5s linear infinite;
+        z-index: 10;
     }
     
     @keyframes flow {
-        from {
-            stroke-dashoffset: 1000;
-        }
-        to {
-            stroke-dashoffset: 0;
-        }
+        from { stroke-dashoffset: 1000; }
+        to { stroke-dashoffset: 0; }
     }
     
     @keyframes pulse {
         from { r: 5; fill: #e53935; }
         to { r: 7; fill: #c62828; }
     }
-`;
+    `;
       document.head.appendChild(style);
 
-      // Create drip animation if exists
+      // Create drip animation
       const drip = document.getElementById('drip');
       if (drip) {
         drip.style.display = 'block';
       } else {
-        // Buat elemen tetesan jika belum ada
         const dropSvg = document.querySelector(".transfusion-room svg");
         if (dropSvg) {
           const newDrip = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -3976,7 +4405,6 @@
           newDrip.setAttribute('r', '3');
           newDrip.setAttribute('fill', '#e53935');
 
-          // Tambahkan animasi ke tetesan
           const animate1 = document.createElementNS("http://www.w3.org/2000/svg", "animate");
           animate1.setAttribute('attributeName', 'cy');
           animate1.setAttribute('from', '145');
@@ -3997,40 +4425,115 @@
         }
       }
 
-      // PERBAIKAN: Hapus atau komentari baris bermasalah ini
-      // document.getElementById("arm-coord").addEventListener("click", function () {
-      //   alert("Area tangan (arm) diklik!");
-      //   // Ganti ini dengan logika game kamu, misalnya: mulai proses donor darah
-      // });
-
-      // Update patient appearance gradually
-      setTimeout(() => {
-        // Cari elemen pasien dan ubah warnanya secara bertahap
-        const patientElements = document.querySelectorAll('.patient-in-bed rect, .patient-in-bed circle');
-        patientElements.forEach(el => {
-          if (el.getAttribute('fill') === '#f5cba7') {
-            el.style.transition = 'fill 2s';
-            el.style.fill = '#ffccbc';
-          }
-        });
-
-        // Tambahkan animasi pada transfusion point
-        const transfusionPoint = document.getElementById('transfusion-point');
-        if (transfusionPoint) {
-          transfusionPoint.style.animation = 'pulse 1s infinite alternate';
-        }
-
-        // Perbarui pesan di panel bawah
-        showAlert('Blood transfusion successful!', 'success');
-        messageEl.textContent = 'The blood transfusion is complete. Click the "Next" button to end the simulation.';
-
-        // Enable dan tampilkan tombol "Lanjut"
-        gameState.transfusionComplete = true;
-        nextBtn.disabled = false;
-        nextBtn.style.display = 'block';
-        nextBtn.style.opacity = '1';
-      }, 2000);
+      // Tambahkan area klik untuk transfusi
+      setupTransfusionClick();
     }
+
+    function processTransfusionProgress() {
+      if (!isTransfusingActive) return;
+
+      // 40% chance untuk skill check muncul
+      if (Math.random() < 0.1 && !skillCheckSystem.isActive) {
+        skillCheckSystem.startSkillCheck();
+        return;
+      }
+
+      // Progress normal jika tidak ada skill check
+      if (!skillCheckSystem.isActive) {
+        updateTransfusionProgress(-1);
+      }
+    }
+
+    function updateTransfusionProgress(change) {
+      transfusionProgress += change;
+      transfusionProgress = Math.max(0, Math.min(100, transfusionProgress));
+
+      updateTransfusionProgressUI();
+
+      if (transfusionProgress <= 0) {
+        completeTransfusion();
+      }
+    }
+
+    function updateTransfusionProgressUI() {
+      // Update progress bar atau UI lainnya
+      messageEl.textContent = `Transfusion Progress: ${100 - transfusionProgress}%`;
+    }
+
+    function setupTransfusionClick() {
+      const transfusionPoint = document.getElementById('transfusion-point');
+      if (transfusionPoint) {
+        transfusionPoint.style.border = '2px dashed #4caf50';
+        transfusionPoint.style.borderRadius = '10px';
+        transfusionPoint.title = 'Click to perform transfusion';
+      }
+    }
+
+    function showSkillCheckFeedback(text, color) {
+      const patientContainer = document.querySelector('.patient-in-bed');
+      if (!patientContainer) return;
+
+      const feedback = document.createElement('div');
+      feedback.textContent = text;
+      feedback.style.cssText = `
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: ${color};
+        font-size: 18px;
+        font-weight: bold;
+        z-index: 1001;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        animation: skillCheckFeedback 1.5s ease-out forwards;
+    `;
+
+      patientContainer.appendChild(feedback);
+
+      setTimeout(() => {
+        if (feedback.parentNode) {
+          feedback.remove();
+        }
+      }, 1500);
+    }
+
+    function completeTransfusion() {
+      isTransfusingActive = false;
+
+      if (transfusionInterval) {
+        clearInterval(transfusionInterval);
+        transfusionInterval = null;
+      }
+
+      if (skillCheckSystem) {
+        skillCheckSystem.stopSkillCheck();
+      }
+
+      // Update patient appearance gradually (kode asli Anda)
+      const patientElements = document.querySelectorAll('.patient-in-bed rect, .patient-in-bed circle');
+      patientElements.forEach(el => {
+        if (el.getAttribute('fill') === '#f5cba7') {
+          el.style.transition = 'fill 2s';
+          el.style.fill = '#ffccbc';
+        }
+      });
+
+      // Tambahkan animasi pada transfusion point
+      const transfusionPoint = document.getElementById('transfusion-point');
+      if (transfusionPoint) {
+        transfusionPoint.style.animation = 'pulse 1s infinite alternate';
+      }
+
+      messageEl.textContent = 'Transfusion completed successfully!';
+      showAlert('Blood transfusion completed successfully!', 'success');
+
+      // Enable dan tampilkan tombol "Lanjut"
+      gameState.transfusionComplete = true;
+      nextBtn.disabled = false;
+      nextBtn.style.display = 'block';
+      nextBtn.style.opacity = '1';
+    }
+
 
     function fadeInElement(element) {
       element.style.display = 'block';
@@ -4363,7 +4866,6 @@
       // Draw UI
       ctx.fillStyle = 'black';
       ctx.font = '18px Arial';
-      ctx.fillText("Score: " + brGameState.score, 10, 25);
       ctx.fillText("Blood: " + brGameState.collectedBlood + "/" + brGameState.bloodGoal, 10, 45);
       ctx.fillText("Lives: " + brGameState.lives, 10, 65);
       ctx.fillText("Speed: " + (brGameState.speedMultiplier * 100).toFixed(0) + "%", 10, 85);
@@ -4506,19 +5008,293 @@
       bloodRunGame.keyDownHandler = handleKeyDown;
       bloodRunGame.keyUpHandler = handleKeyUp;
     }
+
+    let skillCheckSystem = null;
+    let transfusionProgress = 100; // Blood level pasien (mulai dari 100)
+    let transfusionInterval = null;
+    let isTransfusingActive = false;
+
+    class SkillCheckSystem {
+      constructor() {
+        this.isActive = false;
+        this.skillCheckProgress = 0;
+        this.skillCheckSpeed = 1; // Kecepatan jarum
+        this.safeZoneStart = 30;
+        this.safeZoneWidth = 25;
+        this.bonusZoneStart = 40;
+        this.bonusZoneWidth = 10;
+        this.skillCheckDirection = 1;
+        this.skillCheckContainer = null;
+        this.skillCheckBar = null;
+        this.skillCheckNeedle = null;
+      }
+
+      createSkillCheckUI() {
+        // Container utama skill check
+        this.skillCheckContainer = document.createElement('div');
+        this.skillCheckContainer.className = 'skill-check-container';
+        this.skillCheckContainer.style.cssText = `
+            position: absolute;
+            top: 250px;
+            left: 65%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 70px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #fff;
+            border-radius: 15px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        `;
+
+        // Bar skill check
+        this.skillCheckBar = document.createElement('div');
+        this.skillCheckBar.className = 'skill-check-bar';
+        this.skillCheckBar.style.cssText = `
+            position: relative;
+            width: 250px;
+            height: 25px;
+            background: #333;
+            margin: 15px auto 5px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #555;
+        `;
+
+        // Safe zone
+        const safeZone = document.createElement('div');
+        safeZone.className = 'safe-zone';
+        safeZone.style.cssText = `
+            position: absolute;
+            height: 100%;
+            background: rgba(76, 175, 80, 0.6);
+            border: 2px solid #4caf50;
+            left: ${this.safeZoneStart}%;
+            width: ${this.safeZoneWidth}%;
+            border-radius: 8px;
+        `;
+
+        // Bonus zone
+        const bonusZone = document.createElement('div');
+        bonusZone.className = 'bonus-zone';
+        bonusZone.style.cssText = `
+            position: absolute;
+            height: 100%;
+            background: rgba(255, 193, 7, 0.8);
+            border: 2px solid #ffc107;
+            left: ${this.bonusZoneStart}%;
+            width: ${this.bonusZoneWidth}%;
+            border-radius: 8px;
+        `;
+
+        // Jarum
+        this.skillCheckNeedle = document.createElement('div');
+        this.skillCheckNeedle.className = 'skill-check-needle';
+        this.skillCheckNeedle.style.cssText = `
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff5722, #d32f2f);
+            left: 0%;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(244, 67, 54, 0.8);
+        `;
+
+        // Text instruction
+        const instructionText = document.createElement('div');
+        instructionText.textContent = 'Tekan SPACE saat jarum di zona hijau!';
+        instructionText.style.cssText = `
+            color: white;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 5px;
+            font-weight: bold;
+        `;
+
+        this.skillCheckBar.appendChild(safeZone);
+        this.skillCheckBar.appendChild(bonusZone);
+        this.skillCheckBar.appendChild(this.skillCheckNeedle);
+        this.skillCheckContainer.appendChild(this.skillCheckBar);
+        this.skillCheckContainer.appendChild(instructionText);
+
+        return this.skillCheckContainer;
+      }
+
+      generateRandomZones() {
+        this.safeZoneStart = Math.random() * 50 + 15; // 15-65%
+        this.safeZoneWidth = Math.random() * 15 + 20; // 20-35%
+
+        const bonusOffset = Math.random() * (this.safeZoneWidth - 8);
+        this.bonusZoneStart = this.safeZoneStart + bonusOffset;
+        this.bonusZoneWidth = Math.min(8, this.safeZoneWidth - bonusOffset);
+
+        if (this.skillCheckBar) {
+          const safeZone = this.skillCheckBar.querySelector('.safe-zone');
+          const bonusZone = this.skillCheckBar.querySelector('.bonus-zone');
+
+          safeZone.style.left = this.safeZoneStart + '%';
+          safeZone.style.width = this.safeZoneWidth + '%';
+
+          bonusZone.style.left = this.bonusZoneStart + '%';
+          bonusZone.style.width = this.bonusZoneWidth + '%';
+        }
+      }
+
+      startSkillCheck() {
+        if (this.isActive) return;
+
+        this.isActive = true;
+        this.skillCheckProgress = 0;
+        this.skillCheckDirection = 1;
+
+        this.generateRandomZones();
+        this.skillCheckContainer.style.display = 'block';
+        this.animateNeedle();
+      }
+
+      animateNeedle() {
+        if (!this.isActive) return;
+
+        this.skillCheckProgress += this.skillCheckSpeed * this.skillCheckDirection;
+
+        if (this.skillCheckProgress >= 100) {
+          this.skillCheckProgress = 100;
+          this.skillCheckDirection = -1;
+        } else if (this.skillCheckProgress <= 0) {
+          this.skillCheckProgress = 0;
+          this.skillCheckDirection = 1;
+        }
+
+        this.skillCheckNeedle.style.left = this.skillCheckProgress + '%';
+
+        if (this.isActive) {
+          requestAnimationFrame(() => this.animateNeedle());
+        }
+      }
+
+      checkSkillCheck() {
+        if (!this.isActive) return 'none';
+
+        const needlePos = this.skillCheckProgress;
+        const safeZoneEnd = this.safeZoneStart + this.safeZoneWidth;
+        const bonusZoneEnd = this.bonusZoneStart + this.bonusZoneWidth;
+
+        if (needlePos >= this.bonusZoneStart && needlePos <= bonusZoneEnd) {
+          this.stopSkillCheck();
+          return 'bonus';
+        } else if (needlePos >= this.safeZoneStart && needlePos <= safeZoneEnd) {
+          this.stopSkillCheck();
+          return 'safe';
+        } else {
+          this.stopSkillCheck();
+          return 'danger';
+        }
+      }
+
+      stopSkillCheck() {
+        this.isActive = false;
+        this.skillCheckContainer.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.code === 'Space' && skillCheckSystem && skillCheckSystem.isActive && isTransfusingActive) {
+        event.preventDefault();
+
+        const result = skillCheckSystem.checkSkillCheck();
+
+        switch (result) {
+          case 'bonus':
+            updateTransfusionProgress(-10); // Progress cepat
+            showSkillCheckFeedback('BONUS! +10', '#ffc107');
+            break;
+
+          case 'safe':
+            updateTransfusionProgress(-8); // Progress normal
+            showSkillCheckFeedback('Good!', '#4caf50');
+            break;
+
+          case 'danger':
+            updateTransfusionProgress(+5); // Progress mundur
+            showSkillCheckFeedback('Failed! -5', '#f44336');
+            break;
+        }
+      }
+    });
+
+    // Popup Functions - Updated
+    function showPopup() {
+      const popup = document.getElementById('howToPlayPopup');
+      if (popup) {
+        popup.classList.remove('hidden');
+        // Hide legend when popup is shown
+        const legend = document.getElementById('tap-legend');
+        if (legend) {
+          legend.classList.add('hidden');
+        }
+      }
+    }
+
+    function closePopup() {
+      const popup = document.getElementById('howToPlayPopup');
+      if (popup) {
+        popup.classList.add('hidden');
+        // Show legend when popup is closed
+        const legend = document.getElementById('tap-legend');
+        if (legend) {
+          legend.classList.remove('hidden');
+        }
+      }
+    }
+
+    function startGame() {
+      closePopup();
+      // Start the tap game immediately
+      if (typeof initTapGame === 'function') {
+        // Game is already initialized, just close popup
+        console.log('Game continued!');
+      }
+    }
+
+    // Auto-show popup only once when tap game starts
+    let tapGamePopupShown = false;
+
+    function showTapGameIntro() {
+      if (!tapGamePopupShown) {
+        setTimeout(() => {
+          showPopup();
+          tapGamePopupShown = true;
+        }, 1000); // Show popup after 1 second
+      }
+    }
+
   </script>
   <!-- Tap Game Overlay -->
   <div id="tap-game-overlay">
     <div id="tap-game-container">
       <div id="tap-hud">
-        Total: <span id="tap-score">0</span> ml
+        Total : <span id="tap-score"> 0</span> ml
+        <button class="help-btn-inline" onclick="showPopup()" title="How to Play">?</button>
       </div>
-      <div id="tap-blood-bag-container">
-        <div id="tap-blood-fill"></div>
-      </div>
+      <div id="tap-blood-bag-container"></div>
+      <div id="tap-blood-fill"></div>
       <canvas id="tap-canvas" width="800" height="600"></canvas>
-      <div style="margin-top: 20px; text-align: center; color: #666;">
-        <p>Klik tetesan darah merah, hindari bakteri!</p>
+
+      <!-- Legend Container - Initially Hidden -->
+      <div class="legend-container hidden" id="tap-legend">
+        <div class="legend-item">
+          <div class="legend-icon">
+            <img src="img/darahMerah.png" alt="Blood Cell">
+          </div>
+          <span>Red Blood Cells - Click to collect</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon">
+            <img src="img/bakteri.png" alt="Bacteria">
+          </div>
+          <span>Bacteria - Avoid!</span>
+        </div>
       </div>
     </div>
   </div>
@@ -4527,9 +5303,8 @@
   <div class="fade-overlay" id="main-fade-overlay">
     <div id="fade-content">
       <div style="font-size: 32px; margin-bottom: 20px;">🩸</div>
-      <div id="fade-text">Memulai proses pengambilan darah...</div>
+      <div id="fade-text">Initiate the blood collection process...</div>
     </div>
   </div>
 </body>
-
 </html>
