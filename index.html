@@ -1143,64 +1143,7 @@
     }
   </style>
 </head>
-
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
-  <!-- How to Play Popup -->
-  <div id="howToPlayPopup" class="popup-overlay hidden">
-    <div class="popup-container">
-      <button class="close-btn" onclick="closePopup()">&times;</button>
-
-      <div class="popup-header">
-        <h2 class="popup-title">🩸How To Play</h2>
-        <p class="popup-subtitle">Collect blood, avoid bacteria!</p>
-      </div>
-
-      <div class="game-elements">
-        <div class="element blood-element">
-          <div class="element-icon">
-            <img src="img/darahMerah.png" alt="Blood Cell" style="width: 50px; height: 50px; border-radius: 50%;">
-          </div>
-          <h3 class="element-title">Red Blood Cells</h3>
-          <p class="element-desc">Click to collect and proceed to the next stage</p>
-        </div>
-
-        <div class="element bacteria-element">
-          <div class="element-icon">
-            <img src="img/bakteri.png" alt="Bacteria" style="width: 50px; height: 50px; border-radius: 50%;">
-          </div>
-          <h3 class="element-title">Bacteria</h3>
-          <p class="element-desc">Avoid! Will make you game over</p>
-        </div>
-      </div>
-
-      <div class="instructions">
-        <h3 class="instruction-title">📋 Game Instructions</h3>
-        <ul class="instruction-list">
-          <li class="instruction-item">
-            <span class="instruction-number">1</span>
-            Click on red blood cells (🩸) to collect blood
-          </li>
-          <li class="instruction-item">
-            <span class="instruction-number">2</span>
-            Avoid green bacteria (🦠) to avoid game over
-          </li>
-          <li class="instruction-item">
-            <span class="instruction-number">3</span>
-            Pantau kantong darah di kanan atas untuk melihat progress
-          </li>
-          <li class="instruction-item">
-            <span class="instruction-number">4</span>
-            collect it then it will proceed to the next stage
-          </li>
-        </ul>
-      </div>
-
-      <div class="popup-buttons">
-        <button class="btn-popup btn-play" onclick="startGame()">🎮 Games Start</button>
-        <button class="btn-popup btn-close" onclick="closePopup()">❌ Close</button>
-      </div>
-    </div>
-  </div>
   <header class="bg-white text-black shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
@@ -1445,7 +1388,7 @@
                   style="display: none; position: absolute; top: 130px; left: 215px; width: 30px; height: 30px; background: rgba(200, 230, 255, 0.5); border-radius: 50%; z-index: 6;">
                 </div>
                 <div id="bandage"
-                  style="display: none; position: absolute; top: 135px; left: 210px; width: 40px; height: 20px; background: #f5f5f5; border: 1px solid #bdbdbd; border-radius: 5px; z-index: 7; transform: rotate(90deg);">
+                  style="display: none; position: absolute; top: 135px; left: 210px; width: 40px; height: 20px; background: #F1D3B2; border: 1px solid #F1D3B2; border-radius: 5px; z-index: 7; transform: rotate(90deg);">
                 </div>
               </div>
 
@@ -1678,7 +1621,6 @@
                 <span id="result-blood-type" class="text-3xl font-bold text-red-600">?</span>
               </div>
             </div>
-            <p class="text-center text-gray-600 mt-3">Blood type successfully identified</p>
           </div>
 
           <div class="message" id="message">Choose a tool to start blood donation</div>
@@ -1789,8 +1731,9 @@
           </div>
 
           <!-- Feedback alert -->
-          <div id="feedback-alert" class="hidden mt-4 p-4 rounded-lg">
-            <p id="feedback-text" class="font-medium"></p>
+          <div id="feedback-alert"
+            class="hidden mt-4 p-4 rounded-lg bg-green-100 border border-green-300 text-green-800">
+            <p id="feedback-text" class="font-semibold"></p>
             <p id="feedback-explanation" class="text-sm mt-2"></p>
           </div>
         </div>
@@ -2492,6 +2435,64 @@
       </a>
     </div>
   </section>
+
+  <!-- How to Play Popup -->
+  <div id="howToPlayPopup" class="popup-overlay hidden">
+    <div class="popup-container">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+
+      <div class="popup-header">
+        <h2 class="popup-title">🩸How To Play</h2>
+        <p class="popup-subtitle">Collect blood, avoid bacteria!</p>
+      </div>
+
+      <div class="game-elements">
+        <div class="element blood-element">
+          <div class="element-icon">
+            <img src="img/darahMerah.png" alt="Blood Cell" style="width: 50px; height: 50px; border-radius: 50%;">
+          </div>
+          <h3 class="element-title">Red Blood Cells</h3>
+          <p class="element-desc">Click to collect and proceed to the next stage</p>
+        </div>
+
+        <div class="element bacteria-element">
+          <div class="element-icon">
+            <img src="img/bakteri.png" alt="Bacteria" style="width: 50px; height: 50px; border-radius: 50%;">
+          </div>
+          <h3 class="element-title">Bacteria</h3>
+          <p class="element-desc">Avoid! Will make you game over</p>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h3 class="instruction-title">📋 Game Instructions</h3>
+        <ul class="instruction-list">
+          <li class="instruction-item">
+            <span class="instruction-number">1</span>
+            Click on red blood cells (🩸) to collect blood
+          </li>
+          <li class="instruction-item">
+            <span class="instruction-number">2</span>
+            Avoid green bacteria (🦠) to avoid game over
+          </li>
+          <li class="instruction-item">
+            <span class="instruction-number">3</span>
+            Pantau kantong darah di kanan atas untuk melihat progress
+          </li>
+          <li class="instruction-item">
+            <span class="instruction-number">4</span>
+            collect it then it will proceed to the next stage
+          </li>
+        </ul>
+      </div>
+
+      <div class="popup-buttons">
+        <button class="btn-popup btn-play" onclick="startGame()">🎮 Games Start</button>
+        <button class="btn-popup btn-close" onclick="closePopup()">❌ Close</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="bg-gray-800 text-white py-12 px-4">
     <div class="container mx-auto">
       <div class="grid md:grid-cols-3 gap-8">
@@ -2567,9 +2568,17 @@
 
     // Game tabs functionality - keep your existing event listeners
     document.getElementById("sim-tab").addEventListener("click", function () {
-      // Show simulation, hide quiz
-      document.getElementById("simulation").classList.remove("hidden");
-      document.getElementById("quiz").classList.add("hidden");
+      console.log('🎯 Switching to simulation tab...');
+
+      // Hide quiz
+      const quizElement = document.getElementById("quiz");
+      quizElement.style.removeProperty('display');
+      quizElement.classList.add("hidden");
+
+      // Show simulation
+      const simulationElement = document.getElementById("simulation");
+      simulationElement.classList.remove("hidden");
+      simulationElement.style.display = 'block';
 
       // Update tab appearance
       this.classList.add("bg-gray-200");
@@ -2577,9 +2586,17 @@
     });
 
     document.getElementById("quiz-tab").addEventListener("click", function () {
-      // Hide simulation, show quiz
-      document.getElementById("simulation").classList.add("hidden");
-      document.getElementById("quiz").classList.remove("hidden");
+      console.log('🎯 Switching to quiz tab...');
+
+      // Hide simulation
+      const simulationElement = document.getElementById("simulation");
+      simulationElement.style.removeProperty('display');
+      simulationElement.classList.add("hidden");
+
+      // Show quiz
+      const quizElement = document.getElementById("quiz");
+      quizElement.classList.remove("hidden");
+      quizElement.style.display = 'block';
 
       // Update tab appearance
       this.classList.add("bg-gray-200");
@@ -3131,8 +3148,10 @@
       dinosaurX: 50,
       dinosaurY: 0,
 
-      cactus1Width: 110,
-      cactus2Width: 69,
+      cactus1Width: 100,
+      cactus2Width: 95,
+      truckWidth: 100, // Dimensi truck (biasanya lebih besar)
+      truckHeight: 70,
       cactusHeight: 70,
       cactusX: 700,
       cactusY: 0,
@@ -3436,8 +3455,8 @@
     }
 
     function getTapSpawnRate() {
-      const baseRate = 300;
-      const minRate = 90;
+      const baseRate = 60;
+      const minRate = 20;
       const timeProgression = Math.min(tapGameState.gameTime / 3600, 1);
       return baseRate - (baseRate - minRate) * timeProgression;
     }
@@ -4649,8 +4668,9 @@
         { name: 'dinosaurRun2', src: 'img/Ghibli Run-Pass.png' },
         { name: 'dinosaurDead', src: 'img/ghibli dead.png' },
         { name: 'dinosaurJump', src: 'img/Ghibli Jump.png' },
-        { name: 'cactus1', src: 'img/semak.png' },
-        { name: 'cactus2', src: 'img/kucing.png' },
+        { name: 'cactus1', src: 'img/bike.png' },
+        { name: 'cactus2', src: 'img/car.png' },
+        { name: 'truck', src: 'img/Truck.png' },
         { name: 'cactus3', src: 'img/cone1.png' },
         { name: 'blood', src: 'img/bloodpixel.png' },
         { name: 'hospital', src: 'img/hospital1.png' }
@@ -4869,6 +4889,8 @@
       ctx.fillText("Blood: " + brGameState.collectedBlood + "/" + brGameState.bloodGoal, 10, 45);
       ctx.fillText("Lives: " + brGameState.lives, 10, 65);
       ctx.fillText("Speed: " + (brGameState.speedMultiplier * 100).toFixed(0) + "%", 10, 85);
+      ctx.fillText("Obstacles: " + brGameState.cactusArray.length, 10, 105);
+
 
       if (brGameState.gameOver) {
         const msg = (brGameState.collectedBlood >= brGameState.bloodGoal &&
@@ -4890,7 +4912,17 @@
       const chance = Math.random();
       let cactus;
 
-      if (chance > 0.85) {
+      if (chance > 0.9) {
+        // Truck - rintangan paling sulit (10% chance)
+        cactus = {
+          x: brGameState.cactusX,
+          y: brGameState.boardHeight - brGameState.truckHeight,
+          width: brGameState.truckWidth,
+          height: brGameState.truckHeight,
+          img: brGameState.images.truck
+        };
+      } else if (chance > 0.75) {
+        // Cone (15% chance)
         cactus = {
           x: brGameState.cactusX,
           y: brGameState.boardHeight - brGameState.coneHeight,
@@ -4898,7 +4930,8 @@
           height: brGameState.coneHeight,
           img: brGameState.images.cactus3
         };
-      } else if (chance > 0.6) {
+      } else if (chance > 0.5) {
+        // Car (25% chance)
         cactus = {
           x: brGameState.cactusX,
           y: brGameState.cactusY,
@@ -4906,7 +4939,8 @@
           height: brGameState.cactusHeight,
           img: brGameState.images.cactus2
         };
-      } else if (chance > 0.4) {
+      } else if (chance > 0.3) {
+        // Bike (20% chance)
         cactus = {
           x: brGameState.cactusX,
           y: brGameState.cactusY,
@@ -5307,4 +5341,5 @@
     </div>
   </div>
 </body>
+
 </html>
