@@ -692,10 +692,25 @@
 
     #blood-run-canvas {
       background-color: #fff;
+      background-image: url('img/background.png');
+      background-size: cover;
+      background-repeat: repeat-x;
+      animation: animatebackground 15s linear infinite;
       border: 3px solid #ff3434;
       border-radius: 15px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
       margin: 10px 0;
+    }
+
+    @keyframes animatebackground {
+      from {
+        background-position: 0 0;
+      }
+
+      to {
+        background-position: 100% 0;
+      }
+
     }
 
     #blood-run-container {
@@ -3481,6 +3496,20 @@
       cactusSpawnInterval: 1.2,
       bloodSpawnInterval: 1.5,
 
+      background: {
+        x: 0,
+        baseSpeed: 150,
+        currentSpeed: 150,
+        width: 700, // Canvas width
+        height: 220, // Canvas height
+        actualWidth: 1400, // Akan diupdate setelah image load (asumsi 2x canvas width)
+        actualHeight: 220,
+        loopWidth: 700 // Bagian yang akan di-loop (bisa diatur sesuai asset)
+      },
+
+      speedIncreasePerBlood: 0.15,
+      maxSpeedMultiplier: 2.5,
+
       // Game images
       images: {}
     };
@@ -3647,9 +3676,6 @@
               tapGameState.progress = tapGameState.maxProgress;
             }
             updateTapUI();
-
-            // Add collection effect
-            showCollectionEffect(mouseX, mouseY);
             return;
           }
         }
@@ -4744,8 +4770,8 @@
     function processTransfusionProgress() {
       if (!isTransfusingActive) return;
 
-      // 40% chance untuk skill check muncul
-      if (Math.random() < 0.1 && !skillCheckSystem.isActive) {
+      // 20% chance untuk skill check muncul
+      if (Math.random() < 0.2 && !skillCheckSystem.isActive) {
         skillCheckSystem.startSkillCheck();
         return;
       }
@@ -4966,12 +4992,23 @@
         { name: 'truck', src: 'img/Truck.png' },
         { name: 'cactus3', src: 'img/cone1.png' },
         { name: 'blood', src: 'img/bloodpixel.png' },
-        { name: 'hospital', src: 'img/hospital1.png' }
+        { name: 'hospital', src: 'img/hospital1.png' },
+        { name: 'background', src: 'img/background.png' },
       ];
 
       imageList.forEach(item => {
         const img = new Image();
         img.src = item.src;
+
+        // Callback ketika image ter-load untuk mendapatkan ukuran asli
+        img.onload = function () {
+          if (item.name === 'background') {
+            // Update width background sesuai ukuran asli image
+            brGameState.background.actualWidth = this.width;
+            brGameState.background.actualHeight = this.height;
+            console.log(`Background loaded: ${this.width}x${this.height}`);
+          }
+        };
         brGameState.images[item.name] = img;
       });
 
@@ -4983,6 +5020,7 @@
 
     function resetBloodRunGame() {
       brGameState.gameOver = false;
+      brGameState.background.x = 0;
       brGameState.score = 0;
       brGameState.cactusArray = [];
       brGameState.bloodArray = [];
@@ -5036,42 +5074,63 @@
     }
 
     function updateBloodRun(dt) {
+      // ===== 1. BACKGROUND SCROLLING WITH SPEED CONTROL =====
+      // Background hanya bergerak jika game tidak over
+      if (!brGameState.gameOver) {
+        // Update background speed berdasarkan speedMultiplier
+        brGameState.background.currentSpeed = brGameState.background.baseSpeed * brGameState.speedMultiplier;
+
+        // Apply background movement
+        brGameState.background.x -= brGameState.background.currentSpeed * dt;
+
+        // Reset position untuk infinite loop
+        if (brGameState.background.x <= -brGameState.background.loopWidth) {
+          brGameState.background.x = 0;
+        }
+      }
+      // Jika game over, background akan berhenti bergerak
+
+      // ===== 2. GAME OVER CHECK =====
       if (brGameState.gameOver) {
-        // Check for completion
+        // Check for completion (jika sudah sampai hospital)
         if (brGameState.collectedBlood >= brGameState.bloodGoal &&
           brGameState.hospitalVisible &&
           collision(brGameState.dinosaur, brGameState.hospital)) {
           completeBloodRunGame();
         }
-        return;
+        return; // Exit early - background dan game logic stop
       }
 
-      // Update timers
+      // ===== 3. SPAWN TIMERS UPDATE =====
       brGameState.cactusSpawnTimer += dt;
       brGameState.bloodSpawnTimer += dt;
 
-      // Spawn objects
+      // ===== 4. SPAWN OBJECTS =====
+      // Spawn obstacles
       if (brGameState.cactusSpawnTimer >= brGameState.cactusSpawnInterval) {
         placeCactusBloodRun();
         brGameState.cactusSpawnTimer = 0;
       }
 
+      // Spawn blood
       if (brGameState.bloodSpawnTimer >= brGameState.bloodSpawnInterval) {
         placeBloodBloodRun();
         brGameState.bloodSpawnTimer = 0;
       }
 
-      // Physics
+      // ===== 5. DINOSAUR PHYSICS =====
+      // Apply gravity
       brGameState.velocityY += brGameState.gravity * dt;
       brGameState.dinosaur.y += brGameState.velocityY * dt;
 
+      // Ground collision check
       if (brGameState.dinosaur.y > brGameState.dinosaurY) {
         brGameState.dinosaur.y = brGameState.dinosaurY;
         brGameState.velocityY = 0;
         brGameState.dinosaur.isRunning = true;
       }
 
-      // Animation
+      // ===== 6. DINOSAUR ANIMATION =====
       if (brGameState.dinosaur.isRunning && brGameState.images.dinosaurRun1) {
         brGameState.animationTimer += dt;
         if (brGameState.animationTimer >= brGameState.animationDuration) {
@@ -5082,70 +5141,115 @@
         }
       }
 
-      // Update obstacles
+      // ===== 7. UPDATE OBSTACLES =====
       for (let i = 0; i < brGameState.cactusArray.length; i++) {
-        const c = brGameState.cactusArray[i];
-        c.x += brGameState.velocityX * dt;
+        const cactus = brGameState.cactusArray[i];
 
-        if (c.x + c.width < 0) {
+        // Move obstacle
+        cactus.x += brGameState.velocityX * dt;
+
+        // Remove obstacle if off screen
+        if (cactus.x + cactus.width < 0) {
           brGameState.cactusArray.splice(i, 1);
           i--;
           continue;
         }
 
-        if (collision(brGameState.dinosaur, c)) {
+        // Check collision with dinosaur
+        if (collision(brGameState.dinosaur, cactus)) {
           brGameState.cactusArray.splice(i, 1);
           i--;
           brGameState.lives--;
+
+          // Game over if no lives left
           if (brGameState.lives <= 0) {
             brGameState.gameOver = true;
             brGameState.dinosaur.img = brGameState.images.dinosaurDead;
+            brGameState.dinosaur.isRunning = false;
+
+            console.log('💀 Game Over! Lives: 0');
+          } else {
+            console.log(`💥 Hit obstacle! Lives remaining: ${brGameState.lives}`);
           }
         }
       }
 
-      // Update blood
+      // ===== 8. UPDATE BLOOD ITEMS =====
       for (let i = 0; i < brGameState.bloodArray.length; i++) {
-        const b = brGameState.bloodArray[i];
-        b.x += brGameState.velocityX * dt;
+        const blood = brGameState.bloodArray[i];
 
-        if (b.x + b.width < 0) {
+        // Move blood item
+        blood.x += brGameState.velocityX * dt;
+
+        // Remove blood if off screen
+        if (blood.x + blood.width < 0) {
           brGameState.bloodArray.splice(i, 1);
           i--;
           continue;
         }
 
-        if (collision(brGameState.dinosaur, b)) {
+        // Check collision with dinosaur
+        if (collision(brGameState.dinosaur, blood)) {
           brGameState.collectedBlood++;
           brGameState.bloodArray.splice(i, 1);
           i--;
 
-          // Speed increase
-          brGameState.speedMultiplier = Math.min(brGameState.speedMultiplier + brGameState.speedIncreasePerBlood, 1.8);
+          // ===== SPEED INCREASE LOGIC =====
+          const oldSpeedMultiplier = brGameState.speedMultiplier;
+          const oldBackgroundSpeed = brGameState.background.currentSpeed;
+
+          // Increase speed
+          brGameState.speedMultiplier = Math.min(
+            brGameState.speedMultiplier + brGameState.speedIncreasePerBlood,
+            brGameState.maxSpeedMultiplier || 2.5
+          );
+
+          // Update game velocities
           brGameState.velocityX = brGameState.baseVelocityX * brGameState.speedMultiplier;
 
-          // Update spawn intervals
-          brGameState.cactusSpawnInterval = Math.max(0.6, brGameState.baseCactusSpawnInterval / brGameState.speedMultiplier);
-          brGameState.bloodSpawnInterval = Math.max(0.8, brGameState.baseBloodSpawnInterval / brGameState.speedMultiplier);
+          // Update background speed (akan diupdate di loop berikutnya)
+          const newBackgroundSpeed = brGameState.background.baseSpeed * brGameState.speedMultiplier;
 
+          // Log speed changes
+          console.log(`🩸 Blood collected! (#${brGameState.collectedBlood})`);
+          console.log(`🏃 Game Speed: ${oldSpeedMultiplier.toFixed(2)}x → ${brGameState.speedMultiplier.toFixed(2)}x`);
+          console.log(`🌆 Background: ${oldBackgroundSpeed.toFixed(0)}px/s → ${newBackgroundSpeed.toFixed(0)}px/s`);
+
+          // Update spawn intervals (lebih sering spawn saat speed tinggi)
+          brGameState.cactusSpawnInterval = Math.max(
+            0.6,
+            brGameState.baseCactusSpawnInterval / brGameState.speedMultiplier
+          );
+          brGameState.bloodSpawnInterval = Math.max(
+            0.8,
+            brGameState.baseBloodSpawnInterval / brGameState.speedMultiplier
+          );
+
+          // Show hospital when blood goal reached
           if (brGameState.collectedBlood >= brGameState.bloodGoal) {
             brGameState.hospitalVisible = true;
             brGameState.hospital.x = brGameState.boardWidth;
+            console.log(`🏥 Hospital appeared! Goal reached: ${brGameState.collectedBlood}/${brGameState.bloodGoal}`);
           }
         }
       }
 
-      // Update hospital
+      // ===== 9. UPDATE HOSPITAL =====
       if (brGameState.hospitalVisible) {
+        // Move hospital
         brGameState.hospital.x += brGameState.velocityX * dt;
+
+        // Check collision with dinosaur (win condition)
         if (collision(brGameState.dinosaur, brGameState.hospital)) {
           brGameState.gameOver = true;
-          completeBloodRunGame();
+          console.log('🎉 Blood delivered to hospital! Mission accomplished!');
+
+          // Trigger completion
+          setTimeout(() => {
+            completeBloodRunGame();
+          }, 500);
         }
       }
-
-      // Update score
-      brGameState.score += Math.floor(dt * 60);
     }
 
     function drawBloodRun() {
@@ -5153,6 +5257,32 @@
       const canvas = bloodRunGame.canvas;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw scrolling background dengan seamless looping
+      if (brGameState.images.background) {
+        const bg = brGameState.background;
+
+        // Hitung berapa bagian dari image yang terlihat
+        const sourceX = Math.abs(bg.x) % bg.loopWidth;
+        const sourceWidth = Math.min(bg.loopWidth - sourceX, canvas.width);
+
+        // Draw bagian pertama
+        ctx.drawImage(
+          brGameState.images.background,
+          sourceX, 0, sourceWidth, bg.actualHeight, // Source rectangle
+          0, 0, sourceWidth, canvas.height          // Destination rectangle
+        );
+
+        // Jika perlu, draw bagian kedua untuk seamless loop
+        if (sourceWidth < canvas.width) {
+          const remainingWidth = canvas.width - sourceWidth;
+          ctx.drawImage(
+            brGameState.images.background,
+            0, 0, remainingWidth, bg.actualHeight,     // Source rectangle (dari awal image)
+            sourceWidth, 0, remainingWidth, canvas.height // Destination rectangle
+          );
+        }
+      }
 
       // Draw dinosaur
       if (brGameState.dinosaur.img) {
@@ -5182,8 +5312,6 @@
       ctx.fillText("Blood: " + brGameState.collectedBlood + "/" + brGameState.bloodGoal, 10, 45);
       ctx.fillText("Lives: " + brGameState.lives, 10, 65);
       ctx.fillText("Speed: " + (brGameState.speedMultiplier * 100).toFixed(0) + "%", 10, 85);
-      ctx.fillText("Obstacles: " + brGameState.cactusArray.length, 10, 105);
-
 
       if (brGameState.gameOver) {
         const msg = (brGameState.collectedBlood >= brGameState.bloodGoal &&
