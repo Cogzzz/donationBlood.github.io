@@ -654,7 +654,7 @@
 
     #blood-run-canvas {
       background-color: #fff;
-      background-image: url('img/background.png');
+      background-image: url('img/background1.jpg');
       background-size: cover;
       background-repeat: repeat-x;
       animation: animatebackground 15s linear infinite;
@@ -858,7 +858,6 @@
     }
 
     .drop-zone-active {
-      stroke: #4caf50 !important;
       stroke-width: 4 !important;
       fill: rgba(76, 175, 80, 0.2) !important;
     }
@@ -4737,7 +4736,6 @@
     function setupTransfusionClick() {
       const transfusionPoint = document.getElementById('transfusion-point');
       if (transfusionPoint) {
-        transfusionPoint.style.border = '2px dashed #4caf50';
         transfusionPoint.style.borderRadius = '10px';
         transfusionPoint.title = 'Click to perform transfusion';
       }
@@ -4932,7 +4930,7 @@
         { name: 'cactus3', src: 'img/cone1.png' },
         { name: 'blood', src: 'img/bloodpixel.png' },
         { name: 'hospital', src: 'img/hospital1.png' },
-        { name: 'background', src: 'img/background.jpg' },
+        { name: 'background', src: 'img/background1.jpg' },
       ];
 
       imageList.forEach(item => {
@@ -5013,7 +5011,6 @@
     }
 
     function updateBloodRun(dt) {
-      // ===== 1. BACKGROUND SCROLLING WITH SPEED CONTROL =====
       // Background hanya bergerak jika game tidak over
       if (!brGameState.gameOver) {
         // Update background speed berdasarkan speedMultiplier
@@ -5029,7 +5026,6 @@
       }
       // Jika game over, background akan berhenti bergerak
 
-      // ===== 2. GAME OVER CHECK =====
       if (brGameState.gameOver) {
         // Check for completion (jika sudah sampai hospital)
         if (brGameState.collectedBlood >= brGameState.bloodGoal &&
@@ -5040,11 +5036,9 @@
         return; // Exit early - background dan game logic stop
       }
 
-      // ===== 3. SPAWN TIMERS UPDATE =====
       brGameState.cactusSpawnTimer += dt;
       brGameState.bloodSpawnTimer += dt;
 
-      // ===== 4. SPAWN OBJECTS =====
       // Spawn obstacles
       if (brGameState.cactusSpawnTimer >= brGameState.cactusSpawnInterval) {
         placeCactusBloodRun();
@@ -5057,7 +5051,6 @@
         brGameState.bloodSpawnTimer = 0;
       }
 
-      // ===== 5. DINOSAUR PHYSICS =====
       // Apply gravity
       brGameState.velocityY += brGameState.gravity * dt;
       brGameState.dinosaur.y += brGameState.velocityY * dt;
@@ -5069,7 +5062,6 @@
         brGameState.dinosaur.isRunning = true;
       }
 
-      // ===== 6. DINOSAUR ANIMATION =====
       if (brGameState.dinosaur.isRunning && brGameState.images.dinosaurRun1) {
         brGameState.animationTimer += dt;
         if (brGameState.animationTimer >= brGameState.animationDuration) {
@@ -5080,7 +5072,6 @@
         }
       }
 
-      // ===== 7. UPDATE OBSTACLES =====
       for (let i = 0; i < brGameState.cactusArray.length; i++) {
         const cactus = brGameState.cactusArray[i];
 
@@ -5113,7 +5104,6 @@
         }
       }
 
-      // ===== 8. UPDATE BLOOD ITEMS =====
       for (let i = 0; i < brGameState.bloodArray.length; i++) {
         const blood = brGameState.bloodArray[i];
 
@@ -5173,7 +5163,6 @@
         }
       }
 
-      // ===== 9. UPDATE HOSPITAL =====
       if (brGameState.hospitalVisible) {
         // Move hospital
         brGameState.hospital.x += brGameState.velocityX * dt;
@@ -5253,17 +5242,170 @@
       ctx.fillText("Speed: " + (brGameState.speedMultiplier * 100).toFixed(0) + "%", 10, 85);
 
       if (brGameState.gameOver) {
-        const msg = (brGameState.collectedBlood >= brGameState.bloodGoal &&
-          brGameState.hospitalVisible &&
-          collision(brGameState.dinosaur, brGameState.hospital))
-          ? "Blood delivered successfully!"
-          : "Game Over! Press SPACE to retry";
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
 
-        ctx.fillStyle = 'red';
-        ctx.font = 'bold 20px Arial';
-        const textWidth = ctx.measureText(msg).width;
-        ctx.fillText(msg, (canvas.width - textWidth) / 2, canvas.height / 2);
+        const time = Date.now() * 0.002;
+        const bobOffset = Math.sin(time) * 3;
+
+        // Tentukan pesan berdasarkan kondisi
+        const isSuccess = (brGameState.collectedBlood >= brGameState.bloodGoal &&
+          brGameState.hospitalVisible &&
+          collision(brGameState.dinosaur, brGameState.hospital));
+
+        if (isSuccess) {
+          // SUCCESS MESSAGE - No "Press Space" needed
+          const boxX = canvas.width / 2 - 280;
+          const boxY = canvas.height / 2 - 45 + bobOffset; // Slightly smaller box
+          const boxWidth = 560;
+          const boxHeight = 90; // Reduced height since no "Press Space"
+
+          drawMinecraftBox(ctx, boxX, boxY, boxWidth, boxHeight, '#2E8B57', '#228B22');
+
+          // Calculate center positions for text
+          const centerX = boxX + (boxWidth / 2);
+          const centerY = boxY + (boxHeight / 2);
+
+          drawMinecraftTextCenter(ctx, "BLOOD DELIVERED", centerX, centerY - 12, '#ffffff', 2.5);
+          drawMinecraftTextCenter(ctx, "SUCCESSFULLY!", centerX, centerY + 15, '#ffffff', 2.5);
+          // No "PRESS SPACE" for success message
+        } else {
+          // GAME OVER MESSAGE - Keep "Press Space to Retry"
+          const boxX = canvas.width / 2 - 240;
+          const boxY = canvas.height / 2 - 55 + bobOffset;
+          const boxWidth = 480;
+          const boxHeight = 110;
+
+          drawMinecraftBox(ctx, boxX, boxY, boxWidth, boxHeight, '#8B0000', '#B22222');
+
+          // Calculate center positions for text
+          const centerX = boxX + (boxWidth / 2);
+          const centerY = boxY + (boxHeight / 2);
+
+          drawMinecraftTextCenter(ctx, "GAME OVER", centerX, centerY - 15, '#ffffff', 3);
+          drawMinecraftTextCenter(ctx, "PRESS SPACE TO RETRY", centerX, centerY + 15, '#ffff00', 2);
+        }
+        ctx.restore();
       }
+    }
+
+    function drawMinecraftTextCenter(ctx, text, centerX, centerY, color = '#ffffff', scale = 2) {
+      const pixelSize = scale;
+      const spacing = 6 * scale;
+
+      // Calculate text width
+      const textWidth = text.length * spacing;
+      const textHeight = 7 * pixelSize; // Font height is 7 pixels
+
+      // Calculate starting position to center the text
+      const startX = centerX - (textWidth / 2);
+      const startY = centerY - (textHeight / 2);
+
+      // Use the existing drawMinecraftText function with calculated position
+      drawMinecraftText(ctx, text, startX, startY, color, scale);
+    }
+
+
+    // Function untuk menggambar box Minecraft style
+    function drawMinecraftBox(ctx, x, y, width, height, mainColor, borderColor) {
+      const blockSize = 8; // Back to larger blocks
+
+      // Main background
+      ctx.fillStyle = mainColor;
+      ctx.fillRect(x, y, width, height);
+
+      // Top and left borders (lighter - 3D effect)
+      ctx.fillStyle = lightenColor(mainColor, 60);
+      ctx.fillRect(x, y, width, blockSize); // Top border
+      ctx.fillRect(x, y, blockSize, height); // Left border
+
+      // Bottom and right borders (darker - 3D effect)
+      ctx.fillStyle = darkenColor(mainColor, 40);
+      ctx.fillRect(x, y + height - blockSize, width, blockSize); // Bottom border
+      ctx.fillRect(x + width - blockSize, y, blockSize, height); // Right border
+
+      // Corner blocks for extra detail
+      ctx.fillStyle = borderColor;
+      // Top corners
+      ctx.fillRect(x, y, blockSize, blockSize);
+      ctx.fillRect(x + width - blockSize, y, blockSize, blockSize);
+      // Bottom corners
+      ctx.fillRect(x, y + height - blockSize, blockSize, blockSize);
+      ctx.fillRect(x + width - blockSize, y + height - blockSize, blockSize, blockSize);
+
+      // Inner shadow effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(x + blockSize, y + blockSize, width - blockSize * 2, 2);
+      ctx.fillRect(x + blockSize, y + blockSize, 2, height - blockSize * 2);
+    }
+
+    // Function untuk menggambar text Minecraft style
+    function drawMinecraftText(ctx, text, x, y, color = '#ffffff', scale = 2) {
+      ctx.fillStyle = color;
+      const pixelSize = scale;
+      const spacing = 6 * scale;
+
+      const fontData = {
+        'A': ["01110", "10001", "10001", "11111", "10001", "10001", "00000"],
+        'B': ["11110", "10001", "10001", "11110", "10001", "10001", "11110"],
+        'C': ["01111", "10000", "10000", "10000", "10000", "10000", "01111"],
+        'D': ["11110", "10001", "10001", "10001", "10001", "10001", "11110"],
+        'E': ["11111", "10000", "10000", "11110", "10000", "10000", "11111"],
+        'F': ["11111", "10000", "10000", "11110", "10000", "10000", "10000"],
+        'G': ["01111", "10000", "10000", "10111", "10001", "10001", "01111"],
+        'H': ["10001", "10001", "10001", "11111", "10001", "10001", "10001"],
+        'I': ["11111", "00100", "00100", "00100", "00100", "00100", "11111"],
+        'L': ["10000", "10000", "10000", "10000", "10000", "10000", "11111"],
+        'M': ["10001", "11011", "10101", "10001", "10001", "10001", "10001"],
+        'N': ["10001", "11001", "10101", "10011", "10001", "10001", "10001"],
+        'O': ["01110", "10001", "10001", "10001", "10001", "10001", "01110"],
+        'P': ["11110", "10001", "10001", "11110", "10000", "10000", "10000"],
+        'R': ["11110", "10001", "10001", "11110", "10100", "10010", "10001"],
+        'S': ["01111", "10000", "10000", "01110", "00001", "00001", "11110"],
+        'T': ["11111", "00100", "00100", "00100", "00100", "00100", "00100"],
+        'U': ["10001", "10001", "10001", "10001", "10001", "10001", "01110"],
+        'V': ["10001", "10001", "10001", "10001", "10001", "01010", "00100"],
+        'Y': ["10001", "10001", "01010", "00100", "00100", "00100", "00100"],
+        ' ': ["00000", "00000", "00000", "00000", "00000", "00000", "00000"],
+        '!': ["00100", "00100", "00100", "00100", "00100", "00000", "00100"]
+      };
+
+      let currentX = x;
+      for (let char of text.toUpperCase()) {
+        if (fontData[char]) {
+          const pattern = fontData[char];
+          for (let row = 0; row < pattern.length; row++) {
+            for (let col = 0; col < pattern[row].length; col++) {
+              if (pattern[row][col] === '1') {
+                ctx.fillRect(
+                  currentX + col * pixelSize,
+                  y + row * pixelSize,
+                  pixelSize,
+                  pixelSize
+                );
+              }
+            }
+          }
+        }
+        currentX += spacing;
+      }
+    }
+
+    // Helper functions untuk warna
+    function lightenColor(color, percent) {
+      const f = parseInt(color.slice(1), 16);
+      const t = percent < 0 ? 0 : 255;
+      const p = percent < 0 ? percent * -1 : percent;
+      const R = f >> 16;
+      const G = f >> 8 & 0x00FF;
+      const B = f & 0x0000FF;
+      return "#" + (0x1000000 + (Math.round((t - R) * p / 100) + R) * 0x10000 +
+        (Math.round((t - G) * p / 100) + G) * 0x100 +
+        (Math.round((t - B) * p / 100) + B)).toString(16).slice(1);
+    }
+
+    function darkenColor(color, percent) {
+      return lightenColor(color, -percent);
     }
 
     function placeCactusBloodRun() {
@@ -5742,4 +5884,5 @@
     </div>
   </div>
 </body>
+
 </html>
