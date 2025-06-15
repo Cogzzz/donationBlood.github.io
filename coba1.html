@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donor Transfusion Room</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="transfusionRoom" width="760" height="450"></canvas>
+
+    <script>
+        const canvas = document.getElementById('transfusionRoom');
+        const ctx = canvas.getContext('2d');
+
+        // Load background image
+        const bgImage = new Image();
+        bgImage.src = 'img/donationroom.png';
+        bgImage.onload = function() {
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(bgImage, 0, 0, 760, 450);
+            ctx.globalAlpha = 1.0;
+            
+            // Draw medical equipment
+            ctx.fillStyle = '#e0e0e0';
+            ctx.strokeStyle = '#bdbdbd';
+            ctx.beginPath();
+            ctx.roundRect(610, 150, 80, 40, 5);
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw green circle
+            ctx.fillStyle = '#4caf50';
+            ctx.beginPath();
+            ctx.arc(630, 170, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw IV Stand
+            ctx.fillStyle = '#757575';
+            ctx.strokeStyle = '#424242';
+            ctx.lineWidth = 1;
+            
+            // Stand pole
+            ctx.fillRect(565, 130, 10, 200);
+            
+            // Stand base
+            ctx.beginPath();
+            ctx.moveTo(535, 330);
+            ctx.lineTo(605, 330);
+            ctx.lineTo(590, 350);
+            ctx.lineTo(550, 350);
+            ctx.closePath();
+            ctx.fill();
+        };
+
+        // Load patient image
+        const patientImage = new Image();
+        patientImage.src = 'img/pasien2.png';
+        patientImage.onload = function() {
+            ctx.drawImage(patientImage, 40, 110, 500, 350);
+        };
+    </script>
+</body>
+</html>

@@ -173,38 +173,12 @@
 
     .patient {
       position: relative;
-    }
-
-    .vein {
-      stroke: #5c6bc0;
-      stroke-width: 3;
-      stroke-opacity: 0.7;
+      top: 142px;
+      left: 17%;
     }
 
     .blood-sample {
       position: absolute;
-      display: none;
-    }
-
-    .test-result {
-      width: 120px;
-      height: 60px;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      position: absolute;
-      top: 50px;
-      right: 50px;
-      font-size: 14px;
-      padding: 5px;
-      text-align: center;
-      display: none;
-      border-radius: 5px;
-    }
-
-    .patient-target {
-      position: relative;
-      height: 350px;
-      width: 200px;
       display: none;
     }
 
@@ -352,12 +326,10 @@
     }
 
     .transfusion-room {
-      background-color: #e8f5e9;
       width: 100%;
       height: 100%;
       display: none;
       position: relative;
-      background-image: linear-gradient(to bottom, #e8f5e9, #c8e6c9);
     }
 
     .transfusion-stand {
@@ -432,7 +404,6 @@
       }
     }
 
-    /* Tambahkan style untuk visualisasi yang lebih jelas pada penggumpalan */
     .coagulation-positive {
       animation: pulseCoagulation 1.5s infinite;
     }
@@ -451,7 +422,6 @@
       }
     }
 
-    /* Style untuk drop-zone yang lebih jelas */
     .drop-zone-highlight {
       stroke-dasharray: 5;
       animation: dash 2s linear infinite;
@@ -483,12 +453,10 @@
       }
     }
 
-    /* Highlight untuk transfusion stand */
     .stand-highlight {
       filter: drop-shadow(0 0 5px rgba(255, 23, 68, 0.7));
     }
 
-    /* Additional styles for the simulation tabs */
     .sim-tabs {
       display: flex;
       margin-bottom: 1rem;
@@ -561,7 +529,6 @@
       animation: coagulationPulse 2s infinite;
     }
 
-    /* Efek flash saat jawaban salah */
     @keyframes flashError {
       0% {
         background-color: #fff;
@@ -580,7 +547,6 @@
       animation: flashError 0.6s ease-in-out;
     }
 
-    /* Efek muncul untuk interface pemilihan golongan darah */
     @keyframes fadeIn {
       0% {
         opacity: 0;
@@ -597,7 +563,6 @@
       animation: fadeIn 0.5s ease-out forwards;
     }
 
-    /* Efek sukses untuk hasil tes yang benar */
     @keyframes successPulse {
       0% {
         transform: scale(1);
@@ -616,7 +581,6 @@
       animation: successPulse 1s ease-in-out;
     }
 
-    /* Efek hover untuk tombol */
     .blood-type-btn:hover,
     .rh-btn:hover {
       background-color: #fee2e2;
@@ -625,7 +589,6 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    /* Styling tambahan untuk tampilan hasil tes */
     #test-result-display {
       transform-origin: center;
       transition: all 0.3s ease;
@@ -636,7 +599,6 @@
       transform: scale(1);
     }
 
-    /* Efek tetesan darah tambahan */
     .blood-drop {
       position: absolute;
       width: 10px;
@@ -1644,55 +1606,33 @@
         <div id="simulation">
           <div class="scene">
             <div class="scene-content" id="scene-content">
-              <div class="patient" style="position: relative; width: 500px; height: 350px;">
-                <img src="img/patient.png" alt="Patient" class="patient-image" style="width: 100%; height: 100%;" />
+              <div class="donation-process" id="donation-process">
+                <img src="img/donationroom.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; opacity: 0.5; pointer-events: none;">
+                <div class="patient" style="position: relative; width: 500px; height: 350px; top: 80px; left:2px;">
+                  <img src="img/patient.png" alt="Patient" class="patient-image" style="width: 100%; height: 100%;" />
 
-                <!-- Area klik lengan -->
-                <div id="arm" style="position: absolute; top: 130px; left: 215px; width: 120px; height: 35px; 
+                  <!-- Area klik lengan -->
+                  <div id="arm" style="position: absolute; top: 130px; left: 215px; width: 120px; height: 35px; 
               cursor: pointer; background-color: rgba(255, 255, 255, 0); z-index: 4;">
+                  </div>
+
+                  <!-- Cleaned area dan bandage -->
+                  <div id="cleaned-area"
+                    style="display: none; position: absolute; top: 130px; left: 215px; width: 30px; height: 30px; background: rgba(200, 230, 255, 0.5); border-radius: 50%; z-index: 6;">
+                  </div>
+                  <div id="bandage"
+                    style="display: none; position: absolute; top: 135px; left: 210px; width: 40px; height: 20px; background: #F1D3B2; border: 1px solid #F1D3B2; border-radius: 5px; z-index: 7; transform: rotate(90deg);">
+                  </div>
                 </div>
 
-                <!-- Cleaned area dan bandage -->
-                <div id="cleaned-area"
-                  style="display: none; position: absolute; top: 130px; left: 215px; width: 30px; height: 30px; background: rgba(200, 230, 255, 0.5); border-radius: 50%; z-index: 6;">
+                <div class="blood-sample" id="blood-sample">
+                  <img src="img/serum.png" alt="Blood Sample"
+                    style="width: 80px; height: 100px; left:20px; top: 100px;" />
                 </div>
-                <div id="bandage"
-                  style="display: none; position: absolute; top: 135px; left: 210px; width: 40px; height: 20px; background: #F1D3B2; border: 1px solid #F1D3B2; border-radius: 5px; z-index: 7; transform: rotate(90deg);">
-                </div>
+                <div class="test-result" id="test-result"></div>
               </div>
 
-
-              <div class="blood-sample" id="blood-sample">
-
-                <img src="img/serum.png" alt="Blood Sample" style="width: 80px; height: 100px;">
-
-              </div>
-
-              <div class="test-result" id="test-result"></div>
-
-              <div class="patient-target" id="patient-target">
-                <svg width="200" height="350" viewBox="0 0 200 350">
-                  <!-- Patient body -->
-                  <rect x="50" y="50" width="100" height="200" rx="20" fill="#f5cba7" />
-                  <!-- Patient head -->
-                  <circle cx="100" cy="30" r="30" fill="#f5cba7" />
-                  <!-- Patient details -->
-                  <circle cx="90" cy="25" r="3" fill="#424242" /> <!-- Left eye -->
-                  <circle cx="110" cy="25" r="3" fill="#424242" /> <!-- Right eye -->
-                  <path d="M95 45 Q100 40 105 45" stroke="#424242" stroke-width="2" fill="none" />
-                  <!-- Frown (sick) -->
-                </svg>
-                <div class="arm">
-                  <svg width="100" height="150" viewBox="0 0 100 150">
-                    <!-- Arm -->
-                    <rect x="10" y="10" width="40" height="130" rx="20" fill="#f5cba7" />
-                    <!-- Vein -->
-                    <path d="M25 40 L25 120" class="vein" />
-                    <!-- IV insertion point (initially hidden) -->
-                    <circle id="iv-point" cx="25" cy="80" r="5" fill="#e53935" style="display: none;" />
-                  </svg>
-                </div>
-              </div>
 
               <div class="blood-bag" id="blood-bag">
                 <svg width="80" height="100" viewBox="0 0 80 100">
@@ -1768,19 +1708,15 @@
 
               <!-- Transfusion room scene -->
               <div class="transfusion-room" id="transfusion-room">
+                <img src="img/donationroom.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; opacity: 0.5; pointer-events: none;">
                 <svg width="800" height="450" viewBox="0 0 800 450">
-                  <!-- Background wall elements -->
-                  <rect x="0" y="0" width="800" height="450" fill="#e8f5e9" />
-
-                  <!-- Medical equipment - adds realism -->
-                  <rect x="650" y="150" width="80" height="40" rx="5" fill="#e0e0e0" stroke="#bdbdbd" />
-                  <circle cx="670" cy="170" r="5" fill="#4caf50" />
-                  <rect x="680" y="165" width="40" height="10" rx="2" fill="#f5f5f5" />
+                  <!-- untuk menggambar blood flow -->
                 </svg>
 
                 <!-- Patient dengan gambar - menggantikan hospital bed dan patient SVG -->
                 <div class="patient-in-bed"
-                  style="position: absolute; top: 110px; left: 40px; width: 500px; height: 350px;">
+                  style="position: absolute; top: 130px; left: 55px; width: 500px; height: 350px;">
                   <!-- di ubah -->
                   <img src="img/pasien2.png" alt="Patient" class="patient-image" style="width: 100%; height: 100%;" />
 
@@ -1791,7 +1727,7 @@
                 </div>
 
                 <!-- IV Stand - repositioned to match the image -->
-                <div style="position: absolute; top: 100px; left: 520px;">
+                <div style="position: absolute; top: 130px; left: 520px;">
                   <svg width="100" height="300" viewBox="0 0 100 300">
                     <g class="transfusion-stand" id="transfusion-stand">
                       <!-- Stand pole -->
@@ -3527,7 +3463,6 @@
 
     // Scene elements
     const patientEl = document.querySelector('.patient');
-    const patientTargetEl = document.getElementById('patient-target');
     const armEl = document.querySelector('#arm');
     const cleanedAreaEl = document.getElementById('cleaned-area');
     const bandageEl = document.getElementById('bandage');
@@ -3940,8 +3875,8 @@
       messageEl.textContent = 'Taking blood... The blood collection process begins.';
 
       const bloodSample = document.getElementById('blood-sample');
-      bloodSample.style.top = '100px';
-      bloodSample.style.right = '100px';
+      bloodSample.style.top = '190px';
+      bloodSample.style.right = '80px';
 
       // Fade ke tap game
       setTimeout(() => {
@@ -4463,6 +4398,7 @@
     function startTransfusionStage() {
       // Hide laboratory elements
       laboratoryEl.style.display = 'none';
+      donationProcessEl.style.display = 'none';
 
       // Show transfusion scene
       fadeInElement(transfusionRoomEl);
@@ -4908,9 +4844,12 @@
       }, 3000);
     }
 
+    const donationProcessEl = document.querySelector('.donation-process');
+
     function startBloodRunGame() {
       // Hide laboratory elements
       laboratoryEl.style.display = 'none';
+      donationProcessEl.style.display = 'none'; // ← ADDED
 
       // Hide blood type selection elements
       const bloodTypeSelection = document.getElementById('blood-type-selection-container');
@@ -4993,7 +4932,7 @@
         { name: 'cactus3', src: 'img/cone1.png' },
         { name: 'blood', src: 'img/bloodpixel.png' },
         { name: 'hospital', src: 'img/hospital1.png' },
-        { name: 'background', src: 'img/background.png' },
+        { name: 'background', src: 'img/background.jpg' },
       ];
 
       imageList.forEach(item => {
@@ -5754,7 +5693,6 @@
       tapGameState.circles = []; // Clear all circles
       tapGameState.spawnTimer = 0; // Reset spawn timer
 
-      // Optionally reduce progress as penalty
       tapGameState.progress = Math.max(0, tapGameState.progress - 10);
       updateTapUI();
 
@@ -5804,5 +5742,4 @@
     </div>
   </div>
 </body>
-
 </html>
